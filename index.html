@@ -3,29 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>How to Build Super Teams — Advanced Studio Classroom</title>
+  <title>How to Better Use AI — Let's Talk in English</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/night.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/simple.css" id="theme">
   <style>
-    .reveal h1 { font-size: 2.5em; }
-    .reveal h2 { font-size: 1.6em; margin-bottom: 0.5em; }
-    .reveal h3 { font-size: 1.1em; color: #ffd700; margin-bottom: 0.3em; }
-    .reveal h4 { color: #64b5f6; margin-bottom: 0.2em; }
-    .reveal p, .reveal li { font-size: 0.8em; line-height: 1.6; }
+    :root { --primary: #2563eb; --accent: #f59e0b; --bg: #f8fafc; }
+    .reveal { background: var(--bg); color: #1e293b; }
+    .reveal h1 { font-size: 2.4em; color: var(--primary); }
+    .reveal h2 { font-size: 1.6em; color: var(--primary); margin-bottom: 0.5em; }
+    .reveal h3 { font-size: 1em; color: #475569; margin-bottom: 0.3em; }
+    .reveal h4 { font-size: 0.9em; color: var(--accent); margin-bottom: 0.2em; }
+    .reveal p, .reveal li { font-size: 0.78em; line-height: 1.7; }
     .reveal ul { display: block; list-style: none; padding: 0; }
-    .reveal li { margin: 0.4em 0; }
-    .reveal li::before { content: "▸ "; color: #ffd700; }
-    .reveal blockquote { background: rgba(255,255,255,0.05); border-left: 4px solid #ffd700; padding: 0.5em 1em; font-size: 0.75em; font-style: italic; text-align: left; }
-    .reveal .zh { color: #81c784; font-size: 0.7em; display: block; margin-top: 0.2em; }
-    .reveal .tag { display: inline-block; background: rgba(255,215,0,0.15); color: #ffd700; padding: 0.1em 0.6em; border-radius: 4px; font-size: 0.6em; margin: 0.2em; }
-    .reveal .highlight { color: #ffd700; }
-    .reveal .subtitle { color: #90caf9; font-size: 0.85em; }
-    .reveal .pillar-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1em; margin-top: 0.5em; }
-    .reveal .pillar-card { background: rgba(255,255,255,0.06); border-radius: 10px; padding: 0.6em 0.8em; text-align: left; }
-    .reveal .pillar-card h4 { color: #ffd700; margin: 0 0 0.3em 0; font-size: 0.9em; }
-    .reveal .pillar-card p { margin: 0.15em 0; font-size: 0.7em; }
-    .reveal .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5em; text-align: left; }
-    .reveal .footer-note { margin-top: 1.5em; font-size: 0.65em; opacity: 0.6; }
+    .reveal li { margin: 0.3em 0; }
+    .reveal li::before { content: "◆ "; color: var(--accent); }
+    .reveal blockquote { background: #eef2ff; border-left: 4px solid var(--primary); padding: 0.5em 1em; font-size: 0.72em; border-radius: 0 8px 8px 0; }
+    .reveal .zh { color: #64748b; font-size: 0.65em; display: block; margin-top: 0.15em; }
+    .reveal .en { font-weight: bold; color: var(--primary); }
+    .reveal .highlight { color: var(--accent); font-weight: bold; }
+    .reveal .tag { display: inline-block; background: #dbeafe; color: var(--primary); padding: 0.1em 0.6em; border-radius: 4px; font-size: 0.65em; margin: 0.15em; }
+    .reveal .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2em; text-align: left; }
+    .reveal .box { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.6em 0.8em; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .reveal .footer-note { margin-top: 1.2em; font-size: 0.6em; opacity: 0.6; }
+
+    /* Vocabulary flip cards */
+    .vocab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6em; margin-top: 0.5em; }
+    .vocab-card { perspective: 800px; height: 90px; cursor: pointer; }
+    .vocab-card .inner { position: relative; width: 100%; height: 100%; transition: transform .5s; transform-style: preserve-3d; }
+    .vocab-card.flipped .inner { transform: rotateY(180deg); }
+    .vocab-card .front, .vocab-card .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 0.7em; padding: 0.4em; box-sizing: border-box; }
+    .vocab-card .front { background: var(--primary); color: white; font-weight: bold; }
+    .vocab-card .back { background: #fef3c7; color: #1e293b; transform: rotateY(180deg); flex-direction: column; gap: 0.2em; }
+    .vocab-card .back .zh { color: #64748b; }
+    .vocab-card .back .example { font-size: 0.8em; font-style: italic; color: #475569; }
+
+    /* Match quiz */
+    .match-area { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin-top: 0.5em; }
+    .match-col { display: flex; flex-direction: column; gap: 0.4em; }
+    .match-item { background: white; border: 2px solid #e2e8f0; border-radius: 8px; padding: 0.4em 0.6em; font-size: 0.7em; text-align: center; cursor: pointer; transition: all .2s; }
+    .match-item.selected { border-color: var(--primary); background: #dbeafe; }
+    .match-item.matched { border-color: #22c55e; background: #dcfce7; opacity: 0.6; cursor: default; }
+    .match-item.wrong { border-color: #ef4444; background: #fee2e2; animation: shake .3s; }
+    .match-result { margin-top: 0.6em; font-size: 0.7em; text-align: center; min-height: 1.5em; }
+    .match-result .ok { color: #22c55e; font-weight: bold; }
+    .match-result .no { color: #ef4444; }
+
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
   </style>
 </head>
 <body>
@@ -34,191 +57,321 @@
 
 <!-- ===== TITLE ===== -->
 <section>
-  <h1>How to Build Super Teams</h1>
-  <p class="subtitle" style="margin-top:0.5em;">Don't Stop Thinking About Tomorrow</p>
-  <p style="margin-top:1em; font-size:0.8em;">Advanced Studio Classroom · June 4, 2026</p>
-  <p style="font-size:0.7em; opacity:0.6;">Rebecca &amp; Peter</p>
-  <span class="zh">如何打造超級團隊 · 空英職場管理系列</span>
+  <h1>🤖 How to Better Use AI</h1>
+  <p style="font-size:1em; color:#475569; margin-top:0.5em;">Let's Talk in English</p>
+  <p style="font-size:0.8em;">Tips Lesson · Teacher Maria &amp; Teacher Garrett</p>
+  <p style="font-size:0.65em; opacity:0.6; margin-top:1.5em;">Made for beginners · 適合英語初學者的 AI 學習簡報</p>
 </section>
 
-<!-- ===== KEY INSIGHT ===== -->
+<!-- ===== LESSON INTRO ===== -->
 <section>
-  <h2>The Core Insight</h2>
+  <h2>📖 Today's Lesson</h2>
+  <div class="two-col">
+    <div class="box">
+      <h4>💬 Conversation</h4>
+      <p>Ken and Betty are walking. The GPS tells them where to go.</p>
+      <p class="zh">Ken 和 Betty 在路上，GPS 引導他們前進</p>
+    </div>
+    <div class="box">
+      <h4>🎯 5 Tips for Using AI Better</h4>
+      <p style="font-size:0.7em;">① Give clear &amp; specific info<br>② Give examples<br>③ Break big tasks into smaller parts<br>④ Give helpful feedback<br>⑤ Try a few times!</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DIALOGUE ===== -->
+<section>
+  <h2>💬 The Dialogue</h2>
   <blockquote>
-    "People follow leaders based on how good those leaders make people feel about their future."
+    <p><strong>Ken:</strong> The GPS says to turn left here.</p>
+    <p><strong>Betty:</strong> It's taking us a faster way!</p>
+    <p><strong>Ken:</strong> The GPS knows that because it's using AI, right?</p>
+    <p><strong>Betty:</strong> Yes! When we were driving, the GPS helped us avoid traffic.</p>
+    <p><strong>Ken:</strong> AI is a big help <em>if you use it the right way</em>.</p>
   </blockquote>
-  <p style="margin-top:0.8em;">It's not about a detailed strategic plan — it's about giving people a sense that <span class="highlight">tomorrow will be better</span>.</p>
-  <span class="zh">人們追隨領導者，是因為領導者讓他們對未來感到更好</span>
+  <p class="zh" style="margin-top:0.5em;">GPS 使用 AI 來避開車流、找更快路線。AI 要用對方法才有幫助！</p>
 </section>
 
-<!-- ===== THE MYTH ===== -->
+<!-- ===== TIP 1 & 2 ===== -->
 <section>
-  <h2>The Myth of Vision &amp; Charisma</h2>
-  <p>Ask people why they follow leaders, and you'll often hear <span class="highlight">vision</span> and <span class="highlight">charisma</span>.</p>
-  <p>But most leaders don't have both. Many don't have either.</p>
-  <p style="margin-top:0.8em;">What they <em>do</em> have are a few <span class="highlight">super skills</span> that are disproportionately strong.</p>
-  <span class="zh">迷思：大多數人認為領導者需要願景和魅力，但作者發現多數領導者兩者皆無</span>
-</section>
-
-<!-- ===== SUPER SKILLS ===== -->
-<section>
-  <h2>Super Skills</h2>
-  <p>One or two strengths so powerful that they convince people:</p>
-  <p style="font-size:1em; margin:0.8em 0;">✨ <span class="highlight">"The future will be different and better."</span></p>
-  <div class="two-col" style="margin-top:0.8em;">
-    <div>
-      <h4>Don't</h4>
-      <p>Waste time trying to fit some generic leadership model</p>
-      <span class="zh">不要試圖符合通用領導模板</span>
-    </div>
-    <div>
-      <h4>Do</h4>
-      <p>Figure out the 1-2 strengths that make people optimistic &amp; <span class="highlight">lean into them</span></p>
-      <span class="zh">找出你的超級技能，並全力發展它</span>
-    </div>
-  </div>
-</section>
-
-<!-- ===== EXAMPLES ===== -->
-<section>
-  <h2>Who Has Super Skills?</h2>
-  <p style="margin-bottom:0.8em;">John Levy's dinner guests — leaders from every field:</p>
+  <h2>💡 Tips 1 &amp; 2</h2>
   <div class="two-col">
-    <div>
-      <p><span class="tag">🎬</span> Oscar-winning directors → filmmaking</p>
-      <p><span class="tag">🎵</span> Grammy-winning artists → music</p>
-      <p><span class="tag">🏅</span> Olympic athletes → physical excellence</p>
+    <div class="box">
+      <h4>① Give Clear &amp; Specific Information</h4>
+      <p>Tell AI: <span class="highlight">what</span> you want, <span class="highlight">why</span> you want it, <span class="highlight">who</span> it's for.</p>
+      <p class="zh">給 AI 清楚具體的資訊：你要什麼、為什麼、給誰用</p>
+      <p style="margin-top:0.3em; font-size:0.65em;">✏️ <em>"Write a formal email to my boss about a meeting."</em></p>
     </div>
-    <div>
-      <p><span class="tag">✊</span> Martin Luther King → hope &amp; vision</p>
-      <p><span class="tag">📻</span> Dr. Doris Broom (Studio Classroom) → pioneer in English education</p>
+    <div class="box">
+      <h4>② Give Examples</h4>
+      <p>Examples help AI <span class="highlight">understand your requests</span> better.</p>
+      <p class="zh">給 AI 範例，讓它更懂你的需求</p>
+      <p style="margin-top:0.3em; font-size:0.65em;">✏️ <em>"Like this email: 'Dear Mr. Chen…'"</em></p>
     </div>
   </div>
-  <p class="footer-note">Their super skill drew people — not a detailed strategic road map.</p>
-  <span class="zh">各領域頂尖人士都擁有自己的超級技能，吸引人們追隨</span>
 </section>
 
-<!-- ===== TEAM INTELLIGENCE ===== -->
+<!-- ===== TIP 3 & 4 ===== -->
 <section>
-  <h2>The Other Half: Team Intelligence</h2>
+  <h2>💡 Tips 3 &amp; 4</h2>
+  <div class="two-col">
+    <div class="box">
+      <h4>③ Break Big Tasks into Smaller Parts</h4>
+      <p>AI works better when you give it <span class="highlight">one small task</span> at a time.</p>
+      <p class="zh">把大任務切成小步驟，AI 更容易處理</p>
+      <p style="margin-top:0.3em; font-size:0.65em;">✏️ First: "List 3 ideas." → Then: "Write about idea 1."</p>
+    </div>
+    <div class="box">
+      <h4>④ Give Helpful Feedback</h4>
+      <p>Tell AI: <span class="highlight">"Too casual."</span> or <span class="highlight">"Make it shorter."</span></p>
+      <p class="zh">給 AI 回饋，告訴它哪裡需要改</p>
+      <p style="margin-top:0.3em; font-size:0.65em;">✏️ <em>"This is too casual. Make it more formal."</em></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TIP 5 ===== -->
+<section>
+  <h2>💡 Tip 5: Try a Few Times!</h2>
   <blockquote>
-    "Leadership explains why people gather. Team intelligence determines whether they succeed."
+    "It may take a few tries before AI <span class="highlight">finally</span> understands your request."
   </blockquote>
-  <p style="margin-top:0.8em;">Team intelligence is <span class="highlight">not</span> about IQ, degrees, or resumes.</p>
-  <p>It's about the habits and skills that make groups <span class="highlight">smarter together</span> than they could ever be alone.</p>
-  <span class="zh">團隊智商 ≠ 個人智商；是讓團隊一起比單獨更聰明的習慣與技能</span>
+  <p style="margin-top:0.5em;">Don't give up! Keep giving feedback.</p>
+  <p class="zh">不要放棄！多試幾次，給 AI 更多回饋，它就會給你你想要的</p>
+  <p style="margin-top:0.8em; font-size:0.7em; color:#64748b;">📌 The key is: <span class="highlight">be patient and specific</span></p>
 </section>
 
-<!-- ===== BASKETBALL EXAMPLE ===== -->
+<!-- ===== KEY VOCAB INTRO ===== -->
 <section>
-  <h2>The Basketball Lesson</h2>
-  <p>Studies show: it isn't the players with the <span class="highlight">highest salaries</span> or <span class="highlight">raw talent</span> who decide the outcome.</p>
-  <p style="font-size:1.1em; margin:0.8em 0;">It's the <span class="highlight">quality of the coach</span>.</p>
-  <p>The coach aligns reasoning, manages attention, and makes sure resources are used well.</p>
-  <span class="zh">籃球研究：決定勝負的不是明星球員，而是教練的品質</span>
-</section>
-
-<!-- ===== THREE PILLARS ===== -->
-<section>
-  <h2>Three Pillars of Team Intelligence</h2>
-  <div class="pillar-grid">
-    <div class="pillar-card">
-      <h4>🧠 Reasoning</h4>
-      <p>Aligning on clear goals &amp; purpose</p>
-      <p style="font-size:0.65em; margin-top:0.3em;">Debates → better solutions, not power struggles</p>
-      <span class="zh">釐清目標與目的</span>
+  <h2>📚 Key Vocabulary</h2>
+  <p style="margin-bottom:0.5em;">Click each card to see the meaning &amp; example!</p>
+  <p style="font-size:0.65em; color:#64748b;">點擊卡片看中文意思和例句</p>
+  <div class="vocab-grid" id="vocabGrid">
+    <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+      <div class="inner"><div class="front">example</div><div class="back"><strong>例子</strong><span class="example">"Give me an example."</span></div></div>
     </div>
-    <div class="pillar-card">
-      <h4>👁️ Attention</h4>
-      <p>Managing focus &amp; communication</p>
-      <p style="font-size:0.65em; margin-top:0.3em;">Psychological safety — people share ideas freely</p>
-      <span class="zh">心理安全感</span>
+    <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+      <div class="inner"><div class="front">request</div><div class="back"><strong>請求 / 要求</strong><span class="example">"AI understands your request."</span></div></div>
     </div>
-    <div class="pillar-card">
-      <h4>🔧 Resources</h4>
-      <p>Surfacing hidden skills &amp; networks</p>
-      <p style="font-size:0.65em; margin-top:0.3em;">Right expertise at the right time</p>
-      <span class="zh">發掘隱藏技能與人脈</span>
+    <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+      <div class="inner"><div class="front">task</div><div class="back"><strong>任務</strong><span class="example">"Break big tasks into smaller ones."</span></div></div>
+    </div>
+    <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+      <div class="inner"><div class="front">feedback</div><div class="back"><strong>回饋</strong><span class="example">"Give AI helpful feedback."</span></div></div>
+    </div>
+    <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+      <div class="inner"><div class="front">specific</div><div class="back"><strong>具體的</strong><span class="example">"Give clear and specific info."</span></div></div>
+    </div>
+    <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+      <div class="inner"><div class="front">casual</div><div class="back"><strong>隨意的</strong><span class="example">"This email is too casual."</span></div></div>
+    </div>
+    <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+      <div class="inner"><div class="front">finally</div><div class="back"><strong>終於</strong><span class="example">"AI finally understands."</span></div></div>
+    </div>
+    <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+      <div class="inner"><div class="front">short</div><div class="back"><strong>短的</strong><span class="example">"Make it shorter please."</span></div></div>
+    </div>
+    <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+      <div class="inner"><div class="front">avoid</div><div class="back"><strong>避免</strong><span class="example">"GPS helps us avoid traffic."</span></div></div>
+    </div>
+    <div class="vocab-card" onclick="this.classList.toggle('flipped')">
+      <div class="inner"><div class="front">break into</div><div class="back"><strong>拆分成</strong><span class="example">"Break one big task into steps."</span></div></div>
     </div>
   </div>
 </section>
 
-<!-- ===== THE EMPEROR'S NEW CLOTHES ===== -->
+<!-- ===== MATCH QUIZ ===== -->
 <section>
-  <h2>Psychological Safety</h2>
-  <p>The story of <span class="highlight">The Emperor's New Clothes</span>:</p>
-  <p>Everyone was afraid to speak the truth — until a child said, <em>"You're not wearing any clothes!"</em></p>
-  <p style="margin-top:0.8em;">Without psychological safety, leaders become like the emperor — nobody dares to say what's really going on.</p>
-  <span class="zh">沒有心理安全感，團隊就變成「國王的新衣」——沒有人敢說真話</span>
+  <h2>✏️ Match the Word</h2>
+  <p style="margin-bottom:0.3em;">Click an English word, then click its Chinese meaning!</p>
+  <p style="font-size:0.6em; color:#64748b;">先點英文，再點中文配對</p>
+  <div class="match-area" id="matchArea">
+    <div class="match-col" id="matchEn"></div>
+    <div class="match-col" id="matchZh"></div>
+  </div>
+  <div class="match-result" id="matchResult"></div>
+  <button onclick="resetMatch()" style="margin-top:0.4em; padding:0.3em 1em; border:1px solid var(--primary); border-radius:6px; background:white; color:var(--primary); cursor:pointer; font-size:0.65em;">🔄 Try Again</button>
 </section>
 
-<!-- ===== COACH'S ROLE ===== -->
+<!-- ===== GRAMMAR BONUS ===== -->
 <section>
-  <h2>What the Coach Does</h2>
+  <h2>📝 Grammar Tip: Do vs. Write</h2>
+  <blockquote>
+    ❌ "I don't want to <span style="color:#ef4444;">write</span> my homework." ✗<br>
+    ✅ "I don't want to <span style="color:#22c55e;">do</span> my homework." ✓
+  </blockquote>
+  <p style="margin-top:0.5em;">In English, we say <span class="highlight">"do homework"</span>, not "write homework".</p>
+  <p class="zh">英文中「做功課」要用 <em>do</em> homework，不是 write</p>
+  <p style="margin-top:0.8em; font-size:0.65em;">📌 You <em>write</em> <strong>words</strong>, but you <em>do</em> <strong>homework</strong>.</p>
+</section>
+
+<!-- ===== PHRASE ===== -->
+<section>
+  <h2>🗣️ Calendar Phrase</h2>
+  <h3 style="font-size:1.2em; color:var(--primary);">"It's taking us a faster way."</h3>
+  <p style="margin-top:0.5em; font-size:0.7em;">Use this when something (like GPS) finds a quicker route.</p>
+  <p class="zh">當某個東西幫你找到更快的方法或路線時使用</p>
+  <div class="box" style="margin-top:0.8em; text-align:left;">
+    <p style="font-size:0.65em;">🗣️ <em>"The GPS says to turn left. It's taking us a faster way!"</em></p>
+    <p style="font-size:0.65em;">🗣️ <em>"This new app is taking us a faster way to learn English."</em></p>
+  </div>
+</section>
+
+<!-- ===== CHITCHAT ===== -->
+<section>
+  <h2>🎙️ Chitchat: Ivy &amp; Zach</h2>
   <div class="two-col">
-    <div>
-      <p>✅ <span class="highlight">Aligns</span> reasoning on goals</p>
-      <p>✅ <span class="highlight">Manages</span> attention and focus</p>
-      <p>✅ <span class="highlight">Surfaces</span> hidden skills</p>
+    <div class="box">
+      <p><strong>Ivy:</strong> AI can write letters or even books!</p>
+      <p><strong>Zach:</strong> I can do all those things too…</p>
+      <p><strong>Ivy:</strong> But AI can do them <span class="highlight">a million times</span> faster!</p>
+      <p class="zh">AI 可以寫信、寫書、做圖、做影片 — 而且比人類快百萬倍</p>
     </div>
-    <div>
-      <p>✅ <span class="highlight">Ensures</span> resources are used well</p>
-      <p>✅ <span class="highlight">Cultivates</span> team intelligence</p>
+    <div class="box">
+      <h4>🤔 Question for You</h4>
+      <p>How do you use AI?</p>
+      <p style="font-size:0.65em;">Do you use it for:</p>
+      <p style="font-size:0.6em;">✅ Studying English?<br>✅ Writing emails?<br>✅ Making pictures?</p>
     </div>
   </div>
-  <p style="margin-top:1em;">The best coaches may not be the best players — they just know how to <span class="highlight">make the team greater than the sum of its parts</span>.</p>
-  <span class="zh">好教練不一定要是最強選手，但要能讓團隊發揮綜效</span>
 </section>
 
-<!-- ===== FINAL ADVICE ===== -->
+<!-- ===== REVIEW ===== -->
 <section>
-  <h2>Final Advice for Leaders</h2>
+  <h2>🎯 What We Learned Today</h2>
   <div class="two-col">
-    <div>
-      <h4>🚫 Stop</h4>
-      <p>Chasing the illusion of being <span class="highlight">well-rounded</span></p>
-      <span class="zh">不要追求十項全能</span>
+    <div class="box">
+      <h4>5 Tips for Using AI Better</h4>
+      <p style="font-size:0.65em;">1. Give clear &amp; specific information</p>
+      <p style="font-size:0.65em;">2. Give examples</p>
+      <p style="font-size:0.65em;">3. Break big tasks into smaller parts</p>
+      <p style="font-size:0.65em;">4. Give helpful feedback</p>
+      <p style="font-size:0.65em;">5. Try a few times — be patient!</p>
     </div>
-    <div>
-      <h4>✅ Start</h4>
-      <p>Recognize your <span class="highlight">super skill</span> — the thing that makes people feel tomorrow will be better</p>
-      <span class="zh">找到你的超級技能</span>
+    <div class="box">
+      <h4>New Words</h4>
+      <p style="font-size:0.65em;">
+        <span class="tag">example</span> <span class="tag">request</span> <span class="tag">task</span>
+        <span class="tag">feedback</span> <span class="tag">specific</span> <span class="tag">casual</span>
+        <span class="tag">finally</span> <span class="tag">short</span> <span class="tag">avoid</span>
+        <span class="tag">break into</span>
+      </p>
     </div>
   </div>
-  <p style="margin-top:0.8em;">Then focus on <span class="highlight">cultivating team intelligence</span> — when reasoning, attention, and resources are in place, your team doesn't just follow — <span class="highlight">they succeed</span>.</p>
-</section>
-
-<!-- ===== KEY VOCAB ===== -->
-<section>
-  <h2>Key Vocabulary</h2>
-  <div class="two-col">
-    <div>
-      <p><span class="highlight">myth</span> — a widely held but false belief <span class="zh">迷思</span></p>
-      <p><span class="highlight">super skill</span> — a disproportionately strong ability <span class="zh">超級技能</span></p>
-      <p><span class="highlight">lean into</span> — emphasize and develop <span class="zh">全力投入</span></p>
-      <p><span class="highlight">generic</span> — not special, the same as others <span class="zh">通用的</span></p>
-    </div>
-    <div>
-      <p><span class="highlight">well-rounded</span> — good at everything <span class="zh">全方位</span></p>
-      <p><span class="highlight">align</span> — organize into correct relationship <span class="zh">對齊</span></p>
-      <p><span class="highlight">cultivate</span> — develop and improve <span class="zh">培養</span></p>
-      <p><span class="highlight">surface</span> — bring to the surface <span class="zh">浮現、發掘</span></p>
-    </div>
+  <div class="box" style="margin-top:0.5em;">
+    <p style="font-size:0.65em;">📌 Remember: <span class="highlight">do</span> homework (not <em>write</em> homework)</p>
+    <p style="font-size:0.65em;">📌 Phrase: <span class="highlight">"It's taking us a faster way."</span></p>
   </div>
 </section>
 
-<!-- ===== CLOSING ===== -->
+<!-- ===== GOODBYE ===== -->
 <section>
-  <h1>Remember</h1>
-  <p style="font-size:1.2em; margin:1em 0;">Find <span class="highlight">one thing</span> you do better than virtually anyone else.</p>
-  <p style="font-size:1.2em;">And <span class="highlight">lean into it</span>.</p>
-  <p style="margin-top:1.5em; font-size:0.8em; opacity:0.7;">— from City Slickers (1991) to John Levy's research</p>
-  <p class="footer-note" style="margin-top:2em;">Advanced Studio Classroom · June 4, 2026 · Rebecca &amp; Peter</p>
+  <h1>👋 See You Next Time!</h1>
+  <p style="margin-top:0.8em;">Practice every day — 10 minutes is enough!</p>
+  <p class="zh">每天練習 10 分鐘就夠了！</p>
+  <p style="margin-top:1.5em; font-size:0.7em; color:#64748b;">Let's Talk in English · AI Lesson</p>
+  <p style="font-size:0.65em; opacity:0.6;">Teacher Maria · Teacher Garrett</p>
 </section>
 
 </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
-<script>Reveal.initialize({ hash: true, slideNumber: true });</script>
+<script>
+Reveal.initialize({ hash: true, slideNumber: true });
+
+// === Match Quiz ===
+const pairs = [
+  { en: 'example', zh: '例子' },
+  { en: 'request', zh: '請求' },
+  { en: 'task', zh: '任務' },
+  { en: 'feedback', zh: '回饋' },
+  { en: 'specific', zh: '具體的' },
+  { en: 'casual', zh: '隨意的' },
+  { en: 'finally', zh: '終於' },
+  { en: 'avoid', zh: '避免' },
+];
+let selected = null, matched = new Set();
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function renderMatch() {
+  const enCol = document.getElementById('matchEn');
+  const zhCol = document.getElementById('matchZh');
+  enCol.innerHTML = '';
+  zhCol.innerHTML = '';
+  matched.clear();
+  selected = null;
+  const shuffled = shuffle([...pairs]);
+  const enOrder = shuffle([...pairs]);
+  enOrder.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    div.textContent = p.en;
+    div.dataset.key = p.en;
+    div.onclick = () => clickEn(div, p.en);
+    enCol.appendChild(div);
+  });
+  shuffled.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    div.textContent = p.zh;
+    div.dataset.key = p.en;
+    div.onclick = () => clickZh(div, p.en);
+    zhCol.appendChild(div);
+  });
+  document.getElementById('matchResult').textContent = '';
+}
+
+function clickEn(el, key) {
+  if (matched.has(key)) return;
+  document.querySelectorAll('#matchEn .match-item').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  selected = { type: 'en', el, key };
+}
+
+function clickZh(el, key) {
+  if (matched.has(key)) return;
+  if (!selected || selected.type !== 'en') {
+    document.getElementById('matchResult').innerHTML = '<span class="no">⚠️ Click an English word first!</span>';
+    return;
+  }
+  if (selected.key === key) {
+    selected.el.classList.remove('selected');
+    selected.el.classList.add('matched');
+    el.classList.add('matched');
+    matched.add(key);
+    document.getElementById('matchResult').innerHTML = '<span class="ok">✅ Correct!</span>';
+    selected = null;
+    if (matched.size === pairs.length) {
+      document.getElementById('matchResult').innerHTML = '<span class="ok">🎉 All matched! Great job!</span>';
+    }
+  } else {
+    el.classList.add('wrong');
+    document.getElementById('matchResult').innerHTML = '<span class="no">❌ Try again!</span>';
+    setTimeout(() => el.classList.remove('wrong'), 400);
+  }
+}
+
+function resetMatch() { renderMatch(); }
+
+// Initialize match on slide change
+Reveal.on('slidechanged', event => {
+  if (event.currentSlide.querySelector('#matchArea')) renderMatch();
+});
+
+// Also render on first load
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const slide = document.querySelector('.present #matchArea');
+    if (slide) renderMatch();
+  }, 500);
+});
+</script>
 </body>
 </html>
