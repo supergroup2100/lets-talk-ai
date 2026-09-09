@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>動物派對單字練習｜國中英語 Word Power</title>
+<style>
+  :root{
+    --bg:#fff7ed; --card:#ffffff; --ink:#1e293b; --muted:#64748b;
+    --p:#f97316; --p2:#fb923c; --g:#16a34a; --b:#2563eb; --r:#dc2626;
+    --radius:18px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+    background:linear-gradient(180deg,#fff7ed,#fef3c7 40%,#ecfdf5); color:var(--ink); min-height:100vh;}
+  header{position:sticky; top:0; z-index:10; background:#fff7edee; backdrop-filter:blur(6px);
+    border-bottom:2px dashed #fed7aa; padding:10px 14px;}
+  h1{margin:0; font-size:1.25rem;}
+  h1 small{display:block; font-size:.8rem; color:var(--muted); font-weight:normal;}
+  .tabs{display:flex; gap:8px; margin-top:10px; overflow-x:auto; padding-bottom:4px;}
+  .tab{flex:1 0 auto; border:2px solid #fed7aa; background:#fff; border-radius:999px;
+    padding:10px 14px; font-size:1rem; font-weight:700; cursor:pointer; white-space:nowrap;}
+  .tab.active{background:var(--p); border-color:var(--p); color:#fff; box-shadow:0 4px 0 #c2410c;}
+  main{max-width:960px; margin:0 auto; padding:14px 14px 90px;}
+  section.panel{display:none;}
+  section.panel.active{display:block; animation:fade .25s;}
+  @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+  .toolbar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:#fff;
+    border:2px solid #fed7aa; border-radius:var(--radius); padding:10px 12px; margin:12px 0;}
+  .toolbar label{font-size:.9rem; color:var(--muted);}
+  .toolbar select, .toolbar button{font-size:1rem; padding:8px 10px; border-radius:12px; border:2px solid #e2e8f0; background:#fff;}
+  .btn{border:none; border-radius:14px; padding:12px 16px; font-size:1.05rem; font-weight:800; cursor:pointer;}
+  .btn:active{transform:scale(.97);}
+  .btn-p{background:var(--p); color:#fff; box-shadow:0 4px 0 #c2410c;}
+  .btn-g{background:var(--g); color:#fff; box-shadow:0 4px 0 #14532d;}
+  .btn-b{background:var(--b); color:#fff; box-shadow:0 4px 0 #1e3a8a;}
+  .btn-ghost{background:#fff; border:2px solid #e2e8f0;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px;}
+  .wcard{background:var(--card); border:2px solid #fed7aa; border-radius:var(--radius);
+    padding:12px; text-align:center; cursor:pointer; min-height:150px;
+    display:flex; flex-direction:column; justify-content:center; gap:4px;}
+  .wcard .em{font-size:2.2rem; line-height:1;}
+  .wcard .en{font-size:1.25rem; font-weight:900; color:var(--ink);}
+  .wcard .pos{font-size:.8rem; color:var(--muted);}
+  .wcard .zh{font-size:1.05rem; font-weight:700;}
+  .wcard .ex{font-size:.82rem; color:var(--muted);}
+  .wcard.hear{border-color:var(--b); box-shadow:0 0 0 3px #bfdbfe;}
+  .speak-row{display:flex; gap:8px; justify-content:center; margin-top:6px;}
+  .speak-row button{flex:1; font-size:.95rem; padding:8px 4px; border-radius:10px; border:2px solid #e2e8f0; background:#f8fafc; cursor:pointer;}
+  /* flashcard */
+  .flash{background:#fff; border:3px solid var(--p); border-radius:24px; padding:26px 18px; text-align:center; margin-top:12px;}
+  .flash .em{font-size:4rem;}
+  .flash .en{font-size:2.4rem; font-weight:900; margin:6px 0;}
+  .flash .zh{font-size:1.5rem; font-weight:700; color:#c2410c; min-height:2.2rem;}
+  .flash .ex{color:var(--muted); margin-top:8px;}
+  .flash-nav{display:flex; gap:10px; margin-top:14px;}
+  .flash-nav .btn{flex:1; font-size:1.1rem; padding:14px;}
+  /* quiz */
+  .quiz{background:#fff; border:2px solid #bbf7d0; border-radius:24px; padding:18px; margin-top:12px;}
+  .q-big{font-size:3rem; text-align:center;}
+  .q-text{font-size:1.6rem; font-weight:900; text-align:center; margin:8px 0;}
+  .q-sub{text-align:center; color:var(--muted); margin-bottom:10px;}
+  .opts{display:grid; gap:10px; margin-top:10px;}
+  .opt{font-size:1.2rem; font-weight:700; padding:16px; border-radius:14px; border:3px solid #e2e8f0; background:#f8fafc; cursor:pointer;}
+  .opt.correct{border-color:var(--g); background:#dcfce7;}
+  .opt.wrong{border-color:var(--r); background:#fee2e2;}
+  .opt:disabled{opacity:.95;}
+  .spell-input{width:100%; font-size:1.6rem; padding:14px; border-radius:14px; border:3px solid #e2e8f0; text-align:center; letter-spacing:2px;}
+  .scorebar{display:flex; justify-content:space-between; align-items:center; font-weight:800; margin-bottom:8px;}
+  .progress{height:12px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin:8px 0;}
+  .progress i{display:block; height:100%; background:linear-gradient(90deg,var(--p2),var(--p)); width:0;}
+  .feedback{min-height:2rem; text-align:center; font-weight:800; font-size:1.1rem; margin-top:8px;}
+  .ok{color:var(--g);} .no{color:var(--r);}
+  .result{text-align:center; padding:10px;}
+  .result .big{font-size:3rem;}
+  footer{position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:2px solid #fed7aa;
+    padding:8px 12px; font-size:.8rem; color:var(--muted); text-align:center;}
+  .hide-zh .wcard .zh, .hide-zh .wcard .ex, .hide-zh .flash .zh, .hide-zh .flash .ex{visibility:hidden;}
+  @media (min-width:700px){ h1{font-size:1.6rem;} .flash .en{font-size:3rem;} }
+</style>
+</head>
+<body>
+<header>
+  <h1>🎉 動物派對 Animals &amp; Adjectives <small>國中英語 Word Power｜點單字聽發音＋平板自我檢測（共 20 字）</small></h1>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="learn">📖 背單字</button>
+    <button class="tab" data-tab="listen">🔊 聽音選字</button>
+    <button class="tab" data-tab="zh2en">🇹🇼 看中文選英文</button>
+    <button class="tab" data-tab="spell">⌨️ 拼字填空</button>
+    <button class="tab" data-tab="make">🧩 造句練習</button>
+  </nav>
+</header>
+
+<main id="app">
+  <div class="toolbar">
+    <label>🔈 語速 <select id="rate"><option value="0.7">慢速</option><option value="0.9" selected>正常</option><option value="1.1">稍快</option></select></label>
+    <label>🗣 聲音 <select id="voice"><option value="">自動</option></select></label>
+    <button id="hideBtn" class="btn-ghost btn" style="padding:8px 12px;">🙈 遮中文背誦</button>
+    <span id="best" style="margin-left:auto;font-size:.9rem;"></span>
+  </div>
+
+  <!-- 背單字 -->
+  <section class="panel active" id="panel-learn">
+    <p style="color:var(--muted)">👆 點卡片可以直接聽發音；點中文區可翻面看意思。適合全班一起跟讀。</p>
+    <div class="grid" id="wordGrid"></div>
+    <div class="flash" id="flash">
+      <div class="em" id="fEm">🐝</div>
+      <div class="en" id="fEn">bee</div>
+      <div class="zh" id="fZh">蜜蜂 (n.)</div>
+      <div><button class="btn btn-b" id="fSpeak">🔊 唸給我聽</button>
+      <button class="btn btn-ghost" id="fExSpeak">🔈 唸例句</button></div>
+      <div class="ex" id="fEx">I see a bee. 我看到一隻蜜蜂。</div>
+      <div class="flash-nav">
+        <button class="btn btn-ghost" id="fPrev">⬅ 上一字</button>
+        <button class="btn btn-p" id="fNext">下一字 ➡</button>
+      </div>
+      <p id="fCount" style="color:var(--muted)"></p>
+    </div>
+  </section>
+
+  <!-- 聽音選字 / 看中文選英文 共用 -->
+  <section class="panel" id="panel-listen">
+    <div class="quiz">
+      <div class="scorebar"><span id="lScore">第 1 / 10 題</span><span id="lStars">⭐ 0</span></div>
+      <div class="progress"><i id="lBar"></i></div>
+      <div class="q-big">🔊</div>
+      <p class="q-sub">聽發音，選出正確的英文單字（可重播）</p>
+      <p style="text-align:center"><button class="btn btn-b" id="lPlay">▶ 播放發音</button></p>
+      <div class="opts" id="lOpts"></div>
+      <div class="feedback" id="lFb"></div>
+      <p style="text-align:center"><button class="btn btn-g" id="lNext" disabled>下一題 ➡</button></p>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-zh2en">
+    <div class="quiz">
+      <div class="scorebar"><span id="cScore">第 1 / 10 題</span><span id="cStars">⭐ 0</span></div>
+      <div class="progress"><i id="cBar"></i></div>
+      <div class="q-text" id="cQ">蜜蜂</div>
+      <p class="q-sub">看中文，選出正確的英文單字（點選項可聽發音）</p>
+      <div class="opts" id="cOpts"></div>
+      <div class="feedback" id="cFb"></div>
+      <p style="text-align:center"><button class="btn btn-g" id="cNext" disabled>下一題 ➡</button></p>
+    </div>
+  </section>
+
+  <!-- 拼字 -->
+  <section class="panel" id="panel-spell">
+    <div class="quiz">
+      <div class="scorebar"><span id="sScore">第 1 / 10 題</span><span id="sStars">⭐ 0</span></div>
+      <div class="progress"><i id="sBar"></i></div>
+      <div class="q-big" id="sEm">🐝</div>
+      <div class="q-text" id="sZh">蜜蜂 (n.)</div>
+      <p class="q-sub">聽發音＋看中文，輸入正確拼字（不分大小寫）</p>
+      <p style="text-align:center"><button class="btn btn-b" id="sPlay">▶ 播放發音</button></p>
+      <p><input class="spell-input" id="sInput" placeholder="type the word…" autocomplete="off" autocapitalize="off" spellcheck="false"></p>
+      <p style="text-align:center;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-p" id="sCheck">✅ 檢查</button>
+        <button class="btn btn-ghost" id="sHint">💡 提示一個字母</button>
+        <button class="btn btn-g" id="sNext" disabled>下一題 ➡</button>
+      </p>
+      <div class="feedback" id="sFb"></div>
+    </div>
+  </section>
+
+  <!-- 造句 -->
+  <section class="panel" id="panel-make">
+    <div class="quiz">
+      <h2 style="text-align:center;margin:4px 0">🧩 The ___ is / are ___ .</h2>
+      <p class="q-sub">照課本 A. Practice：選動物＋形容詞，組出句子並唸出來</p>
+      <p style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <select id="mSubj" style="font-size:1.1rem;padding:10px;border-radius:10px;"></select>
+        <select id="mAdj" style="font-size:1.1rem;padding:10px;border-radius:10px;"></select>
+      </p>
+      <div class="q-text" id="mOut">The zebra is happy.</div>
+      <p style="text-align:center"><button class="btn btn-b" id="mSpeak">🔊 唸出我的句子</button></p>
+      <p class="q-sub">Example：The <u>zebra</u> is <u>happy</u>.／The <u>ants</u> are <u>small</u>.</p>
+    </div>
+  </section>
+
+  <div class="quiz result" id="finalBox" style="display:none">
+    <div class="big" id="finalEm">🏆</div>
+    <h2 id="finalTitle">測驗完成！</h2>
+    <p id="finalScore" style="font-size:1.4rem;font-weight:900"></p>
+    <p id="finalWrong" style="color:var(--muted)"></p>
+    <p><button class="btn btn-p" id="retryWrong">🔁 只練錯的單字</button>
+    <button class="btn btn-ghost" id="backLearn">📖 回去背單字</button></p>
+  </div>
+</main>
+
+<footer>💡 平板建議用 Chrome / Edge 開啟｜發音使用裝置內建英文語音（離線也多半可用）｜老師可直接用 GitHub Pages 連結分享全班</footer>
+
+<script>
+const WORDS = [
+  {en:"bee", pos:"n.", zh:"蜜蜂", em:"🐝", ex:"I see a bee.", exZh:"我看到一隻蜜蜂。"},
+  {en:"frog", pos:"n.", zh:"青蛙", em:"🐸", ex:"The frog is green.", exZh:"青蛙是綠色的。"},
+  {en:"zebra", pos:"n.", zh:"斑馬", em:"🦓", ex:"The zebra is happy.", exZh:"斑馬很快樂。"},
+  {en:"birthday", pos:"n.", zh:"生日", em:"🎂", ex:"Happy birthday!", exZh:"生日快樂！"},
+  {en:"elephant", pos:"n.", zh:"大象", em:"🐘", ex:"The elephant is big.", exZh:"大象很大。"},
+  {en:"mouse", pos:"n.", zh:"老鼠（複數 mice）", em:"🐭", ex:"The mouse is small.", exZh:"老鼠很小。"},
+  {en:"ant", pos:"n.", zh:"螞蟻", em:"🐜", ex:"The ants are small.", exZh:"螞蟻很小。", plural:"ants"},
+  {en:"sheep", pos:"n.", zh:"綿羊（單複數同形）", em:"🐑", ex:"The sheep is white.", exZh:"綿羊是白色的。"},
+  {en:"goat", pos:"n.", zh:"山羊", em:"🐐", ex:"The goat is clean.", exZh:"山羊很乾淨。"},
+  {en:"hippo", pos:"n.", zh:"河馬", em:"🦛", ex:"The hippo is big.", exZh:"河馬很大。"},
+  {en:"rabbit", pos:"n.", zh:"兔子", em:"🐰", ex:"The rabbit is young.", exZh:"兔子還小。"},
+  {en:"bird", pos:"n.", zh:"鳥", em:"🐦", ex:"The bird is happy.", exZh:"小鳥很開心。"},
+  {en:"angry", pos:"adj.", zh:"生氣的", em:"😠", ex:"The elephant is angry.", exZh:"大象生氣了。"},
+  {en:"young", pos:"adj.", zh:"年輕的", em:"👶", ex:"The rabbit is young.", exZh:"兔子還小。"},
+  {en:"clean", pos:"adj.", zh:"乾淨的", em:"🧼", ex:"The goat is clean.", exZh:"山羊很乾淨。"},
+  {en:"dirty", pos:"adj.", zh:"髒的", em:"🦠", ex:"The hippo is dirty.", exZh:"河馬髒髒的。"},
+  {en:"happy", pos:"adj.", zh:"快樂的", em:"😄", ex:"The zebra is happy.", exZh:"斑馬很開心。"},
+  {en:"old", pos:"adj.", zh:"老的；年老的", em:"👴", ex:"The elephant is old.", exZh:"大象年紀大了。"},
+  {en:"big", pos:"adj.", zh:"大的", em:"📦", ex:"The elephant is big.", exZh:"大象很大。"},
+  {en:"small", pos:"adj.", zh:"小的", em:"🔬", ex:"The ant is small.", exZh:"螞蟻很小。"},
+];
+const $ = s => document.querySelector(s);
+const store = { get(k,d){ try{return JSON.parse(localStorage.getItem(k)) ?? d;}catch{return d;} }, set(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch{} } };
+
+/* ---------- TTS ---------- */
+let enVoice = null;
+function pickVoices(){
+  const vs = speechSynthesis ? speechSynthesis.getVoices() : [];
+  const sel = $("#voice"); sel.length = 1;
+  vs.filter(v=>v.lang.toLowerCase().startsWith("en")).forEach(v=>{
+    const o=document.createElement("option"); o.value=v.name; o.textContent=v.name+" ("+v.lang+")"; sel.appendChild(o);
+  });
+  enVoice = vs.find(v=>v.lang==="en-US") || vs.find(v=>v.lang.toLowerCase().startsWith("en")) || null;
+}
+if("speechSynthesis" in window){ pickVoices(); speechSynthesis.onvoiceschanged = pickVoices; }
+$("#voice").addEventListener("change", e=>{
+  const vs = speechSynthesis.getVoices(); enVoice = vs.find(v=>v.name===e.target.value) || null;
+});
+function speak(text, slow=false){
+  if(!("speechSynthesis" in window)){ alert("這個瀏覽器不支援朗讀，請用 Chrome / Edge。"); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US"; if(enVoice) u.voice = enVoice;
+  u.rate = slow ? 0.6 : parseFloat($("#rate").value || "0.9");
+  speechSynthesis.speak(u);
+}
+const sayWord = w => speak(w.en);
+$("#hideBtn").onclick = ()=>{ document.body.classList.toggle("hide-zh");
+  $("#hideBtn").textContent = document.body.classList.contains("hide-zh") ? "👀 顯示中文" : "🙈 遮中文背誦"; };
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
+  t.classList.add("active"); $("#panel-"+t.dataset.tab).classList.add("active");
+  $("#finalBox").style.display="none"; window.scrollTo({top:0,behavior:"smooth"});
+});
+$("#backLearn").onclick=()=>document.querySelector('[data-tab="learn"]').click();
+
+/* ---------- word grid + flash ---------- */
+let fi = 0;
+function renderGrid(){
+  $("#wordGrid").innerHTML = WORDS.map((w,i)=>`
+    <div class="wcard" data-i="${i}" title="點我聽發音">
+      <div class="em">${w.em}</div><div class="en">${w.en}</div>
+      <div class="pos">${w.pos}</div><div class="zh">${w.zh}</div><div class="ex">${w.ex}<br>${w.exZh}</div>
+      <div class="speak-row"><button data-say="${i}">🔊 單字</button><button data-ex="${i}">🔈 例句</button></div>
+    </div>`).join("");
+}
+$("#wordGrid").addEventListener("click", e=>{
+  const s = e.target.closest("[data-say]"), x = e.target.closest("[data-ex]");
+  if(s){ sayWord(WORDS[+s.dataset.say]); return; }
+  if(x){ const w=WORDS[+x.dataset.ex]; speak(w.ex); return; }
+  const c = e.target.closest(".wcard"); if(c) sayWord(WORDS[+c.dataset.i]);
+});
+function showFlash(){ const w=WORDS[fi];
+  $("#fEm").textContent=w.em; $("#fEn").textContent=w.en;
+  $("#fZh").textContent=w.zh+" ("+w.pos+")"; $("#fEx").textContent=w.ex+" "+w.exZh;
+  $("#fCount").textContent=(fi+1)+" / "+WORDS.length;
+}
+$("#fSpeak").onclick=()=>sayWord(WORDS[fi]);
+$("#fExSpeak").onclick=()=>speak(WORDS[fi].ex);
+$("#fPrev").onclick=()=>{ fi=(fi-1+WORDS.length)%WORDS.length; showFlash(); sayWord(WORDS[fi]); };
+$("#fNext").onclick=()=>{ fi=(fi+1)%WORDS.length; showFlash(); sayWord(WORDS[fi]); };
+renderGrid(); showFlash();
+
+/* ---------- quiz engine ---------- */
+function shuffle(a){ a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function makeRound(n=10, onlyWrong=null){
+  const pool = onlyWrong && onlyWrong.length ? WORDS.filter(w=>onlyWrong.includes(w.en)) : WORDS;
+  const base = shuffle(pool).slice(0, Math.min(n, pool.length));
+  return { qs: base, i:0, stars:0, wrong:[] };
+}
+function showBest(){
+  const b = store.get("vocabBest", {});
+  $("#best").textContent = (b.score!=null) ? `🏅 最佳：${b.mode} ${b.score}/10` : "🏅 還沒有最佳紀錄，加油！";
+}
+showBest();
+
+/* listen */
+let L = makeRound();
+function renderListen(){
+  const q = L.qs[L.i]; $("#lScore").textContent=`第 ${L.i+1} / ${L.qs.length} 題`;
+  $("#lBar").style.width=(L.i/L.qs.length*100)+"%"; $("#lStars").textContent="⭐ "+L.stars;
+  $("#lFb").textContent=""; $("#lNext").disabled=true;
+  const opts = shuffle([q, ...shuffle(WORDS.filter(w=>w.en!==q.en)).slice(0,3)]);
+  $("#lOpts").innerHTML = opts.map(w=>`<button class="opt" data-en="${w.en}">${w.en}<br><small style="color:var(--muted)">${w.em}</small></button>`).join("");
+  setTimeout(()=>speak(q.en), 300);
+}
+$("#lOpts").addEventListener("click", e=>{
+  const b = e.target.closest(".opt"); if(!b || !$("#lNext").disabled) return;
+  const q = L.qs[L.i], ok = b.dataset.en===q.en;
+  [...$("#lOpts").children].forEach(x=>{ x.disabled=true; if(x.dataset.en===q.en) x.classList.add("correct"); });
+  if(ok){ L.stars++; $("#lFb").innerHTML='<span class="ok">✅ 答對了！'+q.en+' '+q.em+'</span>'; }
+  else{ b.classList.add("wrong"); L.wrong.push(q.en); $("#lFb").innerHTML=`<span class="no">❌ 答案是 ${q.en}（${q.zh}）</span>`; speak(q.en); }
+  $("#lStars").textContent="⭐ "+L.stars; $("#lNext").disabled=false;
+});
+$("#lPlay").onclick=()=>speak(L.qs[L.i].en);
+$("#lNext").onclick=()=>{ L.i++;
+  if(L.i>=L.qs.length) return finish("聽音選字", L);
+  renderListen();
+};
+renderListen();
+
+/* zh -> en */
+let C = makeRound();
+function renderC(){
+  const q = C.qs[C.i]; $("#cScore").textContent=`第 ${C.i+1} / ${C.qs.length} 題`;
+  $("#cBar").style.width=(C.i/C.qs.length*100)+"%"; $("#cStars").textContent="⭐ "+C.stars;
+  $("#cFb").textContent=""; $("#cNext").disabled=true;
+  $("#cQ").textContent = q.em+" "+q.zh+" ("+q.pos+")";
+  const opts = shuffle([q, ...shuffle(WORDS.filter(w=>w.en!==q.en)).slice(0,3)]);
+  $("#cOpts").innerHTML = opts.map(w=>`<button class="opt" data-en="${w.en}">${w.en}</button>`).join("");
+}
+$("#cOpts").addEventListener("click", e=>{
+  const b = e.target.closest(".opt"); if(!b) return;
+  const q = C.qs[C.i]; if($("#cNext").disabled===false) return;
+  const ok = b.dataset.en===q.en;
+  [...$("#cOpts").children].forEach(x=>{ x.disabled=true; if(x.dataset.en===q.en) x.classList.add("correct"); });
+  speak(q.en);
+  if(ok){ C.stars++; $("#cFb").innerHTML='<span class="ok">✅ 答對了！</span>'; }
+  else{ b.classList.add("wrong"); C.wrong.push(q.en); $("#cFb").innerHTML=`<span class="no">❌ 答案是 ${q.en}</span>`; }
+  $("#cStars").textContent="⭐ "+C.stars; $("#cNext").disabled=false;
+});
+$("#cNext").onclick=()=>{ C.i++; if(C.i>=C.qs.length) return finish("看中文選英文", C); renderC(); };
+renderC();
+
+/* spelling */
+let S = makeRound();
+function renderS(){
+  const q = S.qs[S.i]; $("#sScore").textContent=`第 ${S.i+1} / ${S.qs.length} 題`;
+  $("#sBar").style.width=(S.i/S.qs.length*100)+"%"; $("#sStars").textContent="⭐ "+S.stars;
+  $("#sEm").textContent=q.em; $("#sZh").textContent=q.zh+" ("+q.pos+")";
+  $("#sInput").value=""; $("#sFb").textContent=""; $("#sNext").disabled=true; $("#sInput").focus();
+  setTimeout(()=>speak(q.en), 300);
+}
+$("#sPlay").onclick=()=>speak(S.qs[S.i].en);
+$("#sHint").onclick=()=>{
+  const q=S.qs[S.i], cur=$("#sInput").value;
+  if(cur.length < q.en.length){ $("#sInput").value = q.en.slice(0, cur.length+1); $("#sInput").focus(); }
+};
+function checkSpell(){
+  const q=S.qs[S.i], v=$("#sInput").value.trim().toLowerCase();
+  if(!v) return;
+  if(v===q.en.toLowerCase()){ S.stars++; $("#sFb").innerHTML=`<span class="ok">✅ 拼對了！${q.en} ${q.em}</span>`; speak(q.en); }
+  else{ S.wrong.push(q.en); $("#sFb").innerHTML=`<span class="no">❌ 再想想看，答案是 _ ${q.en.slice(1)}（${q.en.length} 個字母）</span>`; }
+  $("#sStars").textContent="⭐ "+S.stars; $("#sNext").disabled=false;
+}
+$("#sCheck").onclick=checkSpell;
+$("#sInput").addEventListener("keydown", e=>{ if(e.key==="Enter") ($("#sNext").disabled ? checkSpell() : $("#sNext").click()); });
+$("#sNext").onclick=()=>{ S.i++; if(S.i>=S.qs.length) return finish("拼字填空", S); renderS(); };
+renderS();
+
+/* finish */
+let lastWrong = [];
+function finish(mode, R){
+  lastWrong = [...new Set(R.wrong)];
+  const prev = store.get("vocabBest", {});
+  if(prev.score==null || R.stars > prev.score) store.set("vocabBest", {mode, score:R.stars});
+  showBest();
+  $("#finalBox").style.display="block";
+  $("#finalEm").textContent = R.stars>=9?"🏆":R.stars>=7?"🎉":R.stars>=5?"💪":"📖";
+  $("#finalTitle").textContent = mode+"完成！";
+  $("#finalScore").textContent = `得分：${R.stars} / ${R.qs.length}`;
+  $("#finalWrong").textContent = lastWrong.length ? "要再練："+lastWrong.join("、") : "全部答對，太厲害了！";
+  $("#finalBox").scrollIntoView({behavior:"smooth"});
+  speak(R.stars>=7 ? "Great job!" : "Good try. Let's practice again.");
+}
+$("#retryWrong").onclick=()=>{
+  if(!lastWrong.length){ alert("沒有錯題，直接開新的一輪！"); }
+  L = makeRound(10, lastWrong); C = makeRound(10, lastWrong); S = makeRound(10, lastWrong);
+  renderListen(); renderC(); renderS(); $("#finalBox").style.display="none";
+};
+
+/* sentence maker */
+const SUBJ = ["zebra","elephant","mouse","ant","ants","sheep","goat","hippo","rabbit","bird","bee","frog"];
+const ADJ = ["happy","angry","young","old","clean","dirty","big","small"];
+$("#mSubj").innerHTML = SUBJ.map(s=>`<option>${s}</option>`).join("");
+$("#mAdj").innerHTML = ADJ.map(s=>`<option>${s}</option>`).join("");
+function renderMade(){
+  const s=$("#mSubj").value, a=$("#mAdj").value;
+  const verb = (s==="ants") ? "are" : "is";
+  $("#mOut").textContent = `The ${s} ${verb} ${a}.`;
+}
+$("#mSubj").onchange=renderMade; $("#mAdj").onchange=renderMade; renderMade();
+$("#mSpeak").onclick=()=>speak($("#mOut").textContent);
+</script>
+</body>
+</html>
