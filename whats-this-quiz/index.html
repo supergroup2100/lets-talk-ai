@@ -88,15 +88,15 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:6px}
 <footer>What's This? • Judy / David / Amy • 2026</footer>
 <script>
 const QUIZ=[
-{q:"What is the name of the game show?",a:["What's This?","Duck Show","Lion Show","Bigfoot Show"],c:0,time:20,zh:"這個遊戲節目叫什麼名字？",exp:"Judy: Welcome to What's This?"},
-{q:"Who is the host of the game show?",a:["Judy","David","Amy","Bigfoot"],c:0,time:20,zh:"主持人是誰？",exp:"Judy 是主持人，David 和 Amy 是玩家。"},
-{q:"Look at this picture. What is this?",a:["A goose","A duck","A monkey","A tiger"],c:0,time:30,zh:"第一張圖是什麼？",exp:"Amy說duck錯，David說goose才對。goose鵝，複數geese。"},
+{q:"What is the name of the game show?",a:["Duck Show","Lion Show","What's This?","Bigfoot Show"],c:2,time:20,zh:"這個遊戲節目叫什麼名字？",exp:"Judy: Welcome to What's This?"},
+{q:"Who is the host of the game show?",a:["David","Judy","Amy","Bigfoot"],c:1,time:20,zh:"主持人是誰？",exp:"Judy 是主持人，David 和 Amy 是玩家。"},
+{q:"Look at this picture. What is this?",a:["A duck","A monkey","A tiger","A goose"],c:3,time:30,zh:"第一張圖是什麼？",exp:"Amy說duck錯，David說goose才對。goose鵝，複數geese。"},
 {q:"How many points for a right answer?",a:["Ten points","Five points","One point","Twenty points"],c:0,time:20,zh:"答對得幾分？",exp:"Judy: Yes, it is. Ten points for you!"},
-{q:"Those are not lions. What are they?",a:["Tigers","Lions","Monkeys","Ducks"],c:0,time:20,zh:"不是獅子，是什麼？",exp:"David說lions錯，Amy說tigers才對。"},
-{q:"Judy says to Amy: You are a ___!",a:["smart cookie","big duck","small lion","tired monkey"],c:0,time:20,zh:"Judy誇Amy是什麼？",exp:"You are a smart cookie! = 你真聰明！"},
-{q:"David says: It's a monkey! Is he right?",a:["No, sorry","Yes, that's it","Yes, ten points","No, it's a duck"],c:0,time:20,zh:"第三張圖是猴子嗎？",exp:"Judy: I'm sorry, no. 不是 monkey。"},
-{q:"It is big and tall. What is it?",a:["Bigfoot","A monkey","A goose","A lion"],c:0,time:30,zh:"又高又大的是什麼？",exp:"Amy: Is it big and tall? Judy: Yes. Amy: It's Bigfoot!"},
-{q:"What is the plural of goose?",a:["geese","gooses","goose","geeses"],c:0,time:20,zh:"goose的複數是？",exp:"Words表：goose 複數為 geese。"},
+{q:"Those are not lions. What are they?",a:["Lions","Tigers","Monkeys","Ducks"],c:1,time:20,zh:"不是獅子，是什麼？",exp:"David說lions錯，Amy說tigers才對。"},
+{q:"Judy says to Amy: You are a ___!",a:["big duck","small lion","tired monkey","smart cookie"],c:3,time:20,zh:"Judy誇Amy是什麼？",exp:"You are a smart cookie! = 你真聰明！"},
+{q:"David says: It's a monkey! Is he right?",a:["Yes, that's it","Yes, ten points","No, sorry","No, it's a duck"],c:2,time:20,zh:"第三張圖是猴子嗎？",exp:"Judy: I'm sorry, no. 不是 monkey。"},
+{q:"It is big and tall. What is it?",a:["A monkey","Bigfoot","A goose","A lion"],c:1,time:30,zh:"又高又大的是什麼？",exp:"Amy: Is it big and tall? Judy: Yes. Amy: It's Bigfoot!"},
+{q:"What is the plural of goose?",a:["gooses","goose","geeses","geese"],c:3,time:20,zh:"goose的複數是？",exp:"Words表：goose 複數為 geese。"},
 {q:"Who is the winner of the game?",a:["Amy","David","Judy","Bigfoot"],c:0,time:30,zh:"最後贏家是誰？",exp:"Amy答對tigers得10分，又答對Bigfoot得more points，所以是winner!"}
 ];
 let idx=0,score=0,timerId=null,left=0,answered=false;
