@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>國小自然5上 第1單元 動物求生存｜互動大冒險</title>
+<style>
+:root{--bg:#f0fdf4;--ink:#1e293b;--green:#16a34a;--amber:#f59e0b;--blue:#2563eb;--purple:#7c3aed;--red:#ef4444;--card:#ffffff}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,#15803d,#65a30d 60%,#eab308);color:#fff;padding:28px 18px;text-align:center}
+header h1{margin:0;font-size:clamp(1.4rem,4vw,2.2rem)}
+header p{margin:8px 0 0;opacity:.95}
+.badge{display:inline-block;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.5);padding:4px 12px;border-radius:999px;font-size:.85rem;margin:4px}
+nav{position:sticky;top:0;z-index:10;background:#14532d;display:flex;gap:6px;overflow-x:auto;padding:10px}
+nav button{flex:1;min-width:130px;border:0;border-radius:10px;padding:10px 8px;font-size:.95rem;font-weight:700;cursor:pointer;background:#dcfce7;color:#14532d}
+nav button.active{background:#fbbf24;color:#422006}
+main{max-width:980px;margin:0 auto;padding:18px 14px 80px}
+section.panel{display:none;background:var(--card);border-radius:16px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,.08);margin-top:14px}
+section.panel.active{display:block}
+h2{margin-top:0}
+.hint{background:#fefce8;border:1px dashed #eab308;border-radius:10px;padding:10px 12px;font-size:.9rem;margin:10px 0}
+.quiz-card,.treasure,.story,.lock{border:2px solid #e2e8f0;border-radius:12px;padding:14px;margin:12px 0}
+.quiz-card.done,.treasure.done,.lock.open{border-color:var(--green);background:#f0fdf4}
+input[type=text]{width:100%;padding:10px;border-radius:8px;border:1.5px solid #cbd5e1;font-size:1rem}
+button.btn{background:var(--green);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;margin-top:8px}
+button.btn2{background:var(--blue);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;margin-top:8px}
+button.btn3{background:var(--purple);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer}
+button.ghost{background:#f1f5f9;border:0;border-radius:8px;padding:6px 10px;cursor:pointer}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px;border:2px solid #e2e8f0;border-radius:10px;background:#fff;cursor:pointer;font-size:1rem}
+.opt.correct{border-color:var(--green);background:#dcfce7}
+.opt.wrong{border-color:var(--red);background:#fee2e2}
+.scorebar{display:flex;gap:10px;flex-wrap:wrap;background:#052e16;color:#fff;border-radius:12px;padding:10px 14px;margin-top:12px}
+.progress{height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin:8px 0}
+.progress>div{height:100%;background:linear-gradient(90deg,#22c55e,#eab308);width:0%}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.story-img{font-size:2.6rem}
+.lockcode{font-size:1.4rem;letter-spacing:.4em;text-align:center;font-weight:900}
+.timer{font-weight:900;color:#b45309}
+footer{text-align:center;color:#64748b;font-size:.85rem;padding:24px}
+.kb{font-size:.8rem;color:#475569;background:#f8fafc;border-radius:8px;padding:8px 10px;margin-top:8px}
+details{margin:8px 0}
+audio{width:100%}
+.ttsbox{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px;margin:8px 0}
+</style>
+</head>
+<body>
+<header>
+<h1>🌿 國小自然 5上 第1單元：動物如何求生存 🐾</h1>
+<p>活動1 覓食・適應環境・自我保護 ｜ 課本 p.14–22 對應互動版</p>
+<div>
+<span class="badge">🗺️ 尋寶挑戰 8題</span>
+<span class="badge">🗺️ 故事闖關 5關</span>
+<span class="badge">🏆 搶答賽 10題</span>
+<span class="badge">🔐 密室逃脫 4鎖</span>
+<span class="badge">🎧 AI聽力偵探</span>
+</div>
+<div class="scorebar">⭐ 總星星：<span id="stars">0</span> ｜ 🎒 尋寶 <span id="s1">0/8</span> ｜ 📖 故事 <span id="s2">0/5</span> ｜ 🏆 搶答 <span id="s3">0/10</span> ｜ 🔐 密室 <span id="s4">0/4</span> ｜ 🎧 聽力 <span id="s5">0/4</span>
+<button class="ghost" onclick="resetAll()">↺ 重置</button>
+</div>
+</header>
+<nav>
+<button data-t="p1" class="active">🗺️1 尋寶挑戰</button>
+<button data-t="p2">📖2 故事闖關</button>
+<button data-t="p3">🏆3 搶答賽</button>
+<button data-t="p4">🔐4 密室逃脫</button>
+<button data-t="p5">🎧5 聽力偵探</button>
+<button data-t="p0">👩‍🏫 老師指引</button>
+</nav>
+<main>
+<section id="p0" class="panel">
+<h2>👩‍🏫 老師課堂指引（40分鐘建議流程）</h2>
+<ul>
+<li><b>0–5分：</b>用「聽力偵探」TTS 播放黑面琵鷺介紹，全班閉眼聽，引起動機。</li>
+<li><b>5–15分：</b>「尋寶挑戰」分組翻課本 p.14–22 找答案，最快找齊 8 題的小組加分。</li>
+<li><b>15–25分：</b>「故事闖關」5 關冒險，講完一關答一關，答對才能下一關。</li>
+<li><b>25–33分：</b>「全班搶答賽」投影計時 20 秒一題，難度由淺到深。</li>
+<li><b>33–40分：</b>「密室逃脫」作為收尾挑戰，解開 4 道鎖即逃出「獵豹草原」。</li>
+</ul>
+<div class="hint">📚 對應課本：1-1 動物的覓食 p.14–15 ｜ 1-2 適應環境策略 p.16–19（體溫、遷移、內溫/外溫）｜ 1-3 自我保護 p.20–22（偽裝、保護色、警戒色、擬態、斷尾、毒液等）<br>動物：紅尾伯勞、黑面琵鷺、獵豹、猴子、馬、北極熊、小鴨、龜、蜥蜴、狗、獅、紫斑蝶、牛羚斑馬、蜘蛛蟹、北極狐、食蚜蠅/蜜蜂、胡蜂、刺蝟、閉殼龜、臭鼬、眼鏡蛇、壁虎、小環頸鴴</div>
+<p>💡 部署：本頁為單一 HTML 檔，無需後端，可直接用 GitHub Pages 發布。聽力使用瀏覽器內建語音（Web Speech API），無需上傳音檔。</p>
+</section>
+
+<section id="p1" class="panel active">
+<h2>🗺️ 1 課堂尋寶挑戰｜8 題線索，回課本找答案</h2>
+<p>規則：每題都有「課本頁碼提示」，請翻書找答案再輸入關鍵詞。答對會集 1 顆星。</p>
+<div class="progress"><div id="bar1"></div></div>
+<div id="treasureList"></div>
+</section>
+
+<section id="p2" class="panel">
+<h2>📖 2 故事任務闖關｜黑琵「湯匙嘴」大冒險 5 關</h2>
+<p>主角：黑面琵鷺「小湯匙」，從北方飛來臺灣過冬，一路用覓食、調節體溫、遷移、偽裝來求生存。過一關才能解鎖下一關！</p>
+<div class="progress"><div id="bar2"></div></div>
+<div id="storyList"></div>
+</section>
+
+<section id="p3" class="panel">
+<h2>🏆 3 全班搶答賽｜10 題由淺到深＋20秒計時</h2>
+<p>第1–3題 ★基礎 ｜ 4–7題 ★★進階 ｜ 8–10題 ★★★挑戰。按「開始搶答」依序作答。</p>
+<button class="btn2" onclick="startRace()">▶ 開始搶答賽</button>
+<button class="ghost" onclick="resetRace()">重置搶答</button>
+<div class="timer" id="racetimer"></div>
+<div id="raceList"></div>
+<div class="hint" id="raceResult"></div>
+</section>
+
+<section id="p4" class="panel">
+<h2>🔐 4 密室逃脫｜獵豹草原逃脫計畫（解開上一鎖才拿得到下一關）</h2>
+<p>你被困在草原觀察站，必須依序解開 4 道鎖。密碼藏在上一題的答案裡！</p>
+<div class="progress"><div id="bar4"></div></div>
+<div id="locks"></div>
+<div id="escapeFinal" style="display:none" class="hint">🎉 恭喜逃脫！你是動物求生大師！請截圖此畫面給老師加分。通關密語：<b>湯匙嘴不怕寒冬</b></div>
+</section>
+
+<section id="p5" class="panel">
+<h2>🎧 5 AI 聽力偵探｜聽一聽，找出動物祕密</h2>
+<p>按 ▶ 播放按鈕（使用裝置語音朗讀，無需音檔），聽完再作答。可切換中文 / English。</p>
+<div id="listenList"></div>
+<div class="hint">🎙️ 進階玩法：老師可用 NotebookLM / Gemini 的 Audio Overview 生成課文音檔後，取代下方 TTS，再讓學生做同樣 4 題。題目已對應：覓食構造、內溫外溫、遷移、保護色擬態。</div>
+</section>
+</main>
+<footer>國小自然5上・第1單元 動物求生存互動網頁 ｜ 單檔 HTML・可離線使用・GitHub Pages 發布用 ｜ 課本 p.14–22</footer>
+<script>
+const $=s=>document.querySelector(s);
+let state=JSON.parse(localStorage.getItem('sci5u1')||'{"t":[],"s":[],"r":0,"l":[],"li":[]}');
+function save(){localStorage.setItem('sci5u1',JSON.stringify(state));updateStars();}
+function resetAll(){if(!confirm('確定重置所有進度？'))return;state={"t":[],"s":[],"r":0,"l":[],"li":[]};localStorage.removeItem('sci5u1');location.reload();}
+function updateStars(){
+ const t=state.t.length,s=state.s.length,r=state.r,l=state.l.length,li=state.li.length;
+ $('#stars').textContent=t+s+r+l+li;
+ $('#s1').textContent=t+'/8';$('#s2').textContent=s+'/5';$('#s3').textContent=r+'/10';$('#s4').textContent=l+'/4';$('#s5').textContent=li+'/4';
+ const b1=$('#bar1');if(b1)b1.style.width=(t/8*100)+'%';
+ const b2=$('#bar2');if(b2)b2.style.width=(s/5*100)+'%';
+ const b4=$('#bar4');if(b4)b4.style.width=(l/4*100)+'%';
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+ b.classList.add('active');
+ document.querySelectorAll('section.panel').forEach(p=>p.classList.remove('active'));
+ document.getElementById(b.dataset.t).classList.add('active');
+ window.scrollTo({top:0,behavior:'smooth'});
+});
+// ---------- 1 尋寶 ----------
+const treasures=[
+ {q:'🔍 1號線索：誰的嘴像「湯匙」？會左右掃動捕魚？',page:'p.14',a:['黑面琵鷺','琵鷺'],tip:'扁平如湯匙狀的長嘴，伸入水中左右掃動。'},
+ {q:'🔍 2號線索：誰有「帶鉤的嘴」來捕食獵物？',page:'p.14',a:['紅尾伯勞','伯勞'],tip:'強壯帶鉤的嘴喙。'},
+ {q:'🔍 3號線索：誰跑最快＋用尖銳犬齒撕肉？',page:'p.15',a:['獵豹'],tip:'強壯四肢、移動速度非常快。'},
+ {q:'🔍 4號線索：誰有門齒、犬齒、臼齒，葷素都吃？',page:'p.15',a:['猴子'],tip:'用四肢在樹林間找食物。'},
+ {q:'🔍 5號線索：內溫動物是哪兩類？',page:'p.17 知識庫',a:['哺乳類和鳥類','哺乳類鳥類','鳥類和哺乳類','鳥類哺乳類'],tip:'用身體內部熱量維持體溫，體溫穩定。'},
+ {q:'🔍 6號線索：誰秋冬會從北方飛來臺灣過冬？',page:'p.19',a:['黑面琵鷺','琵鷺'],tip:'遷移是為了找更適合生存的地方。'},
+ {q:'🔍 7號線索：沒有毒刺卻假裝是蜜蜂的是誰？這叫什麼？',page:'p.21',a:['食蚜蠅','擬態','模仿'],tip:'模仿身體顏色花紋，欺騙其他動物＝擬態/模仿。輸入「食蚜蠅」或「擬態」都算對。'},
+ {q:'🔍 8號線索：遇到危險會斷尾逃生的是誰？',page:'p.22',a:['壁虎'],tip:'還記得：刺蝟捲成球、閉殼龜縮進殼、臭鼬噴臭液、眼鏡蛇毒液。'},
+];
+function renderTreasure(){
+ const box=$('#treasureList');box.innerHTML='';
+ treasures.forEach((t,i)=>{
+  const done=state.t.includes(i);
+  const d=document.createElement('div');d.className='treasure'+(done?' done':'');
+  d.innerHTML=`<b>${t.q}</b><div class="kb">📖 課本提示：${t.page} ｜ 💡 ${t.tip}</div>
+  <div class="grid2"><input type="text" id="tin${i}" placeholder="輸入關鍵詞…" ${done?'disabled':''} value="${done?'✔ 已找到':''}">
+  <button class="btn" ${done?'disabled':''} onclick="checkT(${i})">${done?'✅ 完成':'對答案'}</button></div><div id="tf${i}" style="margin-top:6px;font-weight:700;color:${done?'green':''}">${done?'⭐ 答對了！去找下一條線索吧！':''}</div>`;
+  box.appendChild(d);
+ });
+}
+function checkT(i){
+ const v=document.getElementById('tin'+i).value.trim();
+ const ok=treasures[i].a.some(a=>v.includes(a));
+ const f=document.getElementById('tf'+i);
+ if(ok){state.t.push(i);save();renderTreasure();updateStars();}
+ else{f.textContent='❌ 再翻翻課本 '+treasures[i].page+' 試試！';f.style.color='red';}
+}
+// ---------- 2 故事 ----------
+const stories=[
+ {icon:'🌅',title:'第1關・覓食平原',text:'小湯匙肚子餓了！草原上有獵豹追羚羊、猴子摘果子、馬兒嚼草。小湯匙該用什麼吃飯？',q:'黑面琵鷺用什麼構造吃飯？怎麼吃？',opts:['扁平湯匙嘴，伸入水中左右掃動捕魚','帶鉤的嘴撕肉','門齒切斷再用臼齒磨碎'],ans:0,exp:'課本p.14：黑面琵鷺扁平湯匙嘴，左右掃動捕撈魚類。不同食物→不同嘴形和行為。'},
+ {icon:'❄️',title:'第2關・寒流來襲',text:'寒流來了！北極熊靠厚脂肪和濃密的毛，小鴨聚在一起，龜曬太陽，蛇休眠。小湯匙是鳥類，該怎麼辦？',q:'鳥類屬於內溫還是外溫動物？靠什麼維持體溫？',opts:['外溫動物，靠曬太陽','內溫動物，靠身體內部產生熱量','不用維持體溫'],ans:1,exp:'p.16–17：哺乳類和鳥類是內溫動物，用體內熱量維持體溫，較不受環境影響。'},
+ {icon:'🧭',title:'第3關・遷徙大冒險',text:'食物變少了！牛羚斑馬往水草處移動，紫斑蝶南往北繁殖，小湯匙決定從北方飛來臺灣。',q:'動物遷移主要是為了什麼？',opts:['好玩、比賽飛行','尋找更適合生存的地方（生長、覓食、繁殖）','躲避作業'],ans:1,exp:'p.18–19：遷移是為尋找更適合生長、覓食或繁殖的地方。黑琵來臺過冬即一例。'},
+ {icon:'🎭',title:'第4關・偽裝森林',text:'森林危機四伏！蜘蛛蟹黏藻類偽裝，北極狐白色保護色，食蚜蠅假扮蜜蜂，胡蜂亮色警告。',q:'食蚜蠅模仿蜜蜂花紋、胡蜂鮮豔顏色各是什麼策略？',opts:['都是保護色','擬態（模仿）／警戒色','都靠毒液'],ans:1,exp:'p.20–21：偽裝、保護色、警戒色、擬態都是用外形顏色花紋隱藏或欺騙敵人。'},
+ {icon:'🦎',title:'第5關・毒液沼澤終戰',text:'最後一關！刺蝟豎刺、閉殼龜縮殼、臭鼬噴臭液、眼鏡蛇吐毒液、壁虎斷尾逃生。小湯匙學會：身體構造也是武器！',q:'下列哪一組「構造防禦」配對完全正確？',opts:['刺蝟—噴臭液／壁虎—毒液','刺蝟—捲成球豎刺／閉殼龜—縮進殼／壁虎—斷尾','臭鼬—硬殼／眼鏡蛇—保護色'],ans:1,exp:'p.22：刺蝟捲球、龜縮殼、臭鼬臭液、眼鏡蛇毒液、壁虎斷尾，都是構造防禦。'},
+];
+function renderStory(){
+ const box=$('#storyList');box.innerHTML='';
+ stories.forEach((s,i)=>{
+  const locked=i>0&&!state.s.includes(i-1);
+  const done=state.s.includes(i);
+  const d=document.createElement('div');d.className='quiz-card'+(done?' done':'');
+  d.innerHTML=`<div class="story-img">${s.icon}</div><b>${s.title}</b><p>${s.text}</p>
+  ${locked?'<div class="hint">🔒 先完成上一關才能挑戰本關！</div>':`
+  <p><b>任務：${s.q}</b></p>
+  ${s.opts.map((o,oi)=>`<button class="opt" ${done?'disabled':''} onclick="checkS(${i},${oi},this)">${o}</button>`).join('')}
+  <div id="sf${i}" style="font-weight:700">${done?'✅ 已過關！ '+s.exp:''}</div>`}`;
+  box.appendChild(d);
+ });
+}
+function checkS(i,oi,el){
+ if(oi===stories[i].ans){state.s.push(i);save();renderStory();updateStars();}
+ else{el.classList.add('wrong');document.getElementById('sf'+i).textContent='❌ 再想想！提示：'+stories[i].exp;}
+}
+// ---------- 3 搶答 ----------
+const race=[
+ {lv:'★',q:'紅尾伯勞用什麼捕食？',o:['帶鉤的嘴喙','湯匙嘴','臼齒'],a:0},
+ {lv:'★',q:'馬怎麼吃植物？',o:['門齒切斷＋臼齒磨碎','用犬齒撕肉','直接吞'],a:0},
+ {lv:'★',q:'龜冷的時候會？',o:['曬太陽提高體溫','躲洞裡讓體溫過高','流汗'],a:0},
+ {lv:'★★',q:'下列誰是內溫動物？',o:['蜥蜴、青蛙','狗、獅子、黑面琵鷺','昆蟲、大部分魚類'],a:1},
+ {lv:'★★',q:'蜥蜴躲洞穴、狗喘氣吐舌、獅躲樹蔭，這是在？',o:['調節體溫避免過熱','遷移','覓食'],a:0},
+ {lv:'★★',q:'紫斑蝶春夏由南往北，主要是為了？',o:['繁殖','睡覺','躲雨'],a:0},
+ {lv:'★★',q:'北極狐白色、蜘蛛蟹黏藻類是？',o:['警戒色','偽裝／保護色','擬態毒液'],a:1},
+ {lv:'★★★',q:'食蚜蠅像蜜蜂、胡蜂鮮豔色，正確配對是？',o:['擬態／警戒色','保護色／偽裝','遷移／休眠'],a:0},
+ {lv:'★★★',q:'壁虎斷尾、臭鼬臭液、眼鏡蛇毒液，共同點是？',o:['都靠遷移','都用身體構造防禦求生存','都靠群體合作'],a:1},
+ {lv:'★★★',q:'綜合題：獵豹追捕用強壯四肢＋犬齒，猴子雜食有三種齒，這說明？',o:['覓食行為、身體構造和食物類型有關','體溫和牙齒無關','所有動物吃一樣'],a:0},
+];
+let raceIdx=0,raceScore=0,raceTimer=null,raceSec=20;
+function startRace(){
+ if(state.raceDone){resetRace();}
+ raceIdx=0;raceScore=0;renderRaceQ();
+}
+function resetRace(){clearInterval(raceTimer);$('#raceList').innerHTML='';$('#racetimer').textContent='';$('#raceResult').textContent='';state.r=0;save();}
+function renderRaceQ(){
+ clearInterval(raceTimer);
+ if(raceIdx>=race.length){
+  $('#racetimer').textContent='';
+  $('#raceResult').innerHTML=`🏁 完賽！你答對 <b>${raceScore}/10</b>。${raceScore>=8?'🌟 搶答王！全班鼓掌！':raceScore>=6?'👍 很棒，再複習 p.17、p.21 就完美了！':'📖 再翻課本 p.14–22 挑戰一次吧！'}`;
+  state.r=raceScore;save();return;
+ }
+ const q=race[raceIdx];
+ const box=$('#raceList');
+ box.innerHTML=`<div class="quiz-card"><b>${raceIdx+1}/10 ${q.lv} ${q.q}</b><div id="ropts">${q.o.map((o,i)=>`<button class="opt" onclick="answerRace(${i})">${o}</button>`).join('')}</div></div>`;
+ raceSec=20;$('#racetimer').textContent=`⏱️ 第${raceIdx+1}題倒數 ${raceSec} 秒`;
+ raceTimer=setInterval(()=>{raceSec--;$('#racetimer').textContent=`⏱️ 第${raceIdx+1}題倒數 ${raceSec} 秒`;
+  if(raceSec<=0){clearInterval(raceTimer);$('#raceResult').textContent=`⏰ 時間到！正確答案已反綠，3秒後下一題…`;markRace(-1);setTimeout(()=>{raceIdx++;renderRaceQ();},2000);}},1000);
+}
+function markRace(pick){
+ const q=race[raceIdx];
+ [...document.querySelectorAll('#ropts .opt')].forEach((b,i)=>{
+  b.disabled=true;
+  if(i===q.a)b.classList.add('correct');
+  if(i===pick&&pick!==q.a)b.classList.add('wrong');
+ });
+}
+function answerRace(pick){
+ clearInterval(raceTimer);
+ const q=race[raceIdx];markRace(pick);
+ if(pick===q.a){raceScore++;$('#raceResult').textContent='✅ 答對！+1';}
+ else{$('#raceResult').textContent='❌ 答錯了，正確答案是綠色那個！';}
+ state.r=raceScore;save();
+ setTimeout(()=>{raceIdx++;renderRaceQ();},1400);
+}
+// ---------- 4 密室 ----------
+const locks=[
+ {title:'🔒 第1鎖・覓食之門',story:'門上寫著：用湯匙吃飯的鳥是誰？輸入牠的名字（3–4字）開門。',a:['黑面琵鷺','琵鷺'],hint:'p.14，扁平湯匙嘴左右掃動。'},
+ {title:'🔒 第2鎖・體溫之門',story:'第1鎖後出現溫度計：寫出「內溫動物是哪兩類」中的任一類（例：哺乳類）。',a:['哺乳類','鳥類'],hint:'p.17 知識庫：哺乳類和鳥類。'},
+ {title:'🔒 第3鎖・偽裝之門',story:'牆上有蜜蜂圖：沒毒刺卻長得像蜜蜂的是誰？',a:['食蚜蠅'],hint:'p.21，擬態大師。'},
+ {title:'🔒 第4鎖・逃生之門',story:'最後！會斷尾逃生的動物是誰？輸入即逃出草原！',a:['壁虎'],hint:'p.22。'},
+];
+function renderLocks(){
+ const box=$('#locks');box.innerHTML='';
+ locks.forEach((L,i)=>{
+  const locked=i>0&&!state.l.includes(i-1);
+  const opened=state.l.includes(i);
+  const d=document.createElement('div');d.className='lock'+(opened?' open':'');
+  d.innerHTML=`<b>${L.title}</b><p>${locked?'🔒 還沒拿到線索，先解開上一道鎖！':L.story}</p>
+  ${(!locked&&!opened)?`<div class="kb">💡 提示：${L.hint}</div><div class="grid2"><input type="text" id="lin${i}" class="lockcode" placeholder="密碼"><button class="btn3" onclick="checkL(${i})">開鎖</button></div><div id="lf${i}" style="font-weight:700"></div>`:''}
+  ${opened?'<div>✅ 已開鎖！下一關線索已送達。</div>':''}`;
+  box.appendChild(d);
+ });
+ $('#escapeFinal').style.display=state.l.length>=4?'block':'none';
+}
+function checkL(i){
+ const v=document.getElementById('lin'+i).value.trim();
+ if(locks[i].a.some(a=>v.includes(a))){state.l.push(i);save();renderLocks();updateStars();}
+ else{document.getElementById('lf'+i).textContent='❌ 密碼錯誤，再翻課本找找！';}
+}
+// ---------- 5聽力 ----------
+const listens=[
+ {t:'🎧 任務1・覓食構造',zh:'黑面琵鷺把扁平像湯匙一樣的長嘴伸進水裡左右掃動捕魚。紅尾伯勞用帶鉤的嘴捕食。獵豹跑得很快用犬齒撕肉。',en:'The black-faced spoonbill sweeps its flat spoon-like bill in the water to catch fish. The shrike hunts with its hooked beak. The cheetah runs fast and tears meat with sharp canine teeth.',q:'聽完請回答：黑面琵鷺怎麼吃飯？',opts:['用湯匙嘴左右掃動捕魚','用犬齒撕肉','用門齒切草'],a:0},
+ {t:'🎧 任務2・內溫外溫',zh:'哺乳類和鳥類是內溫動物，靠身體裡的熱維持體溫。爬蟲類兩生類昆蟲和大部分魚是外溫動物，體溫跟著環境變。',en:'Mammals and birds are endotherms. They keep warm with heat from inside the body. Reptiles, amphibians, insects and most fish are ectotherms.',q:'狗和獅子是內溫還是外溫？',opts:['內溫動物','外溫動物','不用調節'],a:0},
+ {t:'🎧 任務3・遷移',zh:'紫斑蝶春天從南部往北飛去繁殖。牛羚斑馬為了食物和水遷移。黑面琵鷺從北方飛來台灣過冬。',en:'Butterflies migrate north to breed. Wildebeest and zebras move for food and water. Black-faced spoonbills fly from the north to Taiwan for winter.',q:'動物遷移的主要原因是？',opts:['找更適合生存的地方','喜歡旅行','躲避上課'],a:0},
+ {t:'🎧 任務4・保護大作戰',zh:'蜘蛛蟹偽裝，北極狐白色保護色，食蚜蠅擬態蜜蜂，胡蜂鮮豔警戒色，壁虎會斷尾逃生。',en:'Spider crabs camouflage. Arctic foxes are white. Hoverflies mimic bees. Wasps warn with bright colors. Geckos drop their tails to escape.',q:'食蚜蠅像蜜蜂是什麼策略？',opts:['擬態、模仿','遷移','休眠'],a:0},
+];
+function speak(t){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=/[A-Za-z]/.test(t)&&!/[\u4e00-\u9fff]/.test(t)?'en-US':'zh-TW';u.rate=.9;speechSynthesis.speak(u);}
+function renderListen(){
+ const box=$('#listenList');box.innerHTML='';
+ listens.forEach((L,i)=>{
+  const done=state.li.includes(i);
+  const d=document.createElement('div');d.className='quiz-card'+(done?' done':'');
+  d.innerHTML=`<b>${L.t}</b>
+  <div class="ttsbox">🇹🇼 中文稿：${L.zh}<br><button class="btn2" onclick='speak(${JSON.stringify(L.zh)})'>▶ 播放中文</button>
+  <button class="ghost" onclick='speak(${JSON.stringify(L.en)})'>▶ Play English</button>
+  <button class="ghost" onclick="speechSynthesis.cancel()">⏹ 停止</button></div>
+  <p><b>${L.q}</b></p>
+  ${L.opts.map((o,oi)=>`<button class="opt" ${done?'disabled':''} onclick="checkL5(${i},${oi},this)">${o}</button>`).join('')}
+  <div id="l5f${i}" style="font-weight:700">${done?'✅ 聽力偵探成功！':''}</div>`;
+  box.appendChild(d);
+ });
+}
+function checkL5(i,oi,el){
+ if(oi===listens[i].a){state.li.push(i);save();renderListen();updateStars();}
+ else{el.classList.add('wrong');document.getElementById('l5f'+i).textContent='❌ 再聽一次，答案藏在朗讀裡！';}
+}
+renderTreasure();renderStory();renderLocks();renderListen();updateStars();
+</script>
+</body>
+</html>
