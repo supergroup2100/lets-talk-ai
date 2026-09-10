@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Change, or Go Under! 互動問答</title>
+<style>
+:root{--bg:#f0f4ff;--primary:#2563eb;--red:#e21b3c;--blue:#1368ce;--yellow:#d89e00;--green:#26890c;--card:#fff;--text:#1e293b;--muted:#64748b}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Noto Sans TC",system-ui,-apple-system,"Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+header{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;padding:32px 20px;text-align:center}
+header h1{margin:0;font-size:2rem;letter-spacing:.5px}
+header p{margin:8px 0 0;opacity:.9}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 60px}
+.card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,.07);margin:16px 0}
+.tag{display:inline-block;background:#dbeafe;color:var(--primary);padding:2px 10px;border-radius:20px;font-size:.8rem;margin:2px}
+.article h2{color:var(--primary);margin:.4em 0}
+.article p{margin:.5em 0}
+.vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.vocab div{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;font-size:.9rem}
+.vocab b{color:var(--primary)}
+#progress{height:10px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:12px 0}
+#bar{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#2563eb);transition:width .3s}
+#quiz-meta{display:flex;justify-content:space-between;align-items:center;font-weight:700;color:var(--primary);margin-bottom:8px}
+#timer{font-variant-numeric:tabular-nums;background:#fef3c7;color:#92400e;padding:4px 12px;border-radius:20px}
+#question{font-size:1.25rem;font-weight:800;margin:12px 0}
+#answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:600px){#answers{grid-template-columns:1fr}}
+.ans{border:none;border-radius:12px;padding:16px;font-size:1rem;font-weight:700;color:#fff;cursor:pointer;min-height:64px;transition:transform .1s,filter .15s}
+.ans:hover{filter:brightness(1.05);transform:scale(1.01)}
+.ans:disabled{opacity:.9;cursor:default}
+.a0{background:var(--red)}.a1{background:var(--blue)}.a2{background:var(--yellow)}.a3{background:var(--green)}
+.ans.correct{outline:4px solid #22c55e;box-shadow:0 0 0 4px #bbf7d0}
+.ans.wrong{outline:4px solid #111;opacity:.6}
+#feedback{margin-top:14px;padding:12px 14px;border-radius:10px;background:#f1f5f9;display:none}
+#feedback.show{display:block}
+#feedback.ok{background:#dcfce7;border:1px solid #86efac}
+#feedback.no{background:#fee2e2;border:1px solid #fca5a5}
+#controls{margin-top:14px;display:flex;gap:10px}
+button.btn{background:var(--primary);color:#fff;border:none;border-radius:10px;padding:12px 18px;font-size:1rem;font-weight:700;cursor:pointer}
+button.btn.secondary{background:#e2e8f0;color:#0f172a}
+button.btn:disabled{opacity:.5}
+#result{display:none;text-align:center;padding:20px}
+#score-big{font-size:3rem;font-weight:900;color:var(--primary);margin:0}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:20px}
+.kahoot-dl{background:#fffbeb;border:1px dashed #d89e00;border-radius:12px;padding:14px;margin-top:12px}
+code{background:#f1f5f9;padding:2px 6px;border-radius:6px}
+</style>
+</head>
+<body>
+<header>
+<h1>🌊 Change, or Go Under!</h1>
+<p>課文互動問答 • Global Warming / Panama / Maldives • Reading Skill: Problem and Solution</p>
+</header>
+<div class="wrap">
+
+<div class="card article">
+<h2>📖 課文重點回顧</h2>
+<p><span class="tag">Global warming</span> is leading to a rise in <b>sea levels</b> around the world. This is putting people's lives in <b>danger</b>. However, people in some places are <b>fixing</b> these problems now.</p>
+<p><span class="tag">🇵🇦 Panama – Gardi Sugdub Island</span><br>People said goodbye to their homes and moved away. They <b>built</b> a new town <b>far</b> away from the sea, and many <b>fishermen became farmers</b>. They didn't just sit and <b>cry</b> about climate change. They changed, and they are <b>living</b> new lives now.</p>
+<p><span class="tag">🇲🇻 The Maldives – Floating City</span><br>People are designing a new city. It can rise and fall with sea levels. People can build <b>safe</b> houses there. This city can also <b>protect</b> sea life. It can work with <b>nature</b> and may never go under!</p>
+<p><span class="tag">🇹🇼 Taiwan</span><br>Taiwan is an island, too. We should learn from the examples <b>above</b> and also make some changes, or we may go under!</p>
+<div class="vocab">
+<div><b>sea level</b> 海平面</div>
+<div><b>danger</b> 危險</div>
+<div><b>fix</b> 解決；修理</div>
+<div><b>build / built</b> 建造</div>
+<div><b>far</b> 遙遠地</div>
+<div><b>fisherman</b> 漁夫 (複數 fishermen)</div>
+<div><b>become / became</b> 變成</div>
+<div><b>cry</b> 哭泣</div>
+<div><b>live</b> 生活；居住</div>
+<div><b>safe</b> 安全的</div>
+<div><b>protect</b> 保護</div>
+<div><b>nature</b> 大自然</div>
+</div>
+<div class="kahoot-dl">🎮 老師要用 Kahoot 上課？本專案已附 Kahoot 匯入檔：<code>Kahoot-Change-or-Go-Under.xlsx</code>（10題，20–30秒，直接上傳到 Kahoot 即可用）</div>
+</div>
+
+<div class="card">
+<div id="quiz-meta"><span id="qcount">Q1 / 10</span><span id="timer">⏱ 30s</span><span id="score">Score: 0</span></div>
+<div id="progress"><div id="bar"></div></div>
+<div id="question"></div>
+<div id="answers"></div>
+<div id="feedback"></div>
+<div id="controls"><button class="btn" id="next" disabled>下一題 ➜</button><button class="btn secondary" id="restart">↺ 重新開始</button></div>
+<div id="result">
+<p id="score-big"></p>
+<p id="comment"></p>
+<button class="btn" onclick="restart()">再玩一次</button>
+</div>
+</div>
+
+<div class="card">
+<h3>✅ 答題說明</h3>
+<ul>
+<li>共 10 題，選自課文 Panama / Maldives / Taiwan 三段，與 Kahoot 版本相同。</li>
+<li>每題有倒數計時，時間到自動判定錯誤並顯示正解。</li>
+<li>答對依剩餘秒數加分，速度越快分數越高（Kahoot 計分概念）。</li>
+</ul>
+</div>
+
+</div>
+<footer>Designed for English class • Change, or Go Under! • 2026</footer>
+<script>
+const QUIZ=[
+{q:"What causes sea levels to rise around the world?",a:["Global warming","Too many fishermen","Building new towns","Living new lives"],c:0,time:30,zh:"什麼導致全球海平面上升？",exp:"課文第一段：Global warming is leading to a rise in sea levels."},
+{q:"Why are people's lives in danger?",a:["Sea levels are rising","People are moving away","Cities can rise and fall","Fishermen became farmers"],c:0,time:30,zh:"為什麼人們的生活陷入危險？",exp:"海平面上升 putting people's lives in danger."},
+{q:"Where did people on a small island in Panama move?",a:["A new town far from the sea","A floating city in Maldives","Gardi Sugdub Island beach","Taiwan island"],c:0,time:30,zh:"巴拿馬小島居民搬到哪裡？",exp:"They built a new town far away from the sea. (Gardi Sugdub Island)"},
+{q:"In Panama, many fishermen became ___.",a:["farmers","teachers","sailors","builders"],c:0,time:20,zh:"巴拿馬許多漁夫變成了？",exp:"many fishermen became farmers."},
+{q:"What are people designing in the Maldives?",a:["A city that rises and falls with sea","A new town far from the sea","A farm for fishermen","An island in Panama"],c:0,time:30,zh:"馬爾地夫正在設計什麼？",exp:"people are designing a new city. It can rise and fall with sea levels. (Maldives Floating City)"},
+{q:"The Maldives floating city can also ___ sea life.",a:["protect","cry about","go under","say goodbye to"],c:0,time:20,zh:"馬爾地夫漂浮城市還能對海洋生物做什麼？",exp:"This city can also protect sea life."},
+{q:"The Maldives city works with ___ and may never go under.",a:["nature","danger","warming","fishermen"],c:0,time:20,zh:"這座城市與什麼合作、可能永不沉沒？",exp:"It can work with nature and may never go under!"},
+{q:"What is the Reading Skill in this lesson?",a:["Problem and Solution","Main Idea Only","Story Grammar","Letter Writing"],c:0,time:20,zh:"本課的閱讀策略是什麼？",exp:"Reading Skills: Problem and Solution 找出問題與解決方法。"},
+{q:"Taiwan is an island, too. What should we do?",a:["Learn and make changes, or go under","Just sit and cry about climate","Say goodbye and move away now","Build houses under the sea"],c:0,time:30,zh:"台灣也是島嶼，我們該怎麼做？",exp:"We should learn from the examples above and also make some changes, or we may go under!"},
+{q:"'fishermen' is the plural form of which word?",a:["fisherman","fishes","fisher","fishs"],c:0,time:20,zh:"fishermen 是哪個字的複數？",exp:"fisherman 漁夫 → 複數 fishermen，課文單字表有提示。"}
+];
+let idx=0,score=0,timerId=null,left=0,answered=false;
+const qEl=document.getElementById('question'),aEl=document.getElementById('answers'),fEl=document.getElementById('feedback'),nBtn=document.getElementById('next'),tEl=document.getElementById('timer'),cEl=document.getElementById('qcount'),sEl=document.getElementById('score'),bar=document.getElementById('bar'),res=document.getElementById('result');
+document.getElementById('restart').onclick=restart;
+nBtn.onclick=()=>{idx++;showQ();};
+function restart(){idx=0;score=0;res.style.display='none';showQ();updateScore();}
+function updateScore(){sEl.textContent='Score: '+score;}
+function showQ(){
+ answered=false;fEl.className='';fEl.style.display='none';nBtn.disabled=true;
+ const item=QUIZ[idx];
+ cEl.textContent=`Q${idx+1} / ${QUIZ.length}`;
+ bar.style.width=(idx/QUIZ.length*100)+'%';
+ qEl.innerHTML=`${item.q}<br><span style="color:#64748b;font-size:.95rem;font-weight:400">${item.zh}</span>`;
+ aEl.innerHTML='';
+ item.a.forEach((t,i)=>{
+  const b=document.createElement('button');b.className='ans a'+i;b.textContent=['▲','◆','●','■'][i]+'  '+t;b.onclick=()=>answer(i);aEl.appendChild(b);
+ });
+ left=item.time;tEl.textContent='⏱ '+left+'s';
+ clearInterval(timerId);
+ timerId=setInterval(()=>{left--;tEl.textContent='⏱ '+left+'s';if(left<=0){clearInterval(timerId);answer(-1);}},1000);
+}
+function answer(pick){
+ if(answered)return;answered=true;clearInterval(timerId);
+ const item=QUIZ[idx];const btns=aEl.children;
+ const ok=pick===item.c;
+ [...btns].forEach((b,i)=>{b.disabled=true;if(i===item.c)b.classList.add('correct');else if(i===pick)b.classList.add('wrong');});
+ if(ok){const pts=500+left*20;score+=pts;fEl.className='show ok';fEl.id='feedback';fEl.innerHTML=`✅ 答對！ +${pts} 分<br><small>${item.exp}</small>`;}
+ else{fEl.className='show no';fEl.innerHTML=`❌ 答錯了。正解是：<b>${item.a[item.c]}</b><br><small>${item.exp}</small>`;}
+ fEl.style.display='block';updateScore();
+ bar.style.width=((idx+1)/QUIZ.length*100)+'%';
+ if(idx===QUIZ.length-1){nBtn.disabled=true;setTimeout(showResult,900);}else{nBtn.disabled=false;}
+}
+function showResult(){
+ qEl.textContent='🎉 完成！';aEl.innerHTML='';fEl.style.display='none';nBtn.disabled=true;
+ res.style.display='block';
+ document.getElementById('score-big').textContent=score+' 分';
+ let msg='';
+ if(score>=6500)msg='🌟 Excellent! 你完全讀懂 Change, or Go Under! 可以去教別人了！';
+ else if(score>=4500)msg='👍 Great job! 大部分都懂，再複習一下單字會更穩。';
+ else msg='💪 Keep going! 建議重讀 Panama / Maldives 兩段，再挑戰一次！';
+ document.getElementById('comment').textContent=msg+`（共 ${QUIZ.length} 題）`;
+}
+showQ();
+</script>
+</body>
+</html>
