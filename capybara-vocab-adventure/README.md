@@ -18,8 +18,8 @@
 ninety, hundred, angry, bright, cheap, famous, favorite, happy, honest, hungry, outside, sad, art, Chinese, e-mail, English, internet, lesson, math, music, problem, question, quiz, science, answer
 
 ## 發音
-- `audio/`：75 個預錄真人語音（微軟 Aria 神經語音，慢速）：25 單字＋25 例句＋25 題目版
-- 遊戲優先播 MP3，播不出來才用瀏覽器 TTS 備援（會自動挑較自然的英文語音）
-- 中文解說維持瀏覽器國語 TTS
+- `audio/`：英文 75 個預錄真人語音（微軟 Aria 神經語音，慢速）：25 單字＋25 例句＋25 題目版；情境題直接唸完整句子練聽力
+- 中文 9 句也是真人國語音（HsiaoChen）：鼓勵、過關、魔王台詞、星星不足 4 種
+- 播不出來才用瀏覽器 TTS 備援
 
 單檔主程式＋音檔、無廣告，可直接分享連結給孩子用平板玩。
