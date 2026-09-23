@@ -44,8 +44,8 @@ details{margin-top:10px}summary{cursor:pointer;color:#9fb3c8}
 <h1>🤒 病假大作戰</h1>
 <p class="qsub">房號 <span class="rcode" id="jRoom">----</span></p>
 <div><input id="jName" placeholder="輸入你的名字" maxlength="12"></div>
-<div class="qsub">選你的隊伍</div>
-<div id="jTeams"></div>
+<div id="jTeamBlock"><div class="qsub">選你的隊伍</div><div id="jTeams"></div></div>
+<div class="qsub" id="jSoloNote" style="display:none">🦁 個人戰：不分隊，全班單人對決！</div>
 <div><button class="nbtn" onclick="joinRoom()">⚡ 加入戰局</button></div>
 <p id="jMsg" class="feedback"></p>
 <details><summary>掃碼沒帶出資料？點此手動填</summary>
@@ -89,13 +89,16 @@ function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;",
 function showJ(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");window.scrollTo(0,0)}
 function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
 const TEAMS=["Bella 🔔","Scott 🤒","Doctor 🩺","IceCream 🍦"];
-let J={url:q.url||"",key:q.key||"",room:(q.room||"").toUpperCase(),name:"",team:"",ch:null,locked:true,myH:0,myN:0,t0:0,cur:null};
+let J={url:q.url||"",key:q.key||"",room:(q.room||"").toUpperCase(),mode:q.mode||"team",name:"",team:"",ch:null,locked:true,myH:0,myN:0,t0:0,cur:null};
 $("jRoom").textContent=J.room||"----";
 $("jTeams").innerHTML=TEAMS.map(t=>`<button class="tbtn" data-t="${esc(t)}" onclick="pickTeam(this)">${esc(t)}</button>`).join("");
+function applyModeUI(){const solo=J.mode==="solo";$("jTeamBlock").style.display=solo?"none":"block";$("jSoloNote").style.display=solo?"block":"none"}
+applyModeUI();
 function pickTeam(b){J.team=b.dataset.t;document.querySelectorAll(".tbtn").forEach(x=>x.classList.remove("sel"));b.classList.add("sel")}
 async function joinRoom(){
   J.name=$("jName").value.trim();
   if(!J.name){$("jMsg").textContent="⚠️ 先輸入名字！";return}
+  if(J.mode==="solo")J.team=J.name;
   if(!J.team){$("jMsg").textContent="⚠️ 先選一支隊伍！";return}
   if($("jRoomIn").value.trim())J.room=$("jRoomIn").value.trim().toUpperCase();
   if($("jUrlIn").value.trim())J.url=$("jUrlIn").value.trim();
@@ -111,11 +114,12 @@ async function joinRoom(){
     await J.ch.subscribe();
     await J.ch.send({type:"broadcast",event:"join",payload:{name:J.name,team:J.team}});
   }catch(e){$("jMsg").textContent="❌ 加入失敗："+e.message+"（檢查網路＋房號）";return}
-  $("jWho").textContent=J.name+"・"+J.team+"・房號 "+J.room;
+  $("jWho").textContent=J.mode==="solo"?J.name+"・個人戰・房號 "+J.room:J.name+"・"+J.team+"・房號 "+J.room;
   showJ("j-wait");
 }
 function showQ(d){
   J.cur=d;J.locked=false;J.t0=Date.now();
+  if(d.mode){J.mode=d.mode;if(J.mode==="solo"){J.team=J.name;applyModeUI()}}
   showJ("j-q");
   $("jRound").textContent=d.round+"（第 "+d.n+" / "+d.of+" 題）";
   $("jText").textContent=d.text;$("jHint").textContent="💡 "+d.hint;$("jFb").textContent="";

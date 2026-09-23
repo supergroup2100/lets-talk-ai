@@ -139,6 +139,7 @@ th{background:#FFF2CC}
 <div id="qrBox" style="margin:10px auto;width:236px;line-height:0"></div>
 <p class="qsub">學生掃上方 QR 加入</p>
 <p class="qsub">已加入 <b id="rosterN" style="color:#fff">0</b> 人 <span id="rosterList" style="font-size:13px"></span></p>
+<div class="qsub">模式 <button class="nbtn ghost small" id="modeTeamBtn" onclick="setMode('team')">🛡️ 分隊制</button><button class="nbtn ghost small" id="modeSoloBtn" onclick="setMode('solo')">🦁 個人戰</button></div>
 <div><button class="nbtn" onclick="roomStart()">📢 開始出題</button>
 <button class="nbtn ghost" onclick="closeRoom(true)">⬅ 回去</button></div>
 <p id="roomMsg" class="feedback"></p></div>
@@ -294,7 +295,7 @@ async function openRoom(){
   if(!cfg().url||!cfg().key){showScreen("scr-cfg");$("cfgMsg").textContent="⚠️ 平板模式一定要先連線：填 URL＋key 後再開房";return}
   showScreen("scr-room");
   $("roomEndCard").style.display="none";$("roomQCard").style.display="none";
-  R={code:rndCode(),ch:null,supa:null,qi:-1,roster:{},answered:{},hits:0,session:null};
+  R={code:rndCode(),ch:null,supa:null,qi:-1,roster:{},answered:{},hits:0,session:null,mode:"team"};
   $("roomCode").textContent=R.code;$("rosterN").textContent="0";$("rosterList").textContent="";
   $("roomMsg").textContent="⏳ 開房中…";
   try{
@@ -302,10 +303,7 @@ async function openRoom(){
     await new Promise((res,rej)=>{if(window.QRCode)return res();const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s)});
     R.supa=createClient(cfg().url,cfg().key);
   }catch(e){$("roomMsg").textContent="❌ 載入即時函式庫失敗（教室電腦要能上網）："+e.message;return}
-  const c=cfg();
-  const base=location.href.split("?")[0].replace(/index\.html?$/,"");
-  const joinUrl=base+"join.html?room="+R.code+"&url="+encodeURIComponent(c.url)+"&key="+encodeURIComponent(c.key);
-  $("qrBox").innerHTML="";new QRCode($("qrBox"),{text:joinUrl,width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
+  makeQR();paintMode();
   if(location.protocol==="file:"){$("roomMsg").textContent="⚠️ 本機檔案開啟的 QR 平板打不開！請改用 GitHub Pages 或 Cloudflare 網址開此頁，QR 會自動跟著變"}
   try{R.session=await sb("battle_sessions","POST",{class_name:$("className").value.trim(),lesson:"Dialogue: Bella is calling Scott（平板作答）",teams:[]});R.session=R.session[0]}
   catch(e){const k=cfg().key;$("roomMsg").textContent="❌ 建場次失敗："+e.message+"（key 長度 "+k.length+"、開頭 "+k.slice(0,10)+"…；若看到 Invalid API key 就是 key 跟專案對不上，去 Data API 重抄）";return}
@@ -315,6 +313,12 @@ async function openRoom(){
   await R.ch.subscribe();
   if(location.protocol!=="file:")$("roomMsg").textContent="✅ 房間開好！學生掃 QR 加入，人到齊按「開始出題」";
 }
+function setMode(m){if(!R.code)return;R.mode=m;paintMode();makeQR()}
+function paintMode(){if(!$("modeTeamBtn"))return;const on="3px solid #ffd93d",off="2px solid #556";$("modeTeamBtn").style.border=R.mode==="team"?on:off;$("modeSoloBtn").style.border=R.mode==="solo"?on:off}
+function makeQR(){if(!window.QRCode||!R.code)return;const c=cfg();
+  const base=location.href.split("?")[0].replace(/index\.html?$/,"");
+  const joinUrl=base+"join.html?room="+R.code+"&mode="+R.mode+"&url="+encodeURIComponent(c.url)+"&key="+encodeURIComponent(c.key);
+  $("qrBox").innerHTML="";new QRCode($("qrBox"),{text:joinUrl,width:220,height:220,correctLevel:QRCode.CorrectLevel.M})}
 function renderRoster(){
   const v=Object.values(R.roster);
   $("rosterN").textContent=v.length;
@@ -324,7 +328,7 @@ function renderRoster(){
 function roomStart(){if(R.qi!==-1||!R.ch)return;R.qi=0;$("roomQCard").style.display="block";broadcastQ()}
 function broadcastQ(){
   const q=QS[R.qi];R.answered={};R.hits=0;
-  R.ch.send({type:"broadcast",event:"question",payload:{session:R.session.id,qid:curQid(),n:R.qi+1,of:QS.length,round:q.r,text:q.t,hint:q.hint,opts:q.opts,a:q.a}});
+  R.ch.send({type:"broadcast",event:"question",payload:{session:R.session.id,qid:curQid(),n:R.qi+1,of:QS.length,mode:R.mode,round:q.r,text:q.t,hint:q.hint,opts:q.opts,a:q.a}});
   $("rRound").textContent=q.r+"（第 "+(R.qi+1)+" / "+QS.length+" 題）";
   $("rQText").textContent=q.t;$("rQHint").textContent="💡 "+q.hint;
   $("rOpts").innerHTML=q.opts.map((o,i)=>`<div class="abtn ${i===q.a?'correct':''}">${String.fromCharCode(65+i)}. ${esc(o)}</div>`).join("");
@@ -340,11 +344,17 @@ async function roomEnd(){
     tm[e.team]=tm[e.team]||{n:0,h:0};tm[e.team].n++;if(e.correct)tm[e.team].h++});
   const persons=Object.entries(per).sort((a,b)=>b[1].h-a[1].h||a[1].n-b[1].n);
   const teams=Object.entries(tm).sort((a,b)=>b[1].h-a[1].h);
-  const champ=teams.length?teams[0][0]:"";
-  let h="<h3>🏆 隊伍榜</h3><table><tr><th>隊伍</th><th>作答</th><th>答對</th></tr>";
-  teams.forEach(([t,v])=>{h+=`<tr><td>${esc(t)}</td><td>${v.n}</td><td>${v.h}</td></tr>`});h+="</table>";
-  h+="<h3>個人榜</h3><table><tr><th>學生</th><th>隊伍</th><th>答對/作答</th></tr>";
-  persons.forEach(([p,v])=>{h+=`<tr><td>${esc(p)}</td><td>${esc(v.team)}</td><td>${v.h}/${v.n}</td></tr>`});h+="</table>";
+  const champ=R.mode==="solo"?(persons.length?persons[0][0]:""):(teams.length?teams[0][0]:"");
+  let h="";
+  if(R.mode==="solo"){
+    h="<h3>🏆 個人戰排名</h3><table><tr><th>名次</th><th>學生</th><th>答對/作答</th></tr>";
+    persons.forEach(([p,v],i)=>{h+=`<tr><td>${i+1}</td><td>${esc(p)}</td><td>${v.h}/${v.n}</td></tr>`});h+="</table>";
+  }else{
+    h="<h3>🏆 隊伍榜</h3><table><tr><th>隊伍</th><th>作答</th><th>答對</th></tr>";
+    teams.forEach(([t,v])=>{h+=`<tr><td>${esc(t)}</td><td>${v.n}</td><td>${v.h}</td></tr>`});h+="</table>";
+    h+="<h3>個人榜</h3><table><tr><th>學生</th><th>隊伍</th><th>答對/作答</th></tr>";
+    persons.forEach(([p,v])=>{h+=`<tr><td>${esc(p)}</td><td>${esc(v.team)}</td><td>${v.h}/${v.n}</td></tr>`});h+="</table>";
+  }
   $("roomBoard").innerHTML=h;$("roomEndCard").style.display="block";
   try{R.ch.send({type:"broadcast",event:"end",payload:{champion:champ,top:persons.slice(0,5).map(([p,v])=>({p:p,h:v.h,n:v.n}))}})}catch(e){}
   if(R.session){try{await fetch(cfg().url+"/rest/v1/battle_sessions?id=eq."+R.session.id,{method:"PATCH",headers:{apikey:cfg().key,Authorization:"Bearer "+cfg().key,"Content-Type":"application/json"},body:JSON.stringify({winner:champ})})}catch(e){}}
