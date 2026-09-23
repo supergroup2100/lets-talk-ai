@@ -308,7 +308,7 @@ async function openRoom(){
   $("qrBox").innerHTML="";new QRCode($("qrBox"),{text:joinUrl,width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
   if(location.protocol==="file:"){$("roomMsg").textContent="⚠️ 本機檔案開啟的 QR 平板打不開！請改用 GitHub Pages 或 Cloudflare 網址開此頁，QR 會自動跟著變"}
   try{R.session=await sb("battle_sessions","POST",{class_name:$("className").value.trim(),lesson:"Dialogue: Bella is calling Scott（平板作答）",teams:[]});R.session=R.session[0]}
-  catch(e){$("roomMsg").textContent="❌ 建場次失敗："+e.message+"（看到 Invalid API key 就是 key 跟專案對不上，去 Data API 重抄）";return}
+  catch(e){const k=cfg().key;$("roomMsg").textContent="❌ 建場次失敗："+e.message+"（key 長度 "+k.length+"、開頭 "+k.slice(0,10)+"…；若看到 Invalid API key 就是 key 跟專案對不上，去 Data API 重抄）";return}
   R.ch=R.supa.channel("sdb-room-"+R.code);
   R.ch.on("broadcast",{event:"join"},({payload:d})=>{if(!d||!d.name)return;R.roster[d.name]={name:d.name,team:d.team};renderRoster()});
   R.ch.on("broadcast",{event:"answered"},({payload:d})=>{if(!d||d.qid!==curQid()||R.answered[d.name])return;R.answered[d.name]=d;if(d.correct)R.hits++;renderRoomQ()});
