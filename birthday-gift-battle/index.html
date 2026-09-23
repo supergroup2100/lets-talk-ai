@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生日禮物大作戰 Gift Battle｜Mary's Birthday Party</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--brown:#8B5E34;--dark:#4A2F16;--green:#5DA85F;--yellow:#FFD93D;--blue:#4EA8DE;--pink:#FF7B9C}
+body{font-family:"PingFang TC","Microsoft JhengHei",system-ui,sans-serif;background:linear-gradient(180deg,#FFF7E6,#FFE8C2);color:var(--dark);min-height:100vh}
+.wrap{max-width:900px;margin:0 auto;padding:16px 14px 60px}
+.screen{display:none}.screen.active{display:block;animation:pop .3s ease}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.card{background:#fff;border:3px solid var(--brown);border-radius:20px;padding:18px;margin:12px 0;box-shadow:0 6px 0 #e8c99a}
+h1{font-size:28px}h2{font-size:22px;margin-bottom:8px}
+.btn{display:inline-block;border:3px solid var(--dark);border-radius:16px;padding:12px 22px;font-size:18px;font-weight:900;cursor:pointer;background:var(--yellow);color:var(--dark);box-shadow:0 5px 0 var(--dark);margin:6px}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--dark)}
+.btn.green{background:#8FE388}.btn.blue{background:#AEE3FF}.btn.pink{background:#FFC2D4}.btn.white{background:#fff}.btn.small{font-size:15px;padding:9px 14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input,select{font-size:17px;padding:10px;border:3px solid var(--brown);border-radius:12px;background:#fff;color:var(--dark);margin:4px}
+.teams{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.team{flex:1;min-width:150px;background:#fffdf5;border:3px solid var(--brown);border-radius:16px;padding:12px;text-align:center}
+.team .sc{font-size:34px;font-weight:900}
+.team.turn{border-color:var(--green);background:#f0fff0}
+.q{font-size:22px;font-weight:900;margin:8px 0;line-height:1.6}
+.qsub{color:#7a5a35;margin-bottom:10px}
+.optGrid{display:grid;gap:10px}
+.opt{border:3px solid var(--brown);border-radius:14px;padding:13px;font-size:18px;font-weight:800;background:#fffdf5;color:var(--dark);cursor:pointer;text-align:left}
+.opt.correct{background:#c8f7c5;border-color:#2e9e44}.opt.wrong{background:#ffd6d6;border-color:#d33}
+.buzzRow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.buzz{flex:1;min-width:120px;font-size:17px;font-weight:900;border:3px solid var(--dark);border-radius:14px;padding:12px;cursor:pointer;color:#fff}
+.timer{height:12px;background:#eee;border:2px solid var(--brown);border-radius:999px;overflow:hidden;margin:8px 0}
+.timer>div{height:100%;background:linear-gradient(90deg,#FF9F45,#FFD93D);width:100%}
+.feedback{min-height:30px;font-size:18px;font-weight:900;text-align:center;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:15px;margin-top:8px}
+th,td{border:2px solid #e8c99a;padding:6px 8px;text-align:center}
+th{background:#FFF2CC}
+.sync{font-size:14px;font-weight:800;padding:4px 12px;border-radius:999px;border:2px solid var(--brown);background:#fff;display:inline-block;margin:4px}
+.sync.on{background:#c8f7c5}.sync.off{background:#ffd6d6}
+.speakBtn{font-size:15px}
+.kbd{font-size:13px;color:#7a5a35;text-align:center;margin-top:8px}
+/* ===== 競技場風：即時搶答霓虹（房間＋學生端，成熟刺激） ===== */
+#scr-room .card.arena{background:linear-gradient(160deg,#12163a,#251245);border:3px solid #00e5ff;color:#fff;box-shadow:0 0 26px rgba(0,229,255,.35)}
+#scr-room .arena .qsub{color:#9fb3c8}
+#scr-room .arena .q{color:#fff}
+.live{display:inline-block;background:#ff2e88;color:#fff;font-weight:900;padding:4px 16px;border-radius:6px;letter-spacing:4px;animation:blink 1.1s infinite}
+@keyframes blink{50%{opacity:.5}}
+.rcode{font-size:46px;font-weight:900;letter-spacing:10px;color:#ffd93d;text-shadow:0 0 20px rgba(255,217,61,.85)}
+#qrBox{background:#fff;padding:8px;border-radius:10px}
+.abtn{display:block;width:100%;margin:8px 0;padding:14px;font-size:18px;font-weight:900;text-align:left;color:#fff;background:#1c2148;border:3px solid #00e5ff;border-radius:10px;cursor:pointer}
+.abtn.correct{border-color:#00e676;background:#0c3a24;box-shadow:0 0 18px rgba(0,230,118,.6)}
+.abtn.wrong{border-color:#ff1744;background:#3a0c18;box-shadow:0 0 18px rgba(255,23,68,.6)}
+.abtn:disabled{cursor:default}
+.abtn:not(:disabled):active{transform:scale(.98)}
+.nbtn{display:inline-block;border:none;border-radius:10px;padding:13px 26px;font-size:18px;font-weight:900;cursor:pointer;color:#0b0e24;background:linear-gradient(90deg,#00e5ff,#7c4dff);box-shadow:0 0 18px rgba(0,229,255,.55);margin:6px}
+.nbtn:active{transform:translateY(2px)}
+.nbtn.pink{background:linear-gradient(90deg,#ff2e88,#ff9f45);box-shadow:0 0 18px rgba(255,46,136,.55);color:#fff}
+.nbtn.ghost{background:#262b5c;color:#fff;box-shadow:none;border:2px solid #556}
+.pulse{font-size:52px;animation:pp 1.2s infinite}
+@keyframes pp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:.6}}
+#scr-room table{color:#fff}#scr-room th{background:#262b5c}#scr-room th,#scr-room td{border-color:#00e5ff55}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 設定 / 開場 -->
+<div class="screen active" id="scr-setup">
+<div class="card" style="text-align:center">
+<h1>🎂 生日禮物大作戰<br>Birthday Gift Battle</h1>
+<p class="qsub">Mary had a birthday party · 授與動詞＋句型克漏字＋情境搶答 · 2–4 組對戰</p>
+<div>
+<label>班級 <input id="className" placeholder="如 701" style="width:110px"></label>
+<label>隊數 <select id="teamCount"><option>2</option><option>3</option><option>4</option></select></label>
+</div>
+<div id="teamNames" style="margin:8px 0"></div>
+<div><button class="btn green" onclick="startBattle()">⚔️ 開始對戰！</button>
+<button class="btn blue small" onclick="openRoom()">📱 平板作答（開房間）</button>
+<button class="btn white small" onclick="showScreen('scr-board')">📊 老師看板</button>
+<button class="btn white small" onclick="showScreen('scr-cfg')">🔑 連線設定</button></div>
+<p class="kbd">搶答鍵：1 / 2 / 3 / 4 鍵＝第 1–4 隊搶到 · 也可以按按鈕</p>
+</div>
+<div class="card"><b>📖 本課重點：</b><span style="font-size:15px">授與動詞 give–gave · buy–bought · make–made · send–sent · write–wrote · show–showed · 雙賓 ↔ to / for 句型 · birthday party 生日派對</span></div>
+</div>
+
+<!-- 連線設定 -->
+<div class="screen" id="scr-cfg">
+<div class="card"><h2>🔑 Supabase 連線（老師做一次就好）</h2>
+<p class="qsub">到 Supabase > Project Settings > Data API 抄 Project URL 和 anon public key。只用 anon，金鑰放心存在這台電腦。</p>
+<label>Project URL<br><input id="cfgUrl" style="width:100%" placeholder="https://xxx.supabase.co"></label><br>
+<label>anon public key<br><input id="cfgKey" style="width:100%" placeholder="eyJ..."></label><br>
+<div><button class="btn green small" onclick="saveCfg()">💾 儲存並測試</button>
+<button class="btn white small" onclick="showScreen('scr-setup')">⬅ 回去</button></div>
+<p id="cfgMsg" class="feedback"></p></div>
+</div>
+
+<!-- 對戰 -->
+<div class="screen" id="scr-play">
+<div><span class="sync off" id="syncBadge">📡 未連線（本機紀錄）</span>
+<span style="float:right" id="roundBadge"></span></div>
+<div class="teams" id="teamBar"></div>
+<div class="card">
+<div id="qRound" class="qsub"></div>
+<div class="q" id="qText"></div>
+<div class="qsub" id="qHint"></div>
+<div class="timer"><div id="timerBar"></div></div>
+<div class="buzzRow" id="buzzRow"></div>
+<div class="optGrid" id="optGrid"></div>
+<div class="feedback" id="fb"></div>
+<div style="text-align:center"><button class="btn blue small" onclick="speakQ()">🔊 唸題目</button>
+<button class="btn white small" onclick="nextQ(true)">⏭ 跳過</button></div>
+</div>
+</div>
+
+<!-- 結果 -->
+<div class="screen" id="scr-end">
+<div class="card" style="text-align:center"><h1 id="winText">🏆</h1>
+<div id="finalScores"></div>
+<div id="uploadMsg" class="qsub"></div>
+<div><button class="btn green" onclick="showScreen('scr-board')">📊 看全班紀錄</button>
+<button class="btn white" onclick="location.reload()">🔄 再玩一場</button></div></div>
+<div class="card"><h2>❌ 本場錯最多（下次複習用）</h2><div id="reviewList"></div></div>
+</div>
+
+<!-- 老師看板 -->
+<div class="screen" id="scr-board">
+<div class="card"><h2>📊 老師看板（讀 Supabase 歷程）</h2>
+<div><button class="btn blue small" onclick="loadBoard()">🔄 重新整理</button>
+<button class="btn white small" onclick="showScreen('scr-setup')">⬅ 回去</button></div>
+<p class="qsub">各隊答對率＋平均作答秒數＋錯題排行。沒連線時只顯示本機這一場。</p>
+<div id="boardBody"></div></div>
+</div>
+
+<!-- 平板作答房間：競技場風 -->
+<div class="screen" id="scr-room">
+<div class="card arena" style="text-align:center"><div class="live">● LIVE</div>
+<h2 style="margin:6px 0">📱 平板作答房間</h2>
+<div>房號 <span class="rcode" id="roomCode">----</span></div>
+<div id="qrBox" style="margin:10px auto;width:236px;line-height:0"></div>
+<p class="qsub">學生掃上方 QR 加入</p>
+<p class="qsub">已加入 <b id="rosterN" style="color:#fff">0</b> 人 <span id="rosterList" style="font-size:13px"></span></p>
+<div class="qsub">模式 <button class="nbtn ghost small" id="modeTeamBtn" onclick="setMode('team')">🛡️ 分隊制</button><button class="nbtn ghost small" id="modeSoloBtn" onclick="setMode('solo')">🦁 個人戰</button></div>
+<div><button class="nbtn" onclick="roomStart()">📢 開始出題</button>
+<button class="nbtn ghost" onclick="closeRoom(true)">⬅ 回去</button></div>
+<p id="roomMsg" class="feedback"></p></div>
+<div class="card arena" id="roomQCard" style="display:none">
+<div id="rRound" class="qsub"></div>
+<div class="q" id="rQText"></div>
+<div class="qsub" id="rQHint"></div>
+<div style="font-size:18px;font-weight:900">已作答 <b id="rAnswered">0</b> / <span id="rTotal">0</span> 人 · 答對 <b id="rHits">0</b></div>
+<div id="rOpts" style="margin-top:8px"></div>
+<div style="text-align:center;margin-top:8px"><button class="nbtn" onclick="roomNext()">⏭ 下一題</button>
+<button class="nbtn pink" onclick="roomEnd()">🏁 結束並排名</button></div>
+</div>
+<div class="card arena" id="roomEndCard" style="display:none"><h2>🏆 個人＋隊伍排名</h2><div id="roomBoard"></div>
+<div style="text-align:center"><button class="nbtn ghost" onclick="closeRoom(true)">🔄 回開場</button></div></div>
+</div>
+
+</div>
+<script>
+// ---------- 題庫（Grammar 1 授與動詞＋Mary 生日派對） ----------
+const QS=[
+{r:"R1 動詞快打",t:"give 的過去式是？",opts:["gived","gave","given","giving"],a:1,hint:"Tim gave Mary a cute cat."},
+{r:"R1 動詞快打",t:"buy 的過去式是？",opts:["buyed","boughten","bought","buying"],a:2,hint:"Alice bought Mary a blanket."},
+{r:"R1 動詞快打",t:"make 的過去式是？",opts:["maked","making","maden","made"],a:3,hint:"Michelle made a cake."},
+{r:"R1 動詞快打",t:"send 的過去式是？",opts:["sent","sended","sending","send"],a:0,hint:"Joe sent Mary a book."},
+{r:"R1 動詞快打",t:"write 的過去式是？",opts:["writed","writing","wrote","written"],a:2,hint:"Allen wrote Mary a card."},
+{r:"R2 句型克漏字",t:"Allen wrote Mary a birthday card.＝Allen wrote a birthday card ___ Mary.",opts:["to","for","of","at"],a:0,hint:"wrote → to"},
+{r:"R2 句型克漏字",t:"Alice bought Mary a beautiful blanket.＝Alice bought a beautiful blanket ___ Mary.",opts:["to","for","with","of"],a:1,hint:"bought → for"},
+{r:"R2 句型克漏字",t:"Tim gave Mary a cute cat.＝Tim gave a cute cat ___ Mary.",opts:["for","to","from","by"],a:1,hint:"gave → to"},
+{r:"R2 句型克漏字",t:"Michelle made a cake ___ Mary yesterday.",opts:["to","for","of","at"],a:1,hint:"made → for"},
+{r:"R2 句型克漏字",t:"Joe sent Mary a book.＝Joe sent a book ___ Mary.",opts:["to","for","from","of"],a:0,hint:"sent → to"},
+{r:"R2 句型克漏字",t:"They ___ me a card yesterday.",opts:["give","gived","gave","giving"],a:2,hint:"注意過去式"},
+{r:"R3 情境搶答",t:"Whose birthday party was it?",opts:["Michelle's","Tim's","Alice's","Mary's"],a:3,hint:"Mary had a birthday party."},
+{r:"R3 情境搶答",t:"Who came to the party with gifts?",opts:["Her teachers","Her friends","Her family","Nobody"],a:1,hint:"Her friends came..."},
+{r:"R3 情境搶答",t:"Did Michelle make a cake for Mary?",opts:["No, she didn't","Yes, she made a cake for Mary","She bought a cat","She sent a book"],a:1,hint:"Yes, she..."},
+{r:"R3 情境搶答",t:"What did Joe send Mary yesterday?",opts:["A cat","A cake","A card","A book"],a:3,hint:"send / a book"},
+];
+// ---------- 狀態 ----------
+let S={teams:[],scores:[],streak:[],qi:0,buzzer:-1,lock:false,t0:0,timer:null,session:null,events:[],left:10};
+const $=id=>document.getElementById(id);
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");window.scrollTo(0,0)}
+// ---------- Supabase（REST直連，不用SDK） ----------
+function cfg(){return {url:(localStorage.sb_url||"").replace(/\/$/,""),key:localStorage.sb_key||""}}
+async function sb(path,method,body){
+  const c=cfg();if(!c.url||!c.key)throw new Error("offline");
+  const r=await fetch(c.url+"/rest/v1/"+path,{method:method||"GET",
+    headers:{apikey:c.key,Authorization:"Bearer "+c.key,"Content-Type":"application/json",Prefer:"return=representation"},
+    body:body===undefined?undefined:JSON.stringify(body)});
+  if(!r.ok){const t=await r.text();let m="HTTP "+r.status;
+    try{const j=JSON.parse(t);if(j.message)m+=" "+j.message;if(j.hint)m+="（"+j.hint+"）"}catch(e){if(t)m+=" "+t.slice(0,120)}
+    throw new Error(m)}
+  const t=await r.text();return t?JSON.parse(t):null;
+}
+function refreshSync(){$("syncBadge").className="sync "+(cfg().url?"on":"off");$("syncBadge").textContent=cfg().url?"📡 已連線 Supabase":"📡 未連線（本機紀錄）"}
+function saveCfg(){
+  localStorage.sb_url=$("cfgUrl").value.trim();localStorage.sb_key=$("cfgKey").value.trim();
+  sb("gift_sessions?select=id&limit=1").then(()=>{$("cfgMsg").textContent="✅ 連線成功！可以開始對戰了";refreshSync()})
+  .catch(e=>{$("cfgMsg").textContent="❌ 連不上："+e.message+"（檢查 URL/key，或先跑 schema.sql）"});
+}
+// ---------- 開場 ----------
+const DEFN=["Mary 🎂","Allen ✉️","Tim 🐱","Alice 🎁"];
+function teamInputs(){
+  const n=+$("teamCount").value;let h="";
+  for(let i=0;i<n;i++)h+=`<label>第${i+1}隊 <input id="tn${i}" value="${DEFN[i]}" style="width:150px"></label> `;
+  $("teamNames").innerHTML=h;
+}
+$("teamCount").onchange=teamInputs;teamInputs();
+(function(){$("cfgUrl").value=localStorage.sb_url||"";$("cfgKey").value=localStorage.sb_key||"";refreshSync()})();
+async function startBattle(){
+  const n=+$("teamCount").value;S.teams=[];S.scores=[];S.streak=[];
+  for(let i=0;i<n;i++){S.teams.push($("tn"+i).value.trim()||("第"+(i+1)+"隊"));S.scores.push(0);S.streak.push(0)}
+  S.qi=0;S.events=[];
+  try{S.session=await sb("gift_sessions","POST",{class_name:$("className").value.trim(),lesson:"Grammar 1: Mary's Birthday Party",teams:S.teams});S.session=S.session[0]}
+  catch(e){S.session=null}
+  refreshSync();showScreen("scr-play");renderQ();
+}
+// ---------- 出題＋搶答＋計時 ----------
+function renderTeams(){
+  $("teamBar").innerHTML=S.teams.map((t,i)=>`<div class="team ${i===S.buzzer?'turn':''}"><div>${t}</div><div class="sc">${S.scores[i]}</div></div>`).join("");
+  $("roundBadge").textContent=`第 ${S.qi+1} / ${QS.length} 題`;
+}
+function renderQ(){
+  const q=QS[S.qi];S.buzzer=-1;S.lock=false;S.left=10;
+  $("qRound").textContent=q.r;$("qText").textContent=q.t;$("qHint").textContent="💡 "+q.hint;$("fb").textContent="";
+  const cols=["#FF7B9C","#4EA8DE","#5DA85F","#FF9F45"];
+  $("buzzRow").innerHTML=S.teams.map((t,i)=>`<button class="buzz" style="background:${cols[i%4]}" onclick="buzz(${i})">${t} 搶答 (${i+1})</button>`).join("");
+  $("optGrid").innerHTML=q.opts.map((o,i)=>`<button class="opt" id="opt${i}" onclick="answer(${i})" disabled>${String.fromCharCode(65+i)}. ${o}</button>`).join("");
+  renderTeams();startTimer();
+}
+function startTimer(){
+  clearInterval(S.timer);$("timerBar").style.width="100%";
+  S.t0=Date.now();
+  S.timer=setInterval(()=>{S.left-=0.1;$("timerBar").style.width=Math.max(0,S.left*10)+"%";
+    if(S.left<=0){clearInterval(S.timer);if(!S.lock){S.lock=true;$("fb").textContent="⏰ 時間到！換下一題";logEvent(-1,false,10000);setTimeout(()=>nextQ(),1200)}}},100);
+}
+function buzz(i){
+  if(S.lock||S.buzzer!==-1)return;S.buzzer=i;renderTeams();
+  $("fb").textContent=`🔔 ${S.teams[i]} 搶到！請作答`;
+  document.querySelectorAll(".opt").forEach(b=>b.disabled=false);speak(QS[S.qi].t);
+}
+async function answer(i){
+  if(S.lock||S.buzzer===-1){if(S.buzzer===-1)$("fb").textContent="👆 先搶答才能作答！";return}
+  S.lock=true;clearInterval(S.timer);
+  const q=QS[S.qi],ms=Date.now()-S.t0,ok=i===q.a,team=S.buzzer;
+  document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add("correct");else if(j===i)b.classList.add("wrong")});
+  if(ok){S.streak[team]++;const pts=10+(S.streak[team]>=2?2:0);S.scores[team]+=pts;
+    $("fb").textContent=`✅ 答對！+${pts}分${S.streak[team]>=2?"（連對加成！）":""}`;cheer();
+  }else{S.streak[team]=0;$("fb").textContent=`❌ 答錯了，正確答案是 ${String.fromCharCode(65+q.a)}`;document.querySelectorAll(".opt").forEach(b=>b.disabled=true)}
+  renderTeams();await logEvent(team,ok,ms,i);setTimeout(()=>nextQ(),1600);
+}
+async function logEvent(team,ok,ms,opt){
+  const ev={session_id:S.session?S.session.id:null,team:team<0?"無人":S.teams[team],player:"",round:QS[S.qi].r,qid:"Q"+(S.qi+1)+":"+QS[S.qi].t.slice(0,20),correct:ok,ms:ms};
+  S.events.push(ev);
+  if(S.session){try{await sb("gift_events","POST",ev)}catch(e){}}
+}
+function nextQ(skip){
+  if(skip&&!S.lock){S.lock=true;clearInterval(S.timer);logEvent(-1,false,10000)}
+  S.qi++;
+  if(S.qi>=QS.length)endBattle();else renderQ();
+}
+function endBattle(){
+  clearInterval(S.timer);
+  let w=0;S.scores.forEach((s,i)=>{if(s>S.scores[w])w=i});
+  $("winText").textContent=`🏆 ${S.teams[w]} 獲勝！`;
+  $("finalScores").innerHTML=S.teams.map((t,i)=>`<div>${t}：<b>${S.scores[i]}</b> 分</div>`).join("");
+  // 錯題回顧（本機）
+  const miss={};S.events.forEach(e=>{if(!e.correct){miss[e.qid]=(miss[e.qid]||0)+1}});
+  const arr=Object.entries(miss).sort((a,b)=>b[1]-a[1]);
+  $("reviewList").innerHTML=arr.length?arr.map(([q,c])=>`<div>• ${q} —— 錯 ${c} 次</div>`).join(""):"🎉 全部答對，太強了！";
+  // 上傳總分
+  (async()=>{if(S.session){try{await fetch(cfg().url+"/rest/v1/gift_sessions?id=eq."+S.session.id,{method:"PATCH",headers:{apikey:cfg().key,Authorization:"Bearer "+cfg().key,"Content-Type":"application/json"},body:JSON.stringify({winner:S.teams[w],teams:S.teams.map((t,i)=>({team:t,score:S.scores[i]}))})});$("uploadMsg").textContent="✅ 成績已上傳 Supabase"}catch(e){$("uploadMsg").textContent="⚠️ 上傳失敗，成績只存本機"}}else{$("uploadMsg").textContent="⚠️ 未連線，成績只存本機"}})();
+  showScreen("scr-end");
+}
+// ---------- 老師看板 ----------
+async function loadBoard(){
+  const B=$("boardBody");
+  try{
+    const ses=await sb("gift_sessions?select=id,class_name,lesson,winner,created_at&order=created_at.desc&limit=10");
+    const ev=await sb("gift_events?select=session_id,team,round,qid,correct,ms&order=created_at.desc&limit=500");
+    let h="<h3>最近場次</h3><table><tr><th>時間</th><th>班級</th><th>冠軍</th></tr>";
+    ses.forEach(s=>{h+=`<tr><td>${s.created_at.slice(0,16).replace("T"," ")}</td><td>${s.class_name||"-"}</td><td>${s.winner||"-"}</td></tr>`});
+    h+="</table><h3>各隊答對率（近500筆）</h3><table><tr><th>隊伍</th><th>作答</th><th>答對</th><th>答對率</th><th>平均秒數</th></tr>";
+    const g={};ev.forEach(e=>{const k=e.team;g[k]=g[k]||{n:0,h:0,ms:0};g[k].n++;if(e.correct)g[k].h++;g[k].ms+=e.ms||0});
+    Object.entries(g).forEach(([t,v])=>{h+=`<tr><td>${t}</td><td>${v.n}</td><td>${v.h}</td><td>${(v.h/v.n*100).toFixed(1)}%</td><td>${(v.ms/v.n/1000).toFixed(1)}s</td></tr>`});
+    h+="</table><h3>錯最多題目 Top5</h3><table><tr><th>題目</th><th>錯次</th></tr>";
+    const m={};ev.forEach(e=>{if(!e.correct)m[e.qid]=(m[e.qid]||0)+1});
+    Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,5).forEach(([q,c])=>{h+=`<tr><td style="text-align:left">${q}</td><td>${c}</td></tr>`});
+    B.innerHTML=h+"</table>";
+  }catch(e){B.innerHTML="⚠️ 讀不到 Supabase（"+e.message+"）。先到「連線設定」填 URL＋key 並跑過 schema.sql。本機這一場："+S.events.filter(x=>x.correct).length+"/"+S.events.length+" 答對。"}
+}
+// ---------- 平板作答（開房＋QR＋Realtime 競技場） ----------
+let R={code:null,ch:null,supa:null,qi:-1,roster:{},answered:{},hits:0,session:null};
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function rndCode(){const C="ABCDEFGHJKMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<4;i++)s+=C[Math.floor(Math.random()*C.length)];return s}
+function curQid(){return "Q"+(R.qi+1)+":"+QS[R.qi].t.slice(0,20)}
+async function openRoom(){
+  if(!cfg().url||!cfg().key){showScreen("scr-cfg");$("cfgMsg").textContent="⚠️ 平板模式一定要先連線：填 URL＋key 後再開房";return}
+  showScreen("scr-room");
+  $("roomEndCard").style.display="none";$("roomQCard").style.display="none";
+  R={code:rndCode(),ch:null,supa:null,qi:-1,roster:{},answered:{},hits:0,session:null,mode:"team"};
+  $("roomCode").textContent=R.code;$("rosterN").textContent="0";$("rosterList").textContent="";
+  $("roomMsg").textContent="⏳ 開房中…";
+  try{
+    const {createClient}=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+    await new Promise((res,rej)=>{if(window.QRCode)return res();const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s)});
+    R.supa=createClient(cfg().url,cfg().key);
+  }catch(e){$("roomMsg").textContent="❌ 載入即時函式庫失敗（教室電腦要能上網）："+e.message;return}
+  makeQR();paintMode();
+  if(location.protocol==="file:"){$("roomMsg").textContent="⚠️ 本機檔案開啟的 QR 平板打不開！請改用 GitHub Pages 或 Cloudflare 網址開此頁，QR 會自動跟著變"}
+  try{R.session=await sb("gift_sessions","POST",{class_name:$("className").value.trim(),lesson:"Grammar 1: Mary's Birthday Party（平板作答）",teams:[]});R.session=R.session[0]}
+  catch(e){const k=cfg().key;$("roomMsg").textContent="❌ 建場次失敗："+e.message+"（key 長度 "+k.length+"、開頭 "+k.slice(0,10)+"…；若看到 Invalid API key 就是 key 跟專案對不上，去 Data API 重抄）";return}
+  R.ch=R.supa.channel("gift-room-"+R.code);
+  R.ch.on("broadcast",{event:"join"},({payload:d})=>{if(!d||!d.name)return;R.roster[d.name]={name:d.name,team:d.team};renderRoster()});
+  R.ch.on("broadcast",{event:"answered"},({payload:d})=>{if(!d||d.qid!==curQid()||R.answered[d.name])return;R.answered[d.name]=d;if(d.correct)R.hits++;renderRoomQ()});
+  await R.ch.subscribe();
+  if(location.protocol!=="file:")$("roomMsg").textContent="✅ 房間開好！學生掃 QR 加入，人到齊按「開始出題」";
+}
+function setMode(m){if(!R.code)return;R.mode=m;paintMode();makeQR()}
+function paintMode(){if(!$("modeTeamBtn"))return;const on="3px solid #ffd93d",off="2px solid #556";$("modeTeamBtn").style.border=R.mode==="team"?on:off;$("modeSoloBtn").style.border=R.mode==="solo"?on:off}
+function makeQR(){if(!window.QRCode||!R.code)return;const c=cfg();
+  const base=location.href.split("?")[0].replace(/index\.html?$/,"");
+  const joinUrl=base+"join.html?room="+R.code+"&mode="+R.mode+"&url="+encodeURIComponent(c.url)+"&key="+encodeURIComponent(c.key);
+  $("qrBox").innerHTML="";new QRCode($("qrBox"),{text:joinUrl,width:220,height:220,correctLevel:QRCode.CorrectLevel.M})}
+function renderRoster(){
+  const v=Object.values(R.roster);
+  $("rosterN").textContent=v.length;
+  $("rosterList").textContent=v.length?"（"+v.map(p=>esc(p.name)+"・"+esc(p.team)).join("，")+"）":"";
+  $("rTotal").textContent=v.length;
+}
+function roomStart(){if(R.qi!==-1||!R.ch)return;R.qi=0;$("roomQCard").style.display="block";broadcastQ()}
+function broadcastQ(){
+  const q=QS[R.qi];R.answered={};R.hits=0;
+  R.ch.send({type:"broadcast",event:"question",payload:{session:R.session.id,qid:curQid(),n:R.qi+1,of:QS.length,mode:R.mode,round:q.r,text:q.t,hint:q.hint,opts:q.opts,a:q.a}});
+  $("rRound").textContent=q.r+"（第 "+(R.qi+1)+" / "+QS.length+" 題）";
+  $("rQText").textContent=q.t;$("rQHint").textContent="💡 "+q.hint;
+  $("rOpts").innerHTML=q.opts.map((o,i)=>`<div class="abtn ${i===q.a?'correct':''}">${String.fromCharCode(65+i)}. ${esc(o)}</div>`).join("");
+  renderRoomQ();speak(q.t);
+}
+function renderRoomQ(){$("rAnswered").textContent=Object.keys(R.answered).length;$("rTotal").textContent=Object.keys(R.roster).length;$("rHits").textContent=R.hits}
+function roomNext(){R.qi++;if(R.qi>=QS.length)roomEnd();else broadcastQ()}
+async function roomEnd(){
+  $("roomMsg").textContent="⏳ 統計排名中…";
+  let ev=[];try{ev=await sb("gift_events?session_id=eq."+R.session.id+"&select=team,player,correct&limit=2000")}catch(e){}
+  const per={},tm={};
+  ev.forEach(e=>{const k=e.player||"?";per[k]=per[k]||{n:0,h:0,team:e.team};per[k].n++;if(e.correct)per[k].h++;
+    tm[e.team]=tm[e.team]||{n:0,h:0};tm[e.team].n++;if(e.correct)tm[e.team].h++});
+  const persons=Object.entries(per).sort((a,b)=>b[1].h-a[1].h||a[1].n-b[1].n);
+  const teams=Object.entries(tm).sort((a,b)=>b[1].h-a[1].h);
+  const champ=R.mode==="solo"?(persons.length?persons[0][0]:""):(teams.length?teams[0][0]:"");
+  let h="";
+  if(R.mode==="solo"){
+    h="<h3>🏆 個人戰排名</h3><table><tr><th>名次</th><th>學生</th><th>答對/作答</th></tr>";
+    persons.forEach(([p,v],i)=>{h+=`<tr><td>${i+1}</td><td>${esc(p)}</td><td>${v.h}/${v.n}</td></tr>`});h+="</table>";
+  }else{
+    h="<h3>🏆 隊伍榜</h3><table><tr><th>隊伍</th><th>作答</th><th>答對</th></tr>";
+    teams.forEach(([t,v])=>{h+=`<tr><td>${esc(t)}</td><td>${v.n}</td><td>${v.h}</td></tr>`});h+="</table>";
+    h+="<h3>個人榜</h3><table><tr><th>學生</th><th>隊伍</th><th>答對/作答</th></tr>";
+    persons.forEach(([p,v])=>{h+=`<tr><td>${esc(p)}</td><td>${esc(v.team)}</td><td>${v.h}/${v.n}</td></tr>`});h+="</table>";
+  }
+  $("roomBoard").innerHTML=h;$("roomEndCard").style.display="block";
+  try{R.ch.send({type:"broadcast",event:"end",payload:{champion:champ,top:persons.slice(0,5).map(([p,v])=>({p:p,h:v.h,n:v.n}))}})}catch(e){}
+  if(R.session){try{await fetch(cfg().url+"/rest/v1/gift_sessions?id=eq."+R.session.id,{method:"PATCH",headers:{apikey:cfg().key,Authorization:"Bearer "+cfg().key,"Content-Type":"application/json"},body:JSON.stringify({winner:champ})})}catch(e){}}
+  $("roomMsg").textContent="🏁 結束！成績已上傳，學生平板同步看到排名";
+  $("roomEndCard").scrollIntoView();
+}
+async function closeRoom(home){try{if(R.ch)await R.ch.unsubscribe()}catch(e){}R.ch=null;if(home)showScreen("scr-setup")}
+// ---------- 音效＋發音 ----------
+function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+function speakQ(){speak(QS[S.qi].t+". "+QS[S.qi].opts.join(". "))}
+function cheer(){try{const C=new (window.AudioContext||window.webkitAudioContext)();[523,659,784].forEach((f,i)=>{const o=C.createOscillator(),g=C.createGain();o.connect(g);g.connect(C.destination);o.frequency.value=f;o.start(C.currentTime+i*.12);o.stop(C.currentTime+i*.12+.15)})}catch(e){}}
+document.addEventListener("keydown",e=>{if(!$("scr-play").classList.contains("active"))return;const i=["1","2","3","4"].indexOf(e.key);if(i>=0&&i<S.teams.length)buzz(i)});
+</script>
+</body>
+</html>
