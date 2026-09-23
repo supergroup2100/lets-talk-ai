@@ -117,7 +117,7 @@ input,select{background:#fff;color:#1d3557;border-color:#1d3557}
 <button class="btn blue small" onclick="openRoom()">📱 平板作答（開房間）</button>
 <button class="btn white small" onclick="showScreen('scr-board')">📊 老師看板</button>
 <button class="btn white small" onclick="showScreen('scr-cfg')">🔑 連線設定</button></div>
-<p class="kbd">搶答鍵：1 / 2 / 3 / 4 鍵＝第 1–4 隊搶到 · 也可以按按鈕</p>
+<p class="kbd">搶答鍵 1–4＝搶答 · 答對 10 分＋速度加成＋連對 2 分 · 答錯扣 5 分</p>
 </div>
 <div class="card"><b>📖 本課重點：</b><span style="font-size:15px">postcard 明信片 · keep in touch 保持聯絡 · famous 有名的 · beautiful 美麗的 · all over the world 全世界 · a piece of cake 易如反掌 · late 遲到的 · tomorrow 明天</span></div>
 </div>
@@ -179,6 +179,7 @@ input,select{background:#fff;color:#1d3557;border-color:#1d3557}
 <p class="qsub">學生掃上方 QR 加入</p>
 <p class="qsub">已加入 <b id="rosterN" style="color:#fff">0</b> 人 <span id="rosterList" style="font-size:13px"></span></p>
 <div class="qsub">模式 <button class="nbtn ghost small" id="modeTeamBtn" onclick="setMode('team')">🛡️ 分隊制</button><button class="nbtn ghost small" id="modeSoloBtn" onclick="setMode('solo')">🦁 個人戰</button></div>
+<p class="qsub">計分：答對 10 分＋10 秒內越快加越多（最高＋10）＋連對 2 分 · 答錯扣 5 分</p>
 <div><button class="nbtn" onclick="roomStart()">📢 開始出題</button>
 <button class="nbtn ghost" onclick="closeRoom(true)">⬅ 回去</button></div>
 <p id="roomMsg" class="feedback"></p></div>
@@ -278,14 +279,15 @@ function buzz(i){
   $("fb").textContent=`🔔 ${S.teams[i]} 搶到！請作答`;
   document.querySelectorAll(".opt").forEach(b=>b.disabled=false);speak(QS[S.qi].t);
 }
+function speedBonus(ms){return ms<10000?Math.ceil(10*(1-ms/10000)):0}
 async function answer(i){
   if(S.lock||S.buzzer===-1){if(S.buzzer===-1)$("fb").textContent="👆 先搶答才能作答！";return}
   S.lock=true;clearInterval(S.timer);
   const q=QS[S.qi],ms=Date.now()-S.t0,ok=i===q.a,team=S.buzzer;
   document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add("correct");else if(j===i)b.classList.add("wrong")});
-  if(ok){S.streak[team]++;const pts=10+(S.streak[team]>=2?2:0);S.scores[team]+=pts;
-    $("fb").textContent=`✅ 答對！+${pts}分${S.streak[team]>=2?"（連對加成！）":""} 💡${q.hint}`;cheer();
-  }else{playNo();S.streak[team]=0;$("fb").textContent=`❌ 答案是 ${String.fromCharCode(65+q.a)} 💡${q.hint}`;document.querySelectorAll(".opt").forEach(b=>b.disabled=true)}
+  if(ok){S.streak[team]++;const pts=10+speedBonus(ms)+(S.streak[team]>=2?2:0);S.scores[team]+=pts;
+    $("fb").textContent=`✅ 答對！+${pts}分（${(ms/1000).toFixed(1)}秒${S.streak[team]>=2?"＋連對加成":""}）💡${q.hint}`;cheer();
+  }else{S.scores[team]=Math.max(0,S.scores[team]-5);playNo();S.streak[team]=0;$("fb").textContent=`❌ 答錯扣5分，答案是 ${String.fromCharCode(65+q.a)} 💡${q.hint}`;document.querySelectorAll(".opt").forEach(b=>b.disabled=true)}
   renderTeams();await logEvent(team,ok,ms,i);setTimeout(()=>nextQ(),1600);
 }
 async function logEvent(team,ok,ms,opt){
@@ -302,7 +304,7 @@ function endBattle(){
   clearInterval(S.timer);
   let w=0;S.scores.forEach((s,i)=>{if(s>S.scores[w])w=i});
   $("winText").textContent=`🏆 ${S.teams[w]} 獲勝！`;
-  $("finalScores").innerHTML=S.teams.map((t,i)=>`<div>${t}：<b>${S.scores[i]}</b> 分</div>`).join("");
+  $("finalScores").innerHTML=S.teams.map((t,i)=>{const h=S.events.filter(e=>e.correct&&e.team===t).length;return `<div>${t}：<b>${S.scores[i]}</b> 分（答對 ${h} 題）</div>`}).join("");
   // 錯題回顧（本機）
   const miss={};S.events.forEach(e=>{if(!e.correct){miss[e.qid]=(miss[e.qid]||0)+1}});
   const arr=Object.entries(miss).sort((a,b)=>b[1]-a[1]);
@@ -380,25 +382,25 @@ function renderRoomQ(){$("rAnswered").textContent=Object.keys(R.answered).length
 function roomNext(){R.qi++;if(R.qi>=QS.length)roomEnd();else broadcastQ()}
 async function roomEnd(){
   $("roomMsg").textContent="⏳ 統計排名中…";
-  let ev=[];try{ev=await sb("postcard_events?session_id=eq."+R.session.id+"&select=team,player,correct&limit=2000")}catch(e){}
+  let ev=[];try{ev=await sb("postcard_events?session_id=eq."+R.session.id+"&select=team,player,correct,pts&limit=2000")}catch(e){}
   const per={},tm={};
-  ev.forEach(e=>{const k=e.player||"?";per[k]=per[k]||{n:0,h:0,team:e.team};per[k].n++;if(e.correct)per[k].h++;
-    tm[e.team]=tm[e.team]||{n:0,h:0};tm[e.team].n++;if(e.correct)tm[e.team].h++});
-  const persons=Object.entries(per).sort((a,b)=>b[1].h-a[1].h||a[1].n-b[1].n);
-  const teams=Object.entries(tm).sort((a,b)=>b[1].h-a[1].h);
+  ev.forEach(e=>{const k=e.player||"?";per[k]=per[k]||{n:0,h:0,pts:0,team:e.team};per[k].n++;if(e.correct)per[k].h++;per[k].pts+=e.pts||0;
+    tm[e.team]=tm[e.team]||{n:0,h:0,pts:0};tm[e.team].n++;if(e.correct)tm[e.team].h++;tm[e.team].pts+=e.pts||0});
+  const persons=Object.entries(per).sort((a,b)=>b[1].pts-a[1].pts||b[1].h-a[1].h);
+  const teams=Object.entries(tm).sort((a,b)=>b[1].pts-a[1].pts||b[1].h-a[1].h);
   const champ=R.mode==="solo"?(persons.length?persons[0][0]:""):(teams.length?teams[0][0]:"");
   let h="";
   if(R.mode==="solo"){
-    h="<h3>🏆 個人戰排名</h3><table><tr><th>名次</th><th>學生</th><th>答對/作答</th></tr>";
-    persons.forEach(([p,v],i)=>{h+=`<tr><td>${i+1}</td><td>${esc(p)}</td><td>${v.h}/${v.n}</td></tr>`});h+="</table>";
+    h="<h3>🏆 個人戰排名</h3><table><tr><th>名次</th><th>學生</th><th>分數</th><th>答對/作答</th></tr>";
+    persons.forEach(([p,v],i)=>{h+=`<tr><td>${i+1}</td><td>${esc(p)}</td><td><b>${v.pts}</b></td><td>${v.h}/${v.n}</td></tr>`});h+="</table>";
   }else{
-    h="<h3>🏆 隊伍榜</h3><table><tr><th>隊伍</th><th>作答</th><th>答對</th></tr>";
-    teams.forEach(([t,v])=>{h+=`<tr><td>${esc(t)}</td><td>${v.n}</td><td>${v.h}</td></tr>`});h+="</table>";
-    h+="<h3>個人榜</h3><table><tr><th>學生</th><th>隊伍</th><th>答對/作答</th></tr>";
-    persons.forEach(([p,v])=>{h+=`<tr><td>${esc(p)}</td><td>${esc(v.team)}</td><td>${v.h}/${v.n}</td></tr>`});h+="</table>";
+    h="<h3>🏆 隊伍榜</h3><table><tr><th>隊伍</th><th>分數</th><th>作答</th><th>答對</th></tr>";
+    teams.forEach(([t,v])=>{h+=`<tr><td>${esc(t)}</td><td><b>${v.pts}</b></td><td>${v.n}</td><td>${v.h}</td></tr>`});h+="</table>";
+    h+="<h3>個人榜</h3><table><tr><th>學生</th><th>隊伍</th><th>分數</th><th>答對/作答</th></tr>";
+    persons.forEach(([p,v])=>{h+=`<tr><td>${esc(p)}</td><td>${esc(v.team)}</td><td><b>${v.pts}</b></td><td>${v.h}/${v.n}</td></tr>`});h+="</table>";
   }
   $("roomBoard").innerHTML=h;$("roomEndCard").style.display="block";
-  try{R.ch.send({type:"broadcast",event:"end",payload:{champion:champ,top:persons.slice(0,5).map(([p,v])=>({p:p,h:v.h,n:v.n}))}})}catch(e){}
+  try{R.ch.send({type:"broadcast",event:"end",payload:{champion:champ,top:persons.slice(0,5).map(([p,v])=>({p:p,h:v.h,n:v.n,pts:v.pts}))}})}catch(e){}
   if(R.session){try{await fetch(cfg().url+"/rest/v1/postcard_sessions?id=eq."+R.session.id,{method:"PATCH",headers:{apikey:cfg().key,Authorization:"Bearer "+cfg().key,"Content-Type":"application/json"},body:JSON.stringify({winner:champ})})}catch(e){}}
   $("roomMsg").textContent="🏁 結束！成績已上傳，學生平板同步看到排名";
   $("roomEndCard").scrollIntoView();

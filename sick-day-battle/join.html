@@ -46,6 +46,7 @@ details{margin-top:10px}summary{cursor:pointer;color:#9fb3c8}
 <div><input id="jName" placeholder="輸入你的名字" maxlength="12"></div>
 <div id="jTeamBlock"><div class="qsub">選你的隊伍</div><div id="jTeams"></div></div>
 <div class="qsub" id="jSoloNote" style="display:none">🦁 個人戰：不分隊，全班單人對決！</div>
+<div class="qsub">計分：答對 10 分＋10 秒內越快加越多（最高＋10）＋連對 2 分 · 答錯扣 5 分</div>
 <div><button class="nbtn" onclick="joinRoom()">⚡ 加入戰局</button></div>
 <p id="jMsg" class="feedback"></p>
 <details><summary>掃碼沒帶出資料？點此手動填</summary>
@@ -122,6 +123,7 @@ async function joinRoom(){
   $("jWho").textContent=J.mode==="solo"?J.name+"・個人戰・房號 "+J.room:J.name+"・"+J.team+"・房號 "+J.room;
   showJ("j-wait");
 }
+function speedBonus(ms){return ms<10000?Math.ceil(10*(1-ms/10000)):0}
 function showQ(d){
   J.cur=d;J.locked=false;J.t0=Date.now();
   if(d.mode){J.mode=d.mode;if(J.mode==="solo"){J.team=J.name;applyModeUI()}}
@@ -133,18 +135,18 @@ function showQ(d){
 }
 async function answer(i){
   if(J.locked||!J.cur)return;J.locked=true;
-  const ms=Date.now()-J.t0,ok=i===J.cur.a;J.myN++;if(ok){J.myH++;cheer()}else{playNo()}
+  const ms=Date.now()-J.t0,ok=i===J.cur.a;J.myN++;let pts;if(ok){J.streak=(J.streak||0)+1;J.myH++;pts=10+speedBonus(ms)+(J.streak>=2?2:0);cheer()}else{J.streak=0;pts=-5;playNo()}J.pts=Math.max(0,(J.pts||0)+pts);
   document.querySelectorAll("#jOpts .abtn").forEach((b,j)=>{b.disabled=true;if(j===J.cur.a)b.classList.add("correct");else if(j===i)b.classList.add("wrong")});
-  $("jFb").textContent=ok?"✅ 答對了！夠快！":"❌ 正确答案是 "+String.fromCharCode(65+J.cur.a);
-  const ev={session_id:J.cur.session,team:J.team,player:J.name,round:J.cur.round,qid:J.cur.qid,correct:ok,ms:ms};
+  $("jFb").textContent=(ok?`✅ 答對！+${pts}分（${(ms/1000).toFixed(1)}秒）`:`❌ 答錯扣5分，答案是 ${String.fromCharCode(65+J.cur.a)}`);
+  const ev={session_id:J.cur.session,team:J.team,player:J.name,round:J.cur.round,qid:J.cur.qid,correct:ok,ms:ms,pts:pts};
   try{await fetch(J.url+"/rest/v1/battle_events",{method:"POST",headers:{apikey:J.key,Authorization:"Bearer "+J.key,"Content-Type":"application/json",Prefer:"return:representation"},body:JSON.stringify(ev)})}catch(e){}
-  try{await J.ch.send({type:"broadcast",event:"answered",payload:{qid:J.cur.qid,name:J.name,team:J.team,correct:ok}})}catch(e){}
+  try{await J.ch.send({type:"broadcast",event:"answered",payload:{qid:J.cur.qid,name:J.name,team:J.team,correct:ok,pts:pts}})}catch(e){}
 }
 function showEnd(d){
   showJ("j-end");
   $("jChamp").textContent="🏆 "+(d.champion?d.champion+" 奪冠！":"比賽結束！");
-  $("jMine").innerHTML=esc(J.name)+"：<b>"+J.myH+"</b> / "+J.myN+" 答對";
-  $("jTop").innerHTML=(d.top&&d.top.length)?"<div>前 5 強</div>"+d.top.map((t,i)=>`<div>${i+1}. ${esc(t.p)} —— ${t.h}/${t.n}</div>`).join(""):"";
+  $("jMine").innerHTML=esc(J.name)+"：<b>"+(J.pts||0)+"</b> 分 · "+J.myH+" / "+J.myN+" 答對";
+  $("jTop").innerHTML=(d.top&&d.top.length)?"<div>前 5 強</div>"+d.top.map((t,i)=>`<div>${i+1}. ${esc(t.p)} —— ${t.pts||0}分（${t.h}/${t.n}）</div>`).join(""):"";
 }
 </script>
 </body>

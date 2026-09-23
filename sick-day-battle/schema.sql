@@ -22,6 +22,7 @@ create table if not exists public.battle_events (
   qid text not null,
   correct boolean not null,
   ms integer not null default 0,
+  pts integer not null default 0,
   created_at timestamptz not null default now()
 );
 
@@ -31,7 +32,8 @@ select session_id, team,
   count(*) as answered,
   count(*) filter (where correct) as hits,
   round(count(*) filter (where correct)::numeric / greatest(count(*),1) * 100, 1) as hit_rate,
-  avg(ms)::int as avg_ms
+  avg(ms)::int as avg_ms,
+  sum(pts) as total_pts
 from public.battle_events
 group by session_id, team;
 
