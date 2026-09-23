@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>病假大作戰 Sick Day Battle｜Bella is calling Scott</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--brown:#8B5E34;--dark:#4A2F16;--green:#5DA85F;--yellow:#FFD93D;--blue:#4EA8DE;--pink:#FF7B9C}
+body{font-family:"PingFang TC","Microsoft JhengHei",system-ui,sans-serif;background:linear-gradient(180deg,#FFF7E6,#FFE8C2);color:var(--dark);min-height:100vh}
+.wrap{max-width:900px;margin:0 auto;padding:16px 14px 60px}
+.screen{display:none}.screen.active{display:block;animation:pop .3s ease}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.card{background:#fff;border:3px solid var(--brown);border-radius:20px;padding:18px;margin:12px 0;box-shadow:0 6px 0 #e8c99a}
+h1{font-size:28px}h2{font-size:22px;margin-bottom:8px}
+.btn{display:inline-block;border:3px solid var(--dark);border-radius:16px;padding:12px 22px;font-size:18px;font-weight:900;cursor:pointer;background:var(--yellow);color:var(--dark);box-shadow:0 5px 0 var(--dark);margin:6px}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--dark)}
+.btn.green{background:#8FE388}.btn.blue{background:#AEE3FF}.btn.pink{background:#FFC2D4}.btn.white{background:#fff}.btn.small{font-size:15px;padding:9px 14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input,select{font-size:17px;padding:10px;border:3px solid var(--brown);border-radius:12px;background:#fff;color:var(--dark);margin:4px}
+.teams{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.team{flex:1;min-width:150px;background:#fffdf5;border:3px solid var(--brown);border-radius:16px;padding:12px;text-align:center}
+.team .sc{font-size:34px;font-weight:900}
+.team.turn{border-color:var(--green);background:#f0fff0}
+.q{font-size:22px;font-weight:900;margin:8px 0;line-height:1.6}
+.qsub{color:#7a5a35;margin-bottom:10px}
+.optGrid{display:grid;gap:10px}
+.opt{border:3px solid var(--brown);border-radius:14px;padding:13px;font-size:18px;font-weight:800;background:#fffdf5;color:var(--dark);cursor:pointer;text-align:left}
+.opt.correct{background:#c8f7c5;border-color:#2e9e44}.opt.wrong{background:#ffd6d6;border-color:#d33}
+.buzzRow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.buzz{flex:1;min-width:120px;font-size:17px;font-weight:900;border:3px solid var(--dark);border-radius:14px;padding:12px;cursor:pointer;color:#fff}
+.timer{height:12px;background:#eee;border:2px solid var(--brown);border-radius:999px;overflow:hidden;margin:8px 0}
+.timer>div{height:100%;background:linear-gradient(90deg,#FF9F45,#FFD93D);width:100%}
+.feedback{min-height:30px;font-size:18px;font-weight:900;text-align:center;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:15px;margin-top:8px}
+th,td{border:2px solid #e8c99a;padding:6px 8px;text-align:center}
+th{background:#FFF2CC}
+.sync{font-size:14px;font-weight:800;padding:4px 12px;border-radius:999px;border:2px solid var(--brown);background:#fff;display:inline-block;margin:4px}
+.sync.on{background:#c8f7c5}.sync.off{background:#ffd6d6}
+.speakBtn{font-size:15px}
+.kbd{font-size:13px;color:#7a5a35;text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 設定 / 開場 -->
+<div class="screen active" id="scr-setup">
+<div class="card" style="text-align:center">
+<h1>🤒 病假大作戰<br>Sick Day Battle</h1>
+<p class="qsub">Bella is calling Scott · 單字＋課文克漏字＋情境搶答 · 2–4 組對戰</p>
+<div>
+<label>班級 <input id="className" placeholder="如 701" style="width:110px"></label>
+<label>隊數 <select id="teamCount"><option>2</option><option>3</option><option>4</option></select></label>
+</div>
+<div id="teamNames" style="margin:8px 0"></div>
+<div><button class="btn green" onclick="startBattle()">⚔️ 開始對戰！</button>
+<button class="btn white small" onclick="showScreen('scr-board')">📊 老師看板</button>
+<button class="btn white small" onclick="showScreen('scr-cfg')">🔑 連線設定</button></div>
+<p class="kbd">搶答鍵：1 / 2 / 3 / 4 鍵＝第 1–4 隊搶到 · 也可以按按鈕</p>
+</div>
+<div class="card"><b>📖 本課重點：</b><span style="font-size:15px">call 打電話 · speak–spoke 說話 · send–sent 寄 · message 訊息 · hurt 疼痛 · ice cream 冰淇淋 · country 國家 · serious 嚴重的 · health 健康 · why / because 問答 · 看圖判斷 Look and Check</span></div>
+</div>
+
+<!-- 連線設定 -->
+<div class="screen" id="scr-cfg">
+<div class="card"><h2>🔑 Supabase 連線（老師做一次就好）</h2>
+<p class="qsub">到 Supabase > Project Settings > Data API 抄 Project URL 和 anon public key。只用 anon，金鑰放心存在這台電腦。</p>
+<label>Project URL<br><input id="cfgUrl" style="width:100%" placeholder="https://xxx.supabase.co"></label><br>
+<label>anon public key<br><input id="cfgKey" style="width:100%" placeholder="eyJ..."></label><br>
+<div><button class="btn green small" onclick="saveCfg()">💾 儲存並測試</button>
+<button class="btn white small" onclick="showScreen('scr-setup')">⬅ 回去</button></div>
+<p id="cfgMsg" class="feedback"></p></div>
+</div>
+
+<!-- 對戰 -->
+<div class="screen" id="scr-play">
+<div><span class="sync off" id="syncBadge">📡 未連線（本機紀錄）</span>
+<span style="float:right" id="roundBadge"></span></div>
+<div class="teams" id="teamBar"></div>
+<div class="card">
+<div id="qRound" class="qsub"></div>
+<div class="q" id="qText"></div>
+<div class="qsub" id="qHint"></div>
+<div class="timer"><div id="timerBar"></div></div>
+<div class="buzzRow" id="buzzRow"></div>
+<div class="optGrid" id="optGrid"></div>
+<div class="feedback" id="fb"></div>
+<div style="text-align:center"><button class="btn blue small" onclick="speakQ()">🔊 唸題目</button>
+<button class="btn white small" onclick="nextQ(true)">⏭ 跳過</button></div>
+</div>
+</div>
+
+<!-- 結果 -->
+<div class="screen" id="scr-end">
+<div class="card" style="text-align:center"><h1 id="winText">🏆</h1>
+<div id="finalScores"></div>
+<div id="uploadMsg" class="qsub"></div>
+<div><button class="btn green" onclick="showScreen('scr-board')">📊 看全班紀錄</button>
+<button class="btn white" onclick="location.reload()">🔄 再玩一場</button></div></div>
+<div class="card"><h2>❌ 本場錯最多（下次複習用）</h2><div id="reviewList"></div></div>
+</div>
+
+<!-- 老師看板 -->
+<div class="screen" id="scr-board">
+<div class="card"><h2>📊 老師看板（讀 Supabase 歷程）</h2>
+<div><button class="btn blue small" onclick="loadBoard()">🔄 重新整理</button>
+<button class="btn white small" onclick="showScreen('scr-setup')">⬅ 回去</button></div>
+<p class="qsub">各隊答對率＋平均作答秒數＋錯題排行。沒連線時只顯示本機這一場。</p>
+<div id="boardBody"></div></div>
+</div>
+
+</div>
+<script>
+// ---------- 題庫（對應課文＋單字） ----------
+const QS=[
+{r:"R1 單字快打",t:"call 是什麼意思？",opts:["打電話；呼喊","冰淇淋","健康","嚴重的"],a:0,hint:"Bella is calling Scott."},
+{r:"R1 單字快打",t:"speak 的過去式是？",opts:["speaked","spoke","spokened","speaking"],a:1,hint:"May I speak to Scott?"},
+{r:"R1 單字快打",t:"I ___ a message to you.（課文原句）",opts:["send","sent","sended","sending"],a:1,hint:"注意過去式"},
+{r:"R1 單字快打",t:"hurt / hurt 的中文是？",opts:["冰淇淋","訊息","疼痛；受傷的","國家"],a:2,hint:"My head still hurts."},
+{r:"R2 課文克漏字",t:"Scott: I ___ a cold and had a fever.",opts:["caught","catch","catches","catching"],a:0,hint:"catch–caught 感冒了"},
+{r:"R2 課文克漏字",t:"___ didn't you see a doctor?（Bella 問 Scott）",opts:["What","How","Why","When"],a:2,hint:"問原因"},
+{r:"R2 課文克漏字",t:"___ people in my country don't always see a doctor for a cold.",opts:["Because","So","But","And"],a:0,hint:"回答原因"},
+{r:"R2 課文克漏字",t:"We only do that for ___ health problems.",opts:["serious","sorry","small","short"],a:0,hint:"嚴重的"},
+{r:"R2 課文克漏字",t:"Can you bring some ___ to me?",opts:["ice cream","messages","doctors","countries"],a:0,hint:"Scott 想吃什麼？"},
+{r:"R3 情境搶答",t:"In Scott's country, who will go to the doctor?（Look and Check）",opts:["Everyone with a cold","Only people with serious health problems","Nobody","Only Bella"],a:1,hint:"課文最後一段"},
+{r:"R3 情境搶答",t:"Why does Scott want ice cream?",opts:["He is hungry","It can help his sore throat","Bella loves it","He has a fever"],a:1,hint:"Because it can help my sore throat."},
+{r:"R3 情境搶答",t:"What did Scott do all day?",opts:["Went to work","Drank a lot of water and slept","Saw a doctor","Called Bella"],a:1,hint:"No, I didn't. I drank..."},
+];
+// ---------- 狀態 ----------
+let S={teams:[],scores:[],streak:[],qi:0,buzzer:-1,lock:false,t0:0,timer:null,session:null,events:[],left:10};
+const $=id=>document.getElementById(id);
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");window.scrollTo(0,0)}
+// ---------- Supabase（REST直連，不用SDK） ----------
+function cfg(){return {url:(localStorage.sb_url||"").replace(/\/$/,""),key:localStorage.sb_key||""}}
+async function sb(path,method,body){
+  const c=cfg();if(!c.url||!c.key)throw new Error("offline");
+  const r=await fetch(c.url+"/rest/v1/"+path,{method:method||"GET",
+    headers:{apikey:c.key,Authorization:"Bearer "+c.key,"Content-Type":"application/json",Prefer:"return=representation"}});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  const t=await r.text();return t?JSON.parse(t):null;
+}
+function refreshSync(){$("syncBadge").className="sync "+(cfg().url?"on":"off");$("syncBadge").textContent=cfg().url?"📡 已連線 Supabase":"📡 未連線（本機紀錄）"}
+function saveCfg(){
+  localStorage.sb_url=$("cfgUrl").value.trim();localStorage.sb_key=$("cfgKey").value.trim();
+  sb("battle_sessions?select=id&limit=1").then(()=>{$("cfgMsg").textContent="✅ 連線成功！可以開始對戰了";refreshSync()})
+  .catch(e=>{$("cfgMsg").textContent="❌ 連不上："+e.message+"（檢查 URL/key，或先跑 schema.sql）"});
+}
+// ---------- 開場 ----------
+const DEFN=["Bella 🔔","Scott 🤒","Doctor 🩺","IceCream 🍦"];
+function teamInputs(){
+  const n=+$("teamCount").value;let h="";
+  for(let i=0;i<n;i++)h+=`<label>第${i+1}隊 <input id="tn${i}" value="${DEFN[i]}" style="width:150px"></label> `;
+  $("teamNames").innerHTML=h;
+}
+$("teamCount").onchange=teamInputs;teamInputs();
+(function(){$("cfgUrl").value=localStorage.sb_url||"";$("cfgKey").value=localStorage.sb_key||"";refreshSync()})();
+async function startBattle(){
+  const n=+$("teamCount").value;S.teams=[];S.scores=[];S.streak=[];
+  for(let i=0;i<n;i++){S.teams.push($("tn"+i).value.trim()||("第"+(i+1)+"隊"));S.scores.push(0);S.streak.push(0)}
+  S.qi=0;S.events=[];
+  try{S.session=await sb("battle_sessions","POST",{class_name:$("className").value.trim(),lesson:"Dialogue: Bella is calling Scott",teams:S.teams});S.session=S.session[0]}
+  catch(e){S.session=null}
+  refreshSync();showScreen("scr-play");renderQ();
+}
+// ---------- 出題＋搶答＋計時 ----------
+function renderTeams(){
+  $("teamBar").innerHTML=S.teams.map((t,i)=>`<div class="team ${i===S.buzzer?'turn':''}"><div>${t}</div><div class="sc">${S.scores[i]}</div></div>`).join("");
+  $("roundBadge").textContent=`第 ${S.qi+1} / ${QS.length} 題`;
+}
+function renderQ(){
+  const q=QS[S.qi];S.buzzer=-1;S.lock=false;S.left=10;
+  $("qRound").textContent=q.r;$("qText").textContent=q.t;$("qHint").textContent="💡 "+q.hint;$("fb").textContent="";
+  const cols=["#FF7B9C","#4EA8DE","#5DA85F","#FF9F45"];
+  $("buzzRow").innerHTML=S.teams.map((t,i)=>`<button class="buzz" style="background:${cols[i%4]}" onclick="buzz(${i})">${t} 搶答 (${i+1})</button>`).join("");
+  $("optGrid").innerHTML=q.opts.map((o,i)=>`<button class="opt" id="opt${i}" onclick="answer(${i})" disabled>${String.fromCharCode(65+i)}. ${o}</button>`).join("");
+  renderTeams();startTimer();
+}
+function startTimer(){
+  clearInterval(S.timer);$("timerBar").style.width="100%";
+  S.t0=Date.now();
+  S.timer=setInterval(()=>{S.left-=0.1;$("timerBar").style.width=Math.max(0,S.left*10)+"%";
+    if(S.left<=0){clearInterval(S.timer);if(!S.lock){S.lock=true;$("fb").textContent="⏰ 時間到！換下一題";logEvent(-1,false,10000);setTimeout(()=>nextQ(),1200)}}},100);
+}
+function buzz(i){
+  if(S.lock||S.buzzer!==-1)return;S.buzzer=i;renderTeams();
+  $("fb").textContent=`🔔 ${S.teams[i]} 搶到！請作答`;
+  document.querySelectorAll(".opt").forEach(b=>b.disabled=false);speak(QS[S.qi].t);
+}
+async function answer(i){
+  if(S.lock||S.buzzer===-1){if(S.buzzer===-1)$("fb").textContent="👆 先搶答才能作答！";return}
+  S.lock=true;clearInterval(S.timer);
+  const q=QS[S.qi],ms=Date.now()-S.t0,ok=i===q.a,team=S.buzzer;
+  document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add("correct");else if(j===i)b.classList.add("wrong")});
+  if(ok){S.streak[team]++;const pts=10+(S.streak[team]>=2?2:0);S.scores[team]+=pts;
+    $("fb").textContent=`✅ 答對！+${pts}分${S.streak[team]>=2?"（連對加成！）":""}`;cheer();
+  }else{S.streak[team]=0;$("fb").textContent=`❌ 答錯了，正確答案是 ${String.fromCharCode(65+q.a)}`;document.querySelectorAll(".opt").forEach(b=>b.disabled=true)}
+  renderTeams();await logEvent(team,ok,ms,i);setTimeout(()=>nextQ(),1600);
+}
+async function logEvent(team,ok,ms,opt){
+  const ev={session_id:S.session?S.session.id:null,team:team<0?"無人":S.teams[team],player:"",round:QS[S.qi].r,qid:"Q"+(S.qi+1)+":"+QS[S.qi].t.slice(0,20),correct:ok,ms:ms};
+  S.events.push(ev);
+  if(S.session){try{await sb("battle_events","POST",ev)}catch(e){}}
+}
+function nextQ(skip){
+  if(skip&&!S.lock){S.lock=true;clearInterval(S.timer);logEvent(-1,false,10000)}
+  S.qi++;
+  if(S.qi>=QS.length)endBattle();else renderQ();
+}
+function endBattle(){
+  clearInterval(S.timer);
+  let w=0;S.scores.forEach((s,i)=>{if(s>S.scores[w])w=i});
+  $("winText").textContent=`🏆 ${S.teams[w]} 獲勝！`;
+  $("finalScores").innerHTML=S.teams.map((t,i)=>`<div>${t}：<b>${S.scores[i]}</b> 分</div>`).join("");
+  // 錯題回顧（本機）
+  const miss={};S.events.forEach(e=>{if(!e.correct){miss[e.qid]=(miss[e.qid]||0)+1}});
+  const arr=Object.entries(miss).sort((a,b)=>b[1]-a[1]);
+  $("reviewList").innerHTML=arr.length?arr.map(([q,c])=>`<div>• ${q} —— 錯 ${c} 次</div>`).join(""):"🎉 全部答對，太強了！";
+  // 上傳總分
+  (async()=>{if(S.session){try{await fetch(cfg().url+"/rest/v1/battle_sessions?id=eq."+S.session.id,{method:"PATCH",headers:{apikey:cfg().key,Authorization:"Bearer "+cfg().key,"Content-Type":"application/json"},body:JSON.stringify({winner:S.teams[w],teams:S.teams.map((t,i)=>({team:t,score:S.scores[i]}))})});$("uploadMsg").textContent="✅ 成績已上傳 Supabase"}catch(e){$("uploadMsg").textContent="⚠️ 上傳失敗，成績只存本機"}}else{$("uploadMsg").textContent="⚠️ 未連線，成績只存本機"}})();
+  showScreen("scr-end");
+}
+// ---------- 老師看板 ----------
+async function loadBoard(){
+  const B=$("boardBody");
+  try{
+    const ses=await sb("battle_sessions?select=id,class_name,lesson,winner,created_at&order=created_at.desc&limit=10");
+    const ev=await sb("battle_events?select=session_id,team,round,qid,correct,ms&order=created_at.desc&limit=500");
+    let h="<h3>最近場次</h3><table><tr><th>時間</th><th>班級</th><th>冠軍</th></tr>";
+    ses.forEach(s=>{h+=`<tr><td>${s.created_at.slice(0,16).replace("T"," ")}</td><td>${s.class_name||"-"}</td><td>${s.winner||"-"}</td></tr>`});
+    h+="</table><h3>各隊答對率（近500筆）</h3><table><tr><th>隊伍</th><th>作答</th><th>答對</th><th>答對率</th><th>平均秒數</th></tr>";
+    const g={};ev.forEach(e=>{const k=e.team;g[k]=g[k]||{n:0,h:0,ms:0};g[k].n++;if(e.correct)g[k].h++;g[k].ms+=e.ms||0});
+    Object.entries(g).forEach(([t,v])=>{h+=`<tr><td>${t}</td><td>${v.n}</td><td>${v.h}</td><td>${(v.h/v.n*100).toFixed(1)}%</td><td>${(v.ms/v.n/1000).toFixed(1)}s</td></tr>`});
+    h+="</table><h3>錯最多題目 Top5</h3><table><tr><th>題目</th><th>錯次</th></tr>";
+    const m={};ev.forEach(e=>{if(!e.correct)m[e.qid]=(m[e.qid]||0)+1});
+    Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,5).forEach(([q,c])=>{h+=`<tr><td style="text-align:left">${q}</td><td>${c}</td></tr>`});
+    B.innerHTML=h+"</table>";
+  }catch(e){B.innerHTML="⚠️ 讀不到 Supabase（"+e.message+"）。先到「連線設定」填 URL＋key 並跑過 schema.sql。本機這一場："+S.events.filter(x=>x.correct).length+"/"+S.events.length+" 答對。"}
+}
+// ---------- 音效＋發音 ----------
+function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+function speakQ(){speak(QS[S.qi].t+". "+QS[S.qi].opts.join(". "))}
+function cheer(){try{const C=new (window.AudioContext||window.webkitAudioContext)();[523,659,784].forEach((f,i)=>{const o=C.createOscillator(),g=C.createGain();o.connect(g);g.connect(C.destination);o.frequency.value=f;o.start(C.currentTime+i*.12);o.stop(C.currentTime+i*.12+.15)})}catch(e){}}
+document.addEventListener("keydown",e=>{if(!$("scr-play").classList.contains("active"))return;const i=["1","2","3","4"].indexOf(e.key);if(i>=0&&i<S.teams.length)buzz(i)});
+</script>
+</body>
+</html>
