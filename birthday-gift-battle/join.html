@@ -33,6 +33,22 @@ input{font-size:18px;padding:11px;border:3px solid #00e5ff;border-radius:10px;ba
 details{margin-top:10px}summary{cursor:pointer;color:#9fb3c8}
 .manual input{width:100%;font-size:14px;margin:4px 0}
 .big{font-size:22px;font-weight:900}
+/* ===== 🎉 派對風主題（生日禮物版） ===== */
+body{background:linear-gradient(160deg,#2b0a4e,#5c1668 45%,#b81f4d 100%)}
+.panel{background:linear-gradient(160deg,#3b0a54,#6d1568);border:3px solid #ffd93d;box-shadow:0 0 30px rgba(255,77,141,.5)}
+.qsub{color:#ffd9e8}
+input{background:#fff;color:#4a2f16;border-color:#ffd93d}
+.abtn{background:#fff;color:#4a2f16}
+.abtn:nth-child(4n+1){border-color:#ff4d8d}.abtn:nth-child(4n+2){border-color:#7b2ff7}.abtn:nth-child(4n+3){border-color:#2ec4b6}.abtn:nth-child(4n+4){border-color:#ff9f45}
+.abtn.correct{background:#c8f7c5;border-color:#00e676}
+.abtn.wrong{background:#ffd6d6;border-color:#ff1744}
+.tbtn{background:#4a1560;border-color:#8a5a9e}
+.tbtn.sel{border-color:#ffd93d;box-shadow:0 0 16px rgba(255,217,61,.7);background:#5c3a08}
+.nbtn{background:linear-gradient(90deg,#ff4d8d,#ff9f45);color:#fff;box-shadow:0 0 20px rgba(255,77,141,.6)}
+.live{background:linear-gradient(90deg,#ff4d8d,#ff9f45)}
+.bunting{font-size:22px;letter-spacing:8px;margin-bottom:6px}
+.confetti{font-size:26px;letter-spacing:10px;animation:floaty 2.2s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-8px) rotate(-4deg)}}
 </style>
 </head>
 <body>
@@ -40,7 +56,7 @@ details{margin-top:10px}summary{cursor:pointer;color:#9fb3c8}
 
 <!-- 加入 -->
 <div class="screen active" id="j-setup">
-<div class="panel"><div class="live">● LIVE</div>
+<div class="panel"><div class="bunting">🎈🎉🎂🎁⭐🍰🎈🎉</div><div class="live">🎉 PARTY TIME</div>
 <h1>🎂 生日禮物大作戰</h1>
 <p class="qsub">房號 <span class="rcode" id="jRoom">----</span></p>
 <div><input id="jName" placeholder="輸入你的名字" maxlength="12"></div>
@@ -57,7 +73,7 @@ details{margin-top:10px}summary{cursor:pointer;color:#9fb3c8}
 
 <!-- 等待 -->
 <div class="screen" id="j-wait">
-<div class="panel"><div class="pulse">📡</div>
+<div class="panel"><div class="pulse">🎈</div><div class="bunting">🎉🎂🎁</div>
 <h1>等待老師出題…</h1>
 <p class="qsub" id="jWho"></p>
 <p class="qsub">眼睛盯著大螢幕，題目一出就開搶！</p></div>
@@ -76,7 +92,7 @@ details{margin-top:10px}summary{cursor:pointer;color:#9fb3c8}
 <!-- 結束 -->
 <div class="screen" id="j-end">
 <div class="panel"><div class="live">● 終場</div>
-<h1 id="jChamp">🏆</h1>
+<h1 id="jChamp">🏆</h1><div class="confetti">🎉🎈🎂✨🎁⭐🍰</div>
 <div class="big" id="jMine" style="margin:10px 0"></div>
 <div id="jTop" class="qsub"></div></div>
 </div>
@@ -122,7 +138,7 @@ function showQ(d){
   if(d.mode){J.mode=d.mode;if(J.mode==="solo"){J.team=J.name;applyModeUI()}}
   showJ("j-q");
   $("jRound").textContent=d.round+"（第 "+d.n+" / "+d.of+" 題）";
-  $("jText").textContent=d.text;$("jHint").textContent="💡 "+d.hint;$("jFb").textContent="";
+  $("jText").textContent=d.text;$("jFb").textContent="";
   $("jOpts").innerHTML=d.opts.map((o,i)=>`<button class="abtn" onclick="answer(${i})">${String.fromCharCode(65+i)}. ${esc(o)}</button>`).join("");
   speak(d.text);
 }
@@ -130,7 +146,7 @@ async function answer(i){
   if(J.locked||!J.cur)return;J.locked=true;
   const ms=Date.now()-J.t0,ok=i===J.cur.a;J.myN++;if(ok)J.myH++;
   document.querySelectorAll("#jOpts .abtn").forEach((b,j)=>{b.disabled=true;if(j===J.cur.a)b.classList.add("correct");else if(j===i)b.classList.add("wrong")});
-  $("jFb").textContent=ok?"✅ 答對了！夠快！":"❌ 正确答案是 "+String.fromCharCode(65+J.cur.a);
+  $("jFb").textContent=(ok?"✅ 答對了！夠快！":"❌ 答案是 "+String.fromCharCode(65+J.cur.a))+" 💡 "+J.cur.hint;
   const ev={session_id:J.cur.session,team:J.team,player:J.name,round:J.cur.round,qid:J.cur.qid,correct:ok,ms:ms};
   try{await fetch(J.url+"/rest/v1/gift_events",{method:"POST",headers:{apikey:J.key,Authorization:"Bearer "+J.key,"Content-Type":"application/json",Prefer:"return:representation"},body:JSON.stringify(ev)})}catch(e){}
   try{await J.ch.send({type:"broadcast",event:"answered",payload:{qid:J.cur.qid,name:J.name,team:J.team,correct:ok}})}catch(e){}

@@ -59,6 +59,40 @@ th{background:#FFF2CC}
 .pulse{font-size:52px;animation:pp 1.2s infinite}
 @keyframes pp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:.6}}
 #scr-room table{color:#fff}#scr-room th{background:#262b5c}#scr-room th,#scr-room td{border-color:#00e5ff55}
+/* ===== 🎉 派對風主題（生日禮物版） ===== */
+body{background:linear-gradient(160deg,#2b0a4e,#5c1668 45%,#b81f4d 100%);color:#fff}
+.card{background:#fff9f0;border-color:#ffd93d;color:#4a2f16;box-shadow:0 6px 0 #7a2d52,0 0 24px rgba(255,217,61,.35)}
+.card h2,.card h3{color:#4a2f16}
+.card td{color:#4a2f16}
+.card label{color:#4a2f16}
+.card .qsub{color:#8a5a3b}
+.feedback{color:#c2145b}
+.kbd{color:#ffd9e8}
+input,select{background:#fff;color:#4a2f16;border-color:#ff4d8d}
+.btn{background:linear-gradient(180deg,#ffd93d,#ff9f45);border-color:#7a2d52;box-shadow:0 5px 0 #7a2d52;color:#4a1e2e}
+.btn.green{background:linear-gradient(180deg,#5fe08a,#2ec4b6);color:#083b36;border-color:#083b36;box-shadow:0 5px 0 #083b36}
+.btn.blue{background:linear-gradient(180deg,#7cc7ff,#7b2ff7);color:#fff;border-color:#2b0a4e;box-shadow:0 5px 0 #2b0a4e}
+.btn.pink{background:linear-gradient(180deg,#ff9ec7,#ff4d8d);color:#fff;border-color:#7a1040;box-shadow:0 5px 0 #7a1040}
+.btn.white{background:#fff;color:#4a2f16}
+.opt{background:#fff;border:3px solid #ff4d8d;color:#4a2f16}
+.opt:nth-child(4n+1){border-color:#ff4d8d}.opt:nth-child(4n+2){border-color:#7b2ff7}.opt:nth-child(4n+3){border-color:#2ec4b6}.opt:nth-child(4n+4){border-color:#ff9f45}
+.timer>div{background:linear-gradient(90deg,#ff4d8d,#ffd93d,#2ec4b6,#7b2ff7)}
+.team{background:#fff}
+.bunting{font-size:22px;letter-spacing:8px;margin-bottom:6px}
+.confetti{font-size:26px;letter-spacing:10px;animation:floaty 2.2s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-8px) rotate(-4deg)}}
+#scr-room .card.arena{background:linear-gradient(160deg,#3b0a54,#6d1568);border:3px solid #ffd93d;box-shadow:0 0 30px rgba(255,77,141,.5)}
+#scr-room .arena .qsub{color:#ffd9e8}
+#scr-room .arena .q{color:#fff}
+#scr-room .arena h2,#scr-room .arena h3{color:#fff}
+#scr-room .arena .feedback{color:#fff}
+.live{background:linear-gradient(90deg,#ff4d8d,#ff9f45)}
+.abtn{background:#fff;color:#4a2f16;border:3px solid #ff4d8d}
+.abtn:nth-child(4n+1){border-color:#ff4d8d}.abtn:nth-child(4n+2){border-color:#7b2ff7}.abtn:nth-child(4n+3){border-color:#2ec4b6}.abtn:nth-child(4n+4){border-color:#ff9f45}
+.abtn.correct{background:#c8f7c5;border-color:#00e676}
+.abtn.wrong{background:#ffd6d6;border-color:#ff1744}
+.nbtn{background:linear-gradient(90deg,#ff4d8d,#ff9f45);color:#fff;box-shadow:0 0 18px rgba(255,77,141,.6)}
+.nbtn.ghost{background:#4a1560;color:#fff;box-shadow:none;border:2px solid #ffd93d}
 </style>
 </head>
 <body>
@@ -67,6 +101,7 @@ th{background:#FFF2CC}
 <!-- 設定 / 開場 -->
 <div class="screen active" id="scr-setup">
 <div class="card" style="text-align:center">
+<div class="bunting">🎈🎉🎂🎁⭐🍰🎈🎉</div>
 <h1>🎂 生日禮物大作戰<br>Birthday Gift Battle</h1>
 <p class="qsub">Mary had a birthday party · 授與動詞＋句型克漏字＋情境搶答 · 2–4 組對戰</p>
 <div>
@@ -114,7 +149,7 @@ th{background:#FFF2CC}
 
 <!-- 結果 -->
 <div class="screen" id="scr-end">
-<div class="card" style="text-align:center"><h1 id="winText">🏆</h1>
+<div class="card" style="text-align:center"><h1 id="winText">🏆</h1><div class="confetti">🎉🎈🎂✨🎁⭐🍰</div>
 <div id="finalScores"></div>
 <div id="uploadMsg" class="qsub"></div>
 <div><button class="btn green" onclick="showScreen('scr-board')">📊 看全班紀錄</button>
@@ -133,7 +168,7 @@ th{background:#FFF2CC}
 
 <!-- 平板作答房間：競技場風 -->
 <div class="screen" id="scr-room">
-<div class="card arena" style="text-align:center"><div class="live">● LIVE</div>
+<div class="card arena" style="text-align:center"><div class="bunting">🎈🎉🎂🎁⭐🍰🎈🎉</div><div class="live">🎉 PARTY TIME</div>
 <h2 style="margin:6px 0">📱 平板作答房間</h2>
 <div>房號 <span class="rcode" id="roomCode">----</span></div>
 <div id="qrBox" style="margin:10px auto;width:236px;line-height:0"></div>
@@ -152,7 +187,7 @@ th{background:#FFF2CC}
 <div style="text-align:center;margin-top:8px"><button class="nbtn" onclick="roomNext()">⏭ 下一題</button>
 <button class="nbtn pink" onclick="roomEnd()">🏁 結束並排名</button></div>
 </div>
-<div class="card arena" id="roomEndCard" style="display:none"><h2>🏆 個人＋隊伍排名</h2><div id="roomBoard"></div>
+<div class="card arena" id="roomEndCard" style="display:none"><div class="bunting">🎈🎉🎂🎁⭐🍰🎈🎉</div><div class="confetti">🎉🎈🎂✨🎁⭐🍰</div><h2>🏆 個人＋隊伍排名</h2><div id="roomBoard"></div>
 <div style="text-align:center"><button class="nbtn ghost" onclick="closeRoom(true)">🔄 回開場</button></div></div>
 </div>
 
@@ -222,7 +257,7 @@ function renderTeams(){
 }
 function renderQ(){
   const q=QS[S.qi];S.buzzer=-1;S.lock=false;S.left=10;
-  $("qRound").textContent=q.r;$("qText").textContent=q.t;$("qHint").textContent="💡 "+q.hint;$("fb").textContent="";
+  $("qRound").textContent=q.r;$("qText").textContent=q.t;$("fb").textContent="";
   const cols=["#FF7B9C","#4EA8DE","#5DA85F","#FF9F45"];
   $("buzzRow").innerHTML=S.teams.map((t,i)=>`<button class="buzz" style="background:${cols[i%4]}" onclick="buzz(${i})">${t} 搶答 (${i+1})</button>`).join("");
   $("optGrid").innerHTML=q.opts.map((o,i)=>`<button class="opt" id="opt${i}" onclick="answer(${i})" disabled>${String.fromCharCode(65+i)}. ${o}</button>`).join("");
@@ -245,8 +280,8 @@ async function answer(i){
   const q=QS[S.qi],ms=Date.now()-S.t0,ok=i===q.a,team=S.buzzer;
   document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add("correct");else if(j===i)b.classList.add("wrong")});
   if(ok){S.streak[team]++;const pts=10+(S.streak[team]>=2?2:0);S.scores[team]+=pts;
-    $("fb").textContent=`✅ 答對！+${pts}分${S.streak[team]>=2?"（連對加成！）":""}`;cheer();
-  }else{S.streak[team]=0;$("fb").textContent=`❌ 答錯了，正確答案是 ${String.fromCharCode(65+q.a)}`;document.querySelectorAll(".opt").forEach(b=>b.disabled=true)}
+    $("fb").textContent=`✅ 答對！+${pts}分${S.streak[team]>=2?"（連對加成！）":""} 💡${q.hint}`;cheer();
+  }else{S.streak[team]=0;$("fb").textContent=`❌ 答案是 ${String.fromCharCode(65+q.a)} 💡${q.hint}`;document.querySelectorAll(".opt").forEach(b=>b.disabled=true)}
   renderTeams();await logEvent(team,ok,ms,i);setTimeout(()=>nextQ(),1600);
 }
 async function logEvent(team,ok,ms,opt){
@@ -333,7 +368,7 @@ function broadcastQ(){
   const q=QS[R.qi];R.answered={};R.hits=0;
   R.ch.send({type:"broadcast",event:"question",payload:{session:R.session.id,qid:curQid(),n:R.qi+1,of:QS.length,mode:R.mode,round:q.r,text:q.t,hint:q.hint,opts:q.opts,a:q.a}});
   $("rRound").textContent=q.r+"（第 "+(R.qi+1)+" / "+QS.length+" 題）";
-  $("rQText").textContent=q.t;$("rQHint").textContent="💡 "+q.hint;
+  $("rQText").textContent=q.t;
   $("rOpts").innerHTML=q.opts.map((o,i)=>`<div class="abtn ${i===q.a?'correct':''}">${String.fromCharCode(65+i)}. ${esc(o)}</div>`).join("");
   renderRoomQ();speak(q.t);
 }
