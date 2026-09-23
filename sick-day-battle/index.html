@@ -137,7 +137,7 @@ th{background:#FFF2CC}
 <h2 style="margin:6px 0">📱 平板作答房間</h2>
 <div>房號 <span class="rcode" id="roomCode">----</span></div>
 <div id="qrBox" style="margin:10px auto;width:236px;line-height:0"></div>
-<p class="qsub" id="roomUrl" style="word-break:break-all"></p>
+<p class="qsub">學生掃上方 QR 加入</p>
 <p class="qsub">已加入 <b id="rosterN" style="color:#fff">0</b> 人 <span id="rosterList" style="font-size:13px"></span></p>
 <div><button class="nbtn" onclick="roomStart()">📢 開始出題</button>
 <button class="nbtn ghost" onclick="closeRoom(true)">⬅ 回去</button></div>
@@ -305,7 +305,6 @@ async function openRoom(){
   const c=cfg();
   const base=location.href.split("?")[0].replace(/index\.html?$/,"");
   const joinUrl=base+"join.html?room="+R.code+"&url="+encodeURIComponent(c.url)+"&key="+encodeURIComponent(c.key);
-  $("roomUrl").textContent=joinUrl;
   $("qrBox").innerHTML="";new QRCode($("qrBox"),{text:joinUrl,width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
   if(location.protocol==="file:"){$("roomMsg").textContent="⚠️ 本機檔案開啟的 QR 平板打不開！請改用 GitHub Pages 或 Cloudflare 網址開此頁，QR 會自動跟著變"}
   try{R.session=await sb("battle_sessions","POST",{class_name:$("className").value.trim(),lesson:"Dialogue: Bella is calling Scott（平板作答）",teams:[]});R.session=R.session[0]}
