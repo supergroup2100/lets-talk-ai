@@ -181,7 +181,8 @@ function cfg(){return {url:(localStorage.sb_url||"").replace(/\/$/,""),key:local
 async function sb(path,method,body){
   const c=cfg();if(!c.url||!c.key)throw new Error("offline");
   const r=await fetch(c.url+"/rest/v1/"+path,{method:method||"GET",
-    headers:{apikey:c.key,Authorization:"Bearer "+c.key,"Content-Type":"application/json",Prefer:"return=representation"}});
+    headers:{apikey:c.key,Authorization:"Bearer "+c.key,"Content-Type":"application/json",Prefer:"return=representation"},
+    body:body===undefined?undefined:JSON.stringify(body)});
   if(!r.ok){const t=await r.text();let m="HTTP "+r.status;
     try{const j=JSON.parse(t);if(j.message)m+=" "+j.message;if(j.hint)m+="（"+j.hint+"）"}catch(e){if(t)m+=" "+t.slice(0,120)}
     throw new Error(m)}
