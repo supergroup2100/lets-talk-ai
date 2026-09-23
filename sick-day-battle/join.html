@@ -87,7 +87,12 @@ const $=id=>document.getElementById(id);
 const q=Object.fromEntries(new URLSearchParams(location.search));
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function showJ(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");window.scrollTo(0,0)}
-function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+let AU=null;function au(){if(!AU)AU=new Audio();return AU}
+function playFile(f){try{const a=au();a.pause();a.src=f;a.play().catch(function(){})}catch(e){}}
+function playQn(n){playFile("audio/q"+n+".mp3")}
+function cheer(){playFile("audio/ok"+(1+Math.floor(Math.random()*2))+".mp3")}
+function playNo(){playFile("audio/no"+(1+Math.floor(Math.random()*2))+".mp3")}
+function speak(t){if(J.cur)playQn(J.cur.n)}
 const TEAMS=["Bella 🔔","Scott 🤒","Doctor 🩺","IceCream 🍦"];
 let J={url:q.url||"",key:q.key||"",room:(q.room||"").toUpperCase(),mode:q.mode||"team",name:"",team:"",ch:null,locked:true,myH:0,myN:0,t0:0,cur:null};
 $("jRoom").textContent=J.room||"----";
@@ -128,7 +133,7 @@ function showQ(d){
 }
 async function answer(i){
   if(J.locked||!J.cur)return;J.locked=true;
-  const ms=Date.now()-J.t0,ok=i===J.cur.a;J.myN++;if(ok)J.myH++;
+  const ms=Date.now()-J.t0,ok=i===J.cur.a;J.myN++;if(ok){J.myH++;cheer()}else{playNo()}
   document.querySelectorAll("#jOpts .abtn").forEach((b,j)=>{b.disabled=true;if(j===J.cur.a)b.classList.add("correct");else if(j===i)b.classList.add("wrong")});
   $("jFb").textContent=ok?"✅ 答對了！夠快！":"❌ 正确答案是 "+String.fromCharCode(65+J.cur.a);
   const ev={session_id:J.cur.session,team:J.team,player:J.name,round:J.cur.round,qid:J.cur.qid,correct:ok,ms:ms};

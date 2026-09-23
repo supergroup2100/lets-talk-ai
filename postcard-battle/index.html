@@ -285,7 +285,7 @@ async function answer(i){
   document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add("correct");else if(j===i)b.classList.add("wrong")});
   if(ok){S.streak[team]++;const pts=10+(S.streak[team]>=2?2:0);S.scores[team]+=pts;
     $("fb").textContent=`✅ 答對！+${pts}分${S.streak[team]>=2?"（連對加成！）":""} 💡${q.hint}`;cheer();
-  }else{S.streak[team]=0;$("fb").textContent=`❌ 答案是 ${String.fromCharCode(65+q.a)} 💡${q.hint}`;document.querySelectorAll(".opt").forEach(b=>b.disabled=true)}
+  }else{playNo();S.streak[team]=0;$("fb").textContent=`❌ 答案是 ${String.fromCharCode(65+q.a)} 💡${q.hint}`;document.querySelectorAll(".opt").forEach(b=>b.disabled=true)}
   renderTeams();await logEvent(team,ok,ms,i);setTimeout(()=>nextQ(),1600);
 }
 async function logEvent(team,ok,ms,opt){
@@ -374,7 +374,7 @@ function broadcastQ(){
   $("rRound").textContent=q.r+"（第 "+(R.qi+1)+" / "+QS.length+" 題）";
   $("rQText").textContent=q.t;
   $("rOpts").innerHTML=q.opts.map((o,i)=>`<div class="abtn ${i===q.a?'correct':''}">${String.fromCharCode(65+i)}. ${esc(o)}</div>`).join("");
-  renderRoomQ();speak(q.t);
+  renderRoomQ();playQn(R.qi+1);
 }
 function renderRoomQ(){$("rAnswered").textContent=Object.keys(R.answered).length;$("rTotal").textContent=Object.keys(R.roster).length;$("rHits").textContent=R.hits}
 function roomNext(){R.qi++;if(R.qi>=QS.length)roomEnd();else broadcastQ()}
@@ -405,9 +405,14 @@ async function roomEnd(){
 }
 async function closeRoom(home){try{if(R.ch)await R.ch.unsubscribe()}catch(e){}R.ch=null;if(home)showScreen("scr-setup")}
 // ---------- 音效＋發音 ----------
-function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
-function speakQ(){speak(QS[S.qi].t+". "+QS[S.qi].opts.join(". "))}
-function cheer(){try{const C=new (window.AudioContext||window.webkitAudioContext)();[523,659,784].forEach((f,i)=>{const o=C.createOscillator(),g=C.createGain();o.connect(g);g.connect(C.destination);o.frequency.value=f;o.start(C.currentTime+i*.12);o.stop(C.currentTime+i*.12+.15)})}catch(e){}}
+let AU=null;function au(){if(!AU)AU=new Audio();return AU}
+function playFile(f){try{const a=au();a.pause();a.src=f;a.play().catch(function(){})}catch(e){}}
+function playQn(n){playFile("audio/q"+n+".mp3")}
+function playFb(ok){playFile(ok?"audio/ok"+(1+Math.floor(Math.random()*2))+".mp3":"audio/no"+(1+Math.floor(Math.random()*2))+".mp3")}
+function speak(t){playQn(S.qi+1)}
+function speakQ(){playQn(S.qi+1)}
+function cheer(){playFb(true)}
+function playNo(){playFb(false)}
 document.addEventListener("keydown",e=>{if(!$("scr-play").classList.contains("active"))return;const i=["1","2","3","4"].indexOf(e.key);if(i>=0&&i<S.teams.length)buzz(i)});
 </script>
 </body>
