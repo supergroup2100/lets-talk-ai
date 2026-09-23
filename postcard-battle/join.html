@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>明信片大作戰｜學生作答 ARENA</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang TC","Microsoft JhengHei",system-ui,sans-serif;background:radial-gradient(1200px 800px at 50% -10%,#2b1a5e,#0b0e24 70%);color:#fff;min-height:100vh}
+.wrap{max-width:640px;margin:0 auto;padding:16px 14px 60px}
+.screen{display:none}.screen.active{display:block;animation:pop .3s ease}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.panel{background:linear-gradient(160deg,#141838,#241245);border:3px solid #00e5ff;border-radius:16px;padding:20px;margin:12px 0;box-shadow:0 0 26px rgba(0,229,255,.35);text-align:center}
+.live{display:inline-block;background:#ff2e88;color:#fff;font-weight:900;padding:4px 16px;border-radius:6px;letter-spacing:4px;animation:blink 1.1s infinite}
+@keyframes blink{50%{opacity:.5}}
+h1{font-size:30px;text-shadow:0 0 18px rgba(0,229,255,.7)}
+.q{font-size:23px;font-weight:900;margin:10px 0;line-height:1.6}
+.qsub{color:#9fb3c8;margin:8px 0}
+.rcode{font-size:40px;font-weight:900;letter-spacing:8px;color:#ffd93d;text-shadow:0 0 20px rgba(255,217,61,.85)}
+input{font-size:18px;padding:11px;border:3px solid #00e5ff;border-radius:10px;background:#0b0e24;color:#fff;margin:4px;width:200px;text-align:center}
+.abtn{display:block;width:100%;margin:8px 0;padding:15px;font-size:19px;font-weight:900;text-align:left;color:#fff;background:#1c2148;border:3px solid #00e5ff;border-radius:10px;cursor:pointer}
+.abtn.correct{border-color:#00e676;background:#0c3a24;box-shadow:0 0 20px rgba(0,230,118,.7)}
+.abtn.wrong{border-color:#ff1744;background:#3a0c18;box-shadow:0 0 20px rgba(255,23,68,.7)}
+.abtn:disabled{cursor:default}
+.abtn:not(:disabled):active{transform:scale(.98)}
+.tbtn{display:inline-block;margin:6px;padding:12px 16px;font-size:17px;font-weight:900;color:#fff;background:#262b5c;border:3px solid #556;border-radius:10px;cursor:pointer}
+.tbtn.sel{border-color:#ffd93d;box-shadow:0 0 16px rgba(255,217,61,.7);background:#3a2f10}
+.nbtn{display:inline-block;border:none;border-radius:10px;padding:14px 30px;font-size:19px;font-weight:900;cursor:pointer;color:#0b0e24;background:linear-gradient(90deg,#00e5ff,#7c4dff);box-shadow:0 0 20px rgba(0,229,255,.6);margin:8px}
+.nbtn:active{transform:translateY(2px)}
+.feedback{min-height:30px;font-size:18px;font-weight:900;text-align:center;margin-top:8px}
+.pulse{font-size:56px;animation:pp 1.2s infinite}
+@keyframes pp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:.6}}
+details{margin-top:10px}summary{cursor:pointer;color:#9fb3c8}
+.manual input{width:100%;font-size:14px;margin:4px 0}
+.big{font-size:22px;font-weight:900}
+/* ===== ✈️ 環遊世界郵政風主題 ===== */
+body{background:linear-gradient(180deg,#1b6ca8,#4ea8de 55%,#cdeffd)}
+.panel{position:relative;background:linear-gradient(160deg,#0f2a43,#1d3557);border:3px solid #ffd93d;box-shadow:0 0 30px rgba(78,168,222,.5)}
+.panel::before{content:"";display:block;height:12px;margin:-21px -21px 12px;border-radius:10px 10px 0 0;background:repeating-linear-gradient(-45deg,#e63946 0 12px,#fff 12px 24px,#1d3557 24px 36px,#fff 36px 48px)}
+.qsub{color:#bde0fe}
+input{background:#fff;color:#1d3557;border-color:#ffd93d}
+.abtn{background:#fff;color:#1d3557}
+.abtn:nth-child(4n+1){border-color:#e63946}.abtn:nth-child(4n+2){border-color:#1d3557}.abtn:nth-child(4n+3){border-color:#2a9d8f}.abtn:nth-child(4n+4){border-color:#f4a261}
+.abtn.correct{background:#c8f7c5;border-color:#00e676}
+.abtn.wrong{background:#ffd6d6;border-color:#ff1744}
+.tbtn{background:#16324f;border-color:#5aa9e6}
+.tbtn.sel{border-color:#ffd93d;box-shadow:0 0 16px rgba(255,217,61,.7);background:#5c3a08}
+.nbtn{background:linear-gradient(90deg,#e63946,#f4a261);color:#fff;box-shadow:0 0 20px rgba(230,57,70,.55)}
+.live{background:linear-gradient(90deg,#1d3557,#e63946)}
+.travel{font-size:22px;letter-spacing:8px;margin-bottom:6px}
+.fly{display:inline-block;animation:fly 3.5s ease-in-out infinite}
+@keyframes fly{0%,100%{transform:translateX(-24px)}50%{transform:translateX(24px)}}
+.floaty{font-size:26px;letter-spacing:10px;animation:floaty 2.2s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-8px)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 加入 -->
+<div class="screen active" id="j-setup">
+<div class="panel"><div class="travel">✈️🌍💌📮🧳🗾✈️🌍</div><div class="fly">✈️</div><div class="live">✈️ LIVE</div>
+<h1>💌 明信片大作戰</h1>
+<p class="qsub">房號 <span class="rcode" id="jRoom">----</span></p>
+<div><input id="jName" placeholder="輸入你的名字" maxlength="12"></div>
+<div id="jTeamBlock"><div class="qsub">選你的隊伍</div><div id="jTeams"></div></div>
+<div class="qsub" id="jSoloNote" style="display:none">🦁 個人戰：不分隊，全班單人對決！</div>
+<div><button class="nbtn" onclick="joinRoom()">⚡ 加入戰局</button></div>
+<p id="jMsg" class="feedback"></p>
+<details><summary>掃碼沒帶出資料？點此手動填</summary>
+<div class="manual"><input id="jRoomIn" placeholder="房號（4 碼，問老師）">
+<input id="jUrlIn" placeholder="Project URL（問老師）">
+<input id="jKeyIn" placeholder="anon key（問老師）"></div></details>
+</div>
+</div>
+
+<!-- 等待 -->
+<div class="screen" id="j-wait">
+<div class="panel"><div class="pulse">✈️</div><div class="travel">🌍💌📮</div>
+<h1>等待老師出題…</h1>
+<p class="qsub" id="jWho"></p>
+<p class="qsub">眼睛盯著大螢幕，題目一出就開搶！</p></div>
+</div>
+
+<!-- 作答 -->
+<div class="screen" id="j-q">
+<div class="panel"><div class="live">● 作答中</div>
+<div id="jRound" class="qsub"></div>
+<div class="q" id="jText"></div>
+<div class="qsub" id="jHint"></div>
+<div id="jOpts"></div>
+<div class="feedback" id="jFb"></div></div>
+</div>
+
+<!-- 結束 -->
+<div class="screen" id="j-end">
+<div class="panel"><div class="live">● 終場</div>
+<h1 id="jChamp">🏆</h1><div class="floaty">✈️🌍💌✨📮⭐🧳</div>
+<div class="big" id="jMine" style="margin:10px 0"></div>
+<div id="jTop" class="qsub"></div></div>
+</div>
+
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const q=Object.fromEntries(new URLSearchParams(location.search));
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function showJ(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");window.scrollTo(0,0)}
+function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+const TEAMS=["Jenny 🤓","Tina 💃","Annie 💌","Ben 🗾"];
+let J={url:q.url||"",key:q.key||"",room:(q.room||"").toUpperCase(),mode:q.mode||"team",name:"",team:"",ch:null,locked:true,myH:0,myN:0,t0:0,cur:null};
+$("jRoom").textContent=J.room||"----";
+$("jTeams").innerHTML=TEAMS.map(t=>`<button class="tbtn" data-t="${esc(t)}" onclick="pickTeam(this)">${esc(t)}</button>`).join("");
+function applyModeUI(){const solo=J.mode==="solo";$("jTeamBlock").style.display=solo?"none":"block";$("jSoloNote").style.display=solo?"block":"none"}
+applyModeUI();
+function pickTeam(b){J.team=b.dataset.t;document.querySelectorAll(".tbtn").forEach(x=>x.classList.remove("sel"));b.classList.add("sel")}
+async function joinRoom(){
+  J.name=$("jName").value.trim();
+  if(!J.name){$("jMsg").textContent="⚠️ 先輸入名字！";return}
+  if(J.mode==="solo")J.team=J.name;
+  if(!J.team){$("jMsg").textContent="⚠️ 先選一支隊伍！";return}
+  if($("jRoomIn").value.trim())J.room=$("jRoomIn").value.trim().toUpperCase();
+  if($("jUrlIn").value.trim())J.url=$("jUrlIn").value.trim();
+  if($("jKeyIn").value.trim())J.key=$("jKeyIn").value.trim();
+  if(!J.room||!J.url||!J.key){$("jMsg").textContent="❌ 缺少房號或連線資料，展開下方手動填（問老師）";return}
+  $("jMsg").textContent="⏳ 加入中…";
+  try{
+    const {createClient}=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+    const supa=createClient(J.url,J.key);
+    J.ch=supa.channel("postcard-room-"+J.room);
+    J.ch.on("broadcast",{event:"question"},({payload:d})=>showQ(d));
+    J.ch.on("broadcast",{event:"end"},({payload:d})=>showEnd(d||{}));
+    await J.ch.subscribe();
+    await J.ch.send({type:"broadcast",event:"join",payload:{name:J.name,team:J.team}});
+  }catch(e){$("jMsg").textContent="❌ 加入失敗："+e.message+"（檢查網路＋房號）";return}
+  $("jWho").textContent=J.mode==="solo"?J.name+"・個人戰・房號 "+J.room:J.name+"・"+J.team+"・房號 "+J.room;
+  showJ("j-wait");
+}
+function showQ(d){
+  J.cur=d;J.locked=false;J.t0=Date.now();
+  if(d.mode){J.mode=d.mode;if(J.mode==="solo"){J.team=J.name;applyModeUI()}}
+  showJ("j-q");
+  $("jRound").textContent=d.round+"（第 "+d.n+" / "+d.of+" 題）";
+  $("jText").textContent=d.text;$("jFb").textContent="";
+  $("jOpts").innerHTML=d.opts.map((o,i)=>`<button class="abtn" onclick="answer(${i})">${String.fromCharCode(65+i)}. ${esc(o)}</button>`).join("");
+  speak(d.text);
+}
+async function answer(i){
+  if(J.locked||!J.cur)return;J.locked=true;
+  const ms=Date.now()-J.t0,ok=i===J.cur.a;J.myN++;if(ok)J.myH++;
+  document.querySelectorAll("#jOpts .abtn").forEach((b,j)=>{b.disabled=true;if(j===J.cur.a)b.classList.add("correct");else if(j===i)b.classList.add("wrong")});
+  $("jFb").textContent=(ok?"✅ 答對了！夠快！":"❌ 答案是 "+String.fromCharCode(65+J.cur.a))+" 💡 "+J.cur.hint;
+  const ev={session_id:J.cur.session,team:J.team,player:J.name,round:J.cur.round,qid:J.cur.qid,correct:ok,ms:ms};
+  try{await fetch(J.url+"/rest/v1/postcard_events",{method:"POST",headers:{apikey:J.key,Authorization:"Bearer "+J.key,"Content-Type":"application/json",Prefer:"return:representation"},body:JSON.stringify(ev)})}catch(e){}
+  try{await J.ch.send({type:"broadcast",event:"answered",payload:{qid:J.cur.qid,name:J.name,team:J.team,correct:ok}})}catch(e){}
+}
+function showEnd(d){
+  showJ("j-end");
+  $("jChamp").textContent="🏆 "+(d.champion?d.champion+" 奪冠！":"比賽結束！");
+  $("jMine").innerHTML=esc(J.name)+"：<b>"+J.myH+"</b> / "+J.myN+" 答對";
+  $("jTop").innerHTML=(d.top&&d.top.length)?"<div>前 5 強</div>"+d.top.map((t,i)=>`<div>${i+1}. ${esc(t.p)} —— ${t.h}/${t.n}</div>`).join(""):"";
+}
+</script>
+</body>
+</html>
