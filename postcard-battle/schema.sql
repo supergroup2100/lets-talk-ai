@@ -51,6 +51,7 @@ alter table public.postcard_events enable row level security;
 drop policy if exists "anon read postcard sessions" on public.postcard_sessions;
 create policy "anon read postcard sessions" on public.postcard_sessions for select to anon using (true);
 drop policy if exists "anon insert postcard sessions" on public.postcard_sessions;
+create policy "anon insert postcard sessions" on public.postcard_sessions for insert to anon with check (true);
 
 drop policy if exists "anon read postcard events" on public.postcard_events;
 create policy "anon read postcard events" on public.postcard_events for select to anon using (true);
