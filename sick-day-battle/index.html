@@ -182,7 +182,9 @@ async function sb(path,method,body){
   const c=cfg();if(!c.url||!c.key)throw new Error("offline");
   const r=await fetch(c.url+"/rest/v1/"+path,{method:method||"GET",
     headers:{apikey:c.key,Authorization:"Bearer "+c.key,"Content-Type":"application/json",Prefer:"return=representation"}});
-  if(!r.ok)throw new Error("HTTP "+r.status);
+  if(!r.ok){const t=await r.text();let m="HTTP "+r.status;
+    try{const j=JSON.parse(t);if(j.message)m+=" "+j.message;if(j.hint)m+="（"+j.hint+"）"}catch(e){if(t)m+=" "+t.slice(0,120)}
+    throw new Error(m)}
   const t=await r.text();return t?JSON.parse(t):null;
 }
 function refreshSync(){$("syncBadge").className="sync "+(cfg().url?"on":"off");$("syncBadge").textContent=cfg().url?"📡 已連線 Supabase":"📡 未連線（本機紀錄）"}
@@ -299,14 +301,14 @@ async function openRoom(){
     await new Promise((res,rej)=>{if(window.QRCode)return res();const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s)});
     R.supa=createClient(cfg().url,cfg().key);
   }catch(e){$("roomMsg").textContent="❌ 載入即時函式庫失敗（教室電腦要能上網）："+e.message;return}
-  try{R.session=await sb("battle_sessions","POST",{class_name:$("className").value.trim(),lesson:"Dialogue: Bella is calling Scott（平板作答）",teams:[]});R.session=R.session[0]}
-  catch(e){$("roomMsg").textContent="❌ 建場次失敗："+e.message+"（先跑 schema.sql 再開房）";return}
   const c=cfg();
   const base=location.href.split("?")[0].replace(/index\.html?$/,"");
   const joinUrl=base+"join.html?room="+R.code+"&url="+encodeURIComponent(c.url)+"&key="+encodeURIComponent(c.key);
   $("roomUrl").textContent=joinUrl;
   $("qrBox").innerHTML="";new QRCode($("qrBox"),{text:joinUrl,width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
   if(location.protocol==="file:"){$("roomMsg").textContent="⚠️ 本機檔案開啟的 QR 平板打不開！請改用 GitHub Pages 或 Cloudflare 網址開此頁，QR 會自動跟著變"}
+  try{R.session=await sb("battle_sessions","POST",{class_name:$("className").value.trim(),lesson:"Dialogue: Bella is calling Scott（平板作答）",teams:[]});R.session=R.session[0]}
+  catch(e){$("roomMsg").textContent="❌ 建場次失敗："+e.message+"（看到 Invalid API key 就是 key 跟專案對不上，去 Data API 重抄）";return}
   R.ch=R.supa.channel("sdb-room-"+R.code);
   R.ch.on("broadcast",{event:"join"},({payload:d})=>{if(!d||!d.name)return;R.roster[d.name]={name:d.name,team:d.team};renderRoster()});
   R.ch.on("broadcast",{event:"answered"},({payload:d})=>{if(!d||d.qid!==curQid()||R.answered[d.name])return;R.answered[d.name]=d;if(d.correct)R.hits++;renderRoomQ()});
