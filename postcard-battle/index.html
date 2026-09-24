@@ -185,7 +185,7 @@ input,select{background:#fff;color:#1d3557;border-color:#1d3557}
 <p id="roomMsg" class="feedback"></p></div>
 <div class="card arena" id="roomQCard" style="display:none">
 <div id="rRound" class="qsub"></div>
-<div class="q" id="rQText"></div>
+<div class="q" id="rQText" onclick="revealA()" title="老師點一下公布／隱藏答案" style="cursor:pointer"></div>
 <div class="qsub" id="rQHint"></div>
 <div style="font-size:18px;font-weight:900">已作答 <b id="rAnswered">0</b> / <span id="rTotal">0</span> 人 · 答對 <b id="rHits">0</b></div>
 <div id="rOpts" style="margin-top:8px"></div>
@@ -375,9 +375,10 @@ function broadcastQ(){
   R.ch.send({type:"broadcast",event:"question",payload:{session:R.session.id,qid:curQid(),n:R.qi+1,of:QS.length,mode:R.mode,round:q.r,text:q.t,hint:q.hint,opts:q.opts,a:q.a}});
   $("rRound").textContent=q.r+"（第 "+(R.qi+1)+" / "+QS.length+" 題）";
   $("rQText").textContent=q.t;
-  $("rOpts").innerHTML=q.opts.map((o,i)=>`<div class="abtn ${i===q.a?'correct':''}">${String.fromCharCode(65+i)}. ${esc(o)}</div>`).join("");
+  $("rOpts").innerHTML=q.opts.map((o,i)=>`<div class="abtn" id="ropt${i}">${String.fromCharCode(65+i)}. ${esc(o)}</div>`).join("");
   renderRoomQ();playQn(R.qi+1);
 }
+function revealA(){if(R.qi<0||R.qi>=QS.length)return;const b=document.getElementById("ropt"+QS[R.qi].a);if(b)b.classList.toggle("correct")}
 function renderRoomQ(){$("rAnswered").textContent=Object.keys(R.answered).length;$("rTotal").textContent=Object.keys(R.roster).length;$("rHits").textContent=R.hits}
 function roomNext(){R.qi++;if(R.qi>=QS.length)roomEnd();else broadcastQ()}
 async function roomEnd(){
