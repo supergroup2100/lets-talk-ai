@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rex 餐廳大冒險</title>
+<style>
+:root{--bg:#cfeedd;--card:#fff;--ink:#17342c;--pop:#ff6b4a;--sun:#ffc93c;--ok:#2fa866;--bad:#e5484d;--line:#17342c;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10261f;--card:#1b3a31;--ink:#eafaf1;--line:#eafaf1}}
+:root[data-theme="dark"]{--bg:#10261f;--card:#1b3a31;--ink:#eafaf1;--line:#eafaf1}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Chalkboard SE","Comic Sans MS","Marker Felt","PingFang TC","Noto Sans TC",system-ui,sans-serif;font-size:17px;line-height:1.5}
+main{max-width:640px;margin:0 auto;padding:14px}
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:700;margin-bottom:10px}
+.box{background:var(--card);border:3px solid var(--line);border-radius:18px;box-shadow:5px 5px 0 var(--line);padding:16px;margin-bottom:16px}
+.rex{display:flex;gap:10px;align-items:flex-start}
+.rex .face{font-size:54px;line-height:1}
+.bub{flex:1;background:var(--sun);color:#17342c;border:3px solid var(--line);border-radius:16px;padding:10px 14px;font-weight:700}
+.bub.bad{background:#ffd9d6}
+h1{font-size:30px;margin:0 0 6px}h2{font-size:22px;margin:0 0 6px}
+button,input{font:inherit;color:var(--ink);background:var(--card);border:3px solid var(--line);border-radius:14px}
+button{cursor:pointer;box-shadow:3px 3px 0 var(--line);padding:9px 14px;font-weight:700}
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+button:focus-visible,input:focus-visible{outline:4px solid var(--pop);outline-offset:2px}
+button:disabled{cursor:default;opacity:.9}
+input{padding:9px 12px;font-size:26px;width:100%;max-width:300px;text-align:center}
+.go{background:var(--pop);color:#fff;font-size:19px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:12px}
+.grid button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:18px}
+.grid button span{font-size:28px}
+.ok{background:var(--ok)!important;color:#fff!important}.no{background:var(--bad)!important;color:#fff!important}
+.opts{display:grid;gap:10px;margin-top:12px}.opts button{text-align:left;font-size:19px}
+.bar{height:14px;border:3px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;width:100%;background:var(--pop);transition:width 10s linear}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.c{justify-content:center}
+.sfx{font-size:30px;font-weight:900;color:var(--pop);margin-top:10px}
+.big{font-size:40px;font-weight:900;text-align:center;margin:10px 0}
+.small{font-size:14px;opacity:.8}
+.t{min-width:46px;font-size:24px}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style></head><body><main>
+<div class="top"><span id="lv">🦖 Rex 餐廳</span><span id="st"></span></div>
+<div id="app"></div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const AUDIO={};/* 真人錄音檔:AUDIO["hand"]="data:audio/mpeg;base64,...",鍵值是要念的英文原句 */
+let au;
+const pickVoice=()=>{try{const v=speechSynthesis.getVoices().filter(x=>/^en[-_](US|GB)/i.test(x.lang));for(const r of [/natural|neural|online/i,/google (us|uk)/i,/samantha|ava|allison|aria|jenny|zoe|serena|daniel/i,/en[-_]US/i]){const f=v.find(x=>r.test(x.name+" "+x.lang));if(f)return f}}catch(e){}};
+const say=t=>{try{if(au){au.pause();au=null}speechSynthesis.cancel()}catch(e){}
+if(AUDIO[t]){try{au=new Audio(AUDIO[t]);au.play();return}catch(e){}}
+try{const u=new SpeechSynthesisUtterance(t);const v=pickVoice();if(v){u.voice=v;u.lang=v.lang}else u.lang="en-US";u.rate=.85;speechSynthesis.speak(u)}catch(e){}};
+const W=[["please","請","🙏"],["put","放","⬇️"],["dish","菜餚","🍽️"],["let’s","讓我們…","🤝"],["try","嘗試","👅"],["beef noodles","牛肉麵","🍜"],["use","使用","🔧"],["chopsticks","筷子","🥢"],["delicious","美味的","😋"],["guys","大家","👥"],["just","就、只是","☝️"],["hand","手","✋"],["bring","帶","🎒"]];
+const Q1=[["I want beef noodles!","beef noodles"],["My hand is too short!","hand"],["Where are my chopsticks?","chopsticks"],["Which dish is mine?","dish"],["Mmm, it’s delicious!","delicious"],["Hey guys, come here!","guys"],["Please sit down!","please"],["Ham! I want ham!","NO!"],["Try it, try it!","try"],["Just a little, thanks!","just"]];
+const SP=[["hand","手","✋",["h","a","nd"]],["dish","菜餚","🍽️",["d","i","sh"]],["put","放","⬇️",["p","u","t"]],["use","使用","🔧",["u","se"]],["try","嘗試","👅",["tr","y"]],["just","就、只是","☝️",["j","u","st"]],["guys","大家","👥",["g","uy","s"]],["please","請","🙏",["pl","ea","se"]]];
+const G=["ch","ea","ee","oo","th","ar"];
+const OK=["YES! You’re great!","CRUNCH! Good ears!","Wow! You know it!","YUM! Good job!","CRUNCH! That’s right!","ROAR! You’re great!","CRUNCH! Every letter is right!","YES! Great spelling!"];
+const R=[{o:["ROAR! I’m Rex! I’m so hungry!","Listen, guys! Raise the right card!"],s:[OK[0],OK[1]],f:["Oh no! Let’s try again.","Hmm... Listen once more!"]},
+{o:["Look at my words, guys!","What do they mean? Help me!"],s:[OK[2],OK[3]],f:["Hmm, close! Try one more time.","Don’t worry. Let’s try again."]},
+{o:["Now I say it in Chinese!","Find the right word, guys!"],s:[OK[4],OK[5]],f:["Oops! Look again.","Let’s try one more time, guys!"]},
+{o:["Help me spell my words!","Put the sounds together, guys!"],s:[OK[6],OK[7]],f:["Oops, one letter is wrong.","Don’t worry. Try again, guys!"]},
+{o:["Oh no! My words are wrong!","Help me, guys! Fix my sentence!"],s:["Wow! Now it’s right!","YUM! Thank you!"],f:["Hmm, close! Try one more time.","Don’t worry. Let’s fix it together."]},
+{o:["The tables are ready!","Waiters, help me! Guests, come and eat!"],s:["It’s delicious! Five stars!","ROAR! You’re my little cooks!"],f:["Oops, my noodles are cold. Try again!","Let’s try one more time, guys!"]}];
+const NAME=["關一:聽音抓字 👂","關二:看英文,挑中文 🔎","關三:看中文,挑英文 🔤","關四:拼音連寫 ✍️","加分關:句子修理工 🔧","加分關:Rex 的點餐台 🍽️"];
+const RULE=["Rex 大聲點餐,每題 10 秒內點選正確的字卡。注意!有一題 Rex 念錯了,沒有那張卡,要按 NO!。","看英文單字,從 4 個中文意思中選出正確的。共 10 題,按 🔊 可以聽發音。","看中文意思,從 4 個英文單字中選出正確的。共 10 題。","先聽發音,把拼音小方塊依序點好,再把整個字連寫出來。共 8 個字,第一次就寫對得 1 分。","Rex 把句子說錯了!看圖提示,選出正確的句子,再大聲說一次。共 6 題,答對 1 分,大聲說一次再加 1 分。","你是 Rex 的恐龍客人,選出每次要回答服務生的句子。最後找同學一起演一遍,演完加 2 分。"];
+const F=[()=>q1(),()=>mc(0),()=>mc(1),()=>q4(),()=>q5(),()=>q6()];
+const MAX=[10,10,10,8,12,6];
+let S,tm;
+const app=$("app");
+const draw=h=>{app.innerHTML=h;scrollTo(0,0)};
+const stars=()=>{$("st").textContent="⭐".repeat(S.stars)+"☆".repeat(5-S.stars)};
+const rex=(t,bad)=>`<div class="rex"><div class="face">🦖</div><div class="bub ${bad?"bad":""}">${t}</div></div>`;
+const line=ok=>`<div class="sfx">${ok?pick(["CRUNCH!","YUM!","ROAR!"]):"Oops!"}</div>${rex(pick(R[S.n][ok?"s":"f"]),!ok)}`;
+const nextBtn=`<div class="row"><button class="go" onclick="next()">繼續</button></div>`;
+function start(){S={stars:0,bonus:0,pts:[0,0,0,0,0,0]};stars();$("lv").textContent="🦖 Rex 餐廳";
+draw(`<div class="box"><h1>Rex 餐廳大冒險</h1>${rex("恐龍島上,暴龍 Rex 開了第一家餐廳,可是他的短手寫不了菜單、端不了盤子!")}<p>請你當「Rex 餐廳的小幫手」,闖過四關,拿到「五星小廚師徽章」⭐</p><p class="small">建議開聲音。如果聽不到,請按每題的 🔊 再試一次。</p><button class="go" onclick="intro(0)">出發!ROAR!</button></div>`)}
+function intro(n){S.n=n;S.i=0;S.pts[n]=0;S.qs=sh(W).slice(0,10);$("lv").textContent=NAME[n];
+draw(`<div class="box"><h2>${NAME[n]}</h2>${rex(pick(R[n].o))}<p>${RULE[n]}</p><button class="go" onclick="F[${n}]()">開始</button></div>`)}
+function next(){S.i++;F[S.n]()}
+/* 關一 */
+function q1(){if(S.i>=10)return end();clearTimeout(tm);const q=Q1[S.i];
+draw(`<div class="box"><b>第 ${S.i+1} / 10 題</b>${rex("Listen!")}<div class="bar"><i id="b"></i></div>
+<div class="row"><button onclick="say(Q1[S.i][0])">🔊 再聽一次</button></div>
+<div class="grid" id="g">${W.map(w=>`<button data-w="${w[0]}" onclick="a1(this,'${w[0]}')"><span>${w[2]}</span>${w[0]}</button>`).join("")}<button data-w="NO!" onclick="a1(this,'NO!')"><span>❌</span>NO!</button></div><div id="fb"></div></div>`);
+say(q[0]);setTimeout(()=>{const b=$("b");if(b)b.style.width="0%"},50);
+tm=setTimeout(()=>a1(null,""),10000)}
+function a1(el,w){clearTimeout(tm);const c=Q1[S.i][1],ok=w===c;if(ok)S.pts[0]++;
+document.querySelectorAll("#g button").forEach(b=>{b.disabled=true;if(b.dataset.w===c)b.classList.add("ok")});
+if(el&&!ok)el.classList.add("no");
+$("fb").innerHTML=(w===""?"<p>時間到!</p>":"")+(!ok&&c==="NO!"?"<p>這是陷阱:ham 是火腿,hand 是手。</p>":"")+line(ok)+nextBtn}
+/* 關二、關三 */
+function mc(d){if(S.i>=10)return end();const it=S.qs[S.i],k=d?0:1;S.cor=it[k];
+S.o=sh([S.cor,...sh(W.filter(x=>x!==it).map(x=>x[k])).slice(0,3)]);
+draw(`<div class="box"><b>第 ${S.i+1} / 10 題</b><div class="big">${d?it[1]:it[0]}</div>${d?"":`<div class="row c"><button onclick="say(S.qs[S.i][0])">🔊 聽發音</button></div>`}
+<div class="opts">${S.o.map((o,j)=>`<button onclick="am(${j})">${o}</button>`).join("")}</div><div id="fb"></div></div>`);
+if(!d)say(it[0])}
+function am(j){const ok=S.o[j]===S.cor;if(ok)S.pts[S.n]++;
+document.querySelectorAll(".opts button").forEach((b,i)=>{b.disabled=true;if(S.o[i]===S.cor)b.classList.add("ok")});
+if(!ok)document.querySelectorAll(".opts button")[j].classList.add("no");
+say(S.qs[S.i][0]);
+$("fb").innerHTML=line(ok)+(ok?"":`<p>正確是:<b>${S.qs[S.i][0]} = ${S.qs[S.i][1]}</b></p>`)+nextBtn}
+/* 關四:拼音連寫 */
+function q4(){if(S.i>=8)return end();const s=SP[S.i];S.w=s[0];S.ch=s[3];S.tr=1;S.ans=[];S.done=0;
+S.t=sh([...S.ch,pick(G.filter(c=>!S.ch.includes(c)))].map(c=>({c,u:0})));
+draw(`<div class="box"><b>第 ${S.i+1} / 8 個字</b><div class="big">${s[2]}</div><p style="text-align:center;font-size:22px"><b>${s[1]}</b></p>
+<div class="row c"><button onclick="say(S.w)">🔊 聽發音</button><button onclick="clr()">清除</button></div>
+<p class="small" id="msg" style="text-align:center">第一步:依照聽到的聲音,把拼音方塊依序點好</p>
+<div id="slots" class="row c"></div><div id="tiles" class="row c"></div><div id="fb"></div></div>`);
+say(S.w);paint()}
+function paint(){$("slots").innerHTML=S.ch.map((_,i)=>`<button class="t" disabled>${S.ans[i]?S.ans[i].c:"_"}</button>`).join("");
+$("tiles").innerHTML=S.t.map((t,i)=>`<button class="t" ${t.u?"disabled style='opacity:.3'":""} onclick="tap(${i})">${t.c}</button>`).join("")}
+function clr(){if(S.done||S.step2)return;S.t.forEach(t=>t.u=0);S.ans=[];paint()}
+function tap(i){const t=S.t[i];if(t.u||S.done)return;t.u=1;S.ans.push(t);paint();
+if(S.ans.length===S.ch.length){if(S.ans.map(x=>x.c).join("|")===S.ch.join("|"))step2();else{$("msg").textContent="順序不對,再試一次。";setTimeout(clr,800)}}}
+function step2(){S.step2=1;$("msg").textContent="拼音完成!第二步:提示會消失,把整個字連寫出來";$("tiles").innerHTML="";
+$("slots").innerHTML=`<b style="font-size:26px">${S.ch.join(" · ")}</b>`;setTimeout(()=>{if(S.step2&&S.tr===1)$("slots").innerHTML=""},1800);
+$("fb").innerHTML=`<div class="row c"><input id="inp" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="單字" onkeydown="if(event.key==='Enter')chk4()"><button class="go" onclick="chk4()">確認</button></div>`;$("inp").focus()}
+function chk4(){const v=$("inp").value.trim().toLowerCase();if(!v)return;
+if(v===S.w){S.done=1;S.step2=0;if(S.tr===1)S.pts[3]++;say(S.w);$("fb").innerHTML=`<p class="big">${S.w} ✅</p>`+line(1)+nextBtn}
+else if(S.tr===1){S.tr=2;$("inp").value="";$("slots").innerHTML=`<b style="font-size:26px">${S.ch.join(" · ")}</b>`;$("msg").textContent="差一點!看看拼音提示,再寫一次(這次不計分)"}
+else{S.done=1;S.step2=0;$("fb").innerHTML=`<p class="big">${S.w}</p>`+line(0)+nextBtn}}
+/* 加分關:句子修理工 */
+const Q5=[["🍜","Let’s try chopsticks.",["Let’s try the beef noodles.","Let’s try the hand.","Let’s use the beef noodles."]],
+["🍽️ ➜ 🪑","Please put chopsticks on the dish.",["Please put the dish on the table.","Please put the table on the dish.","Please bring the dish on the table."]],
+["✋✅ 🥢❌","Use chopsticks, not your hands.",["Use your hands, not chopsticks.","Use your hands, no chopsticks.","Use chopsticks, not your hand."]],
+["😋","It delicious!",["It’s delicious!","Its delicious!","It delicious it!"]],
+["☝️🍽️","Just bring ONE dishes.",["Just bring ONE dish.","Just bring ONE dishs.","Just bring ONES dish."]],
+["👥🍽️🪑","Hey guys, put your dish in the hand.",["Hey guys, put your dish on the table.","Hey guys, put the table on your dish.","Hey guys, bring your dish in the hand."]]];
+function q5(){if(S.i>=6)return end();const q=Q5[S.i];S.o=sh(q[2].map((t,k)=>[t,k===0]));
+draw(`<div class="box"><b>第 ${S.i+1} / 6 題</b><div class="big">${q[0]}</div>${rex(q[1],1)}<p>Rex 說錯了!選出正確的句子:</p><div class="opts">${S.o.map((o,k)=>`<button onclick="a5(${k})">${o[0]}</button>`).join("")}</div><div id="fb"></div></div>`)}
+function a5(k){const ok=S.o[k][1],good=Q5[S.i][2][0];if(ok)S.pts[4]++;
+document.querySelectorAll(".opts button").forEach((b,j)=>{b.disabled=true;if(S.o[j][1])b.classList.add("ok")});
+if(!ok)document.querySelectorAll(".opts button")[k].classList.add("no");
+$("fb").innerHTML=line(ok)+(ok?"":`<p>正確是:<b>${good}</b></p>`)+`<p>像 Rex 一樣大聲說一次!</p><div class="row"><button onclick="say(Q5[S.i][2][0])">🔊 聽示範</button><button class="go" onclick="S.pts[4]++;next()">我說了!(+1)</button><button onclick="next()">跳過</button></div>`}
+/* 加分關:點餐台 */
+const Q6=[["Hello, guys! Please sit down. What would you like?",["I’d like the beef noodles, please.","I’d like chopsticks hand.","Please sit down, beef noodles."]],
+["OK! Here you are. Use your chopsticks, please.",["Oh no! I’ll use my hands, not chopsticks.","Oh no! I’ll use my dish, not chopsticks.","Oh no! I’ll bring my hands, not chopsticks."]],
+["Haha, OK! Please try it.",["YUM! It’s delicious!","YUM! It delicious!","YUM! Is delicious it!"]],
+["Do you want more?",["Yes! Please bring ONE more dish.","Yes! Please bring ONE more dishes.","Yes! Just bring ONE dish more hand."]]];
+function q6(){if(S.i>=4)return fin6();if(!S.i)S.log="";S.o=sh(Q6[S.i][1].map((t,k)=>[t,k===0]));
+draw(`<div class="box"><b>第 ${S.i+1} / 4 句</b>${S.log}<div class="bub">🧑‍🍳 ${Q6[S.i][0]}</div><p>你是 Rex 的客人,要怎麼回答?</p><div class="row"><button onclick="say(Q6[S.i][0])">🔊 聽服務生</button></div><div class="opts">${S.o.map((o,k)=>`<button onclick="a6(${k})">${o[0]}</button>`).join("")}</div><div id="fb"></div></div>`);say(Q6[S.i][0])}
+function a6(k){const ok=S.o[k][1],good=Q6[S.i][1][0];if(ok)S.pts[5]++;
+document.querySelectorAll(".opts button").forEach((b,j)=>{b.disabled=true;if(S.o[j][1])b.classList.add("ok")});
+if(!ok)document.querySelectorAll(".opts button")[k].classList.add("no");
+S.log+=`<p>🧑‍🍳 ${Q6[S.i][0]}<br>🦖 ${good}</p>`;say(good);
+$("fb").innerHTML=line(ok)+(ok?"":`<p>正確是:<b>${good}</b></p>`)+nextBtn}
+function fin6(){draw(`<div class="box"><h2>最後一步:真人演出!</h2>${rex("Guests and waiters, show me!")}${S.log}<p>找一位同學,一人當服務生、一人當 Rex 的客人,把上面這段對話演一遍,再換角色。演完了嗎?</p><div class="row"><button class="go" onclick="S.pts[5]+=2;end()">我們演完了!(+2)</button><button onclick="end()">還沒有,先看結果</button></div></div>`)}
+/* 結算 */
+function end(){S.step2=0;const p=S.pts,n=S.n,x=p[n],s=[x>=7?1:0,x>=7?1:0,x>=7?1:0,x>=7?2:x>=5?1:0,x>=8?1:0,x>=4?1:0][n];if(n<4){S.stars+=s;stars()}else S.bonus+=s;const ic=n<4?"⭐":"🌟";
+draw(`<div class="box"><h2>${NAME[n]} 完成</h2><p style="font-size:28px">${x} / ${MAX[n]} 分 ➜ ${ic.repeat(s)||"0 顆星"}</p>${rex(pick(R[n][s?"s":"f"]),!s)}
+<div class="row">${n<3?`<button class="go" onclick="intro(${n+1})">下一關</button>`:n===3?`<button class="go" onclick="badge()">領徽章!</button><button onclick="intro(4)">挑戰加分關 🌟</button>`:n===4?`<button class="go" onclick="intro(5)">下一個加分關</button><button onclick="badge()">直接領徽章</button>`:`<button class="go" onclick="badge()">領徽章!</button>`}${s?"":`<button onclick="intro(${n})">再玩一次這關</button>`}</div></div>`)}
+function badge(){const t=S.stars,b=t>=5?["🥇","金色五星小廚師徽章"]:t>=3?["🥈","銀色小廚師徽章"]:["🥉","銅色小廚師徽章"];
+$("lv").textContent="🏅 頒章";
+draw(`<div class="box" style="text-align:center"><div style="font-size:90px">${b[0]}</div><h2>${b[1]}</h2><p>你拿到 ${t} / 5 顆星${S.bonus?`,加分 ${"🌟".repeat(S.bonus)}`:""}</p>${rex(t>=5?"It’s delicious! Five stars!":"Great job, guys! Let’s try again!")}<div class="row c"><button class="go" onclick="start()">再玩一次</button></div></div>`)}
+start();
+</script></body></html>
