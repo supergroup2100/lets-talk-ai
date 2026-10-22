@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rex 的冰淇淋危機:繼電器</title>
+<style>
+:root{--bg:#fff8ec;--fg:#2b2d42;--card:#ffffff;--line:#e3d6bd;--acc:#ff8a1f;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d2030;--fg:#f4efe4;--card:#2a2e45;--line:#454a6b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1d2030;--fg:#f4efe4;--card:#2a2e45;--line:#454a6b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;padding:14px}
+.wrap{max-width:960px;margin:0 auto}
+h1{font-size:clamp(18px,3.4vw,26px);margin:4px 0 10px;font-weight:900}
+#stage{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;border:3px solid var(--fg);background:#bfe9ff;container-type:inline-size}
+#stage svg{width:100%;height:100%;display:block}
+#stage svg text{font-family:inherit;font-weight:700}
+.pause *{animation-play-state:paused!important}
+#cap{margin:10px 0 6px;min-height:3.2em;font-size:clamp(15px,2.6vw,20px);line-height:1.6;padding:10px 14px;background:var(--card);border:2px solid var(--line);border-radius:12px}
+.meta{font-size:13px;opacity:.75;margin-bottom:8px}
+.ctrl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ctrl button,.chips button{font:inherit;border:2px solid var(--fg);background:var(--card);color:var(--fg);border-radius:10px;padding:6px 12px;cursor:pointer;font-weight:700}
+.ctrl button:focus-visible,.chips button:focus-visible,.qo button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.ctrl .go{background:var(--acc);color:#fff;border-color:var(--fg);min-width:64px}
+.track{flex:1;min-width:120px;height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+#bar{height:100%;width:0;background:var(--acc)}
+@keyframes prog{to{width:100%}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chips button{padding:3px 9px;font-size:13px}
+.chips button.on{background:var(--fg);color:var(--bg)}
+#start{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(43,45,66,.55);z-index:5}
+#start button{font:inherit;font-size:clamp(16px,3vw,26px);font-weight:900;background:#ff8a1f;color:#fff;border:3px solid #2b2d42;border-radius:18px;padding:12px 28px;cursor:pointer}
+.sfx{position:absolute;right:3%;top:3%;background:#fff;color:#2b2d42;border:3px solid #2b2d42;border-radius:16px;padding:.3em .8em;font-weight:900;font-size:clamp(14px,3.2cqw,26px);transform:rotate(4deg);animation:pop .4s cubic-bezier(.3,1.7,.5,1) both;z-index:2}
+.qz{position:absolute;left:3%;right:3%;bottom:3%;background:rgba(255,255,255,.96);color:#2b2d42;border:3px solid #2b2d42;border-radius:14px;padding:2cqw 2.5cqw;font-size:clamp(11px,2.3cqw,21px);z-index:3}
+.qq{margin:0 0 1.2cqw;font-weight:900}
+.qo{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2cqw}
+.qo button{font:inherit;font-weight:700;background:#fff7e0;color:#2b2d42;border:2px solid #2b2d42;border-radius:10px;padding:.7em .5em;cursor:pointer}
+.qo button.ok{background:#7bd88f}.qo button.no{background:#ff9b9b}
+.qe{margin:1.2cqw 0 0;display:flex;gap:1.5cqw;align-items:center;justify-content:space-between}
+.qe button{font:inherit;font-weight:700;background:#ff8a1f;color:#fff;border:2px solid #2b2d42;border-radius:10px;padding:.4em 1em;cursor:pointer;white-space:nowrap}
+@keyframes pop{from{transform:scale(.2) rotate(-12deg);opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes slow{to{transform:rotate(220deg)}}
+@keyframes fl{to{stroke-dashoffset:-18}}
+@keyframes wig{to{transform:rotate(-14deg)}}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@keyframes drip{0%{transform:translateY(0);opacity:1}100%{transform:translateY(34px);opacity:0}}
+@keyframes pulse{0%{transform:scale(.7);opacity:.9}100%{transform:scale(1.15);opacity:0}}
+.lb{animation:pop .4s both}
+.pop{animation:pop .5s cubic-bezier(.3,1.7,.5,1) both}
+.drip{animation:drip 1.2s ease-in infinite}
+.sun{transform-origin:0 0;animation:spin 14s linear infinite}
+.bob{animation:bob 1.2s ease-in-out infinite}
+.reach .ra{transform-origin:42px -2px;animation:wig .4s ease-in-out infinite alternate}
+.fb,.fo{opacity:0;animation:fl .8s linear infinite}
+.bon .fb,.on .fb,.on .fo{opacity:1}
+.ring{opacity:0}
+.ring circle{transform-box:fill-box;transform-origin:center;animation:pulse 1s ease-out infinite}
+.bon .ring,.on .ring{opacity:1}
+.arm{transform-origin:250px 280px;transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.on .arm{transform:rotate(12deg)}
+.spr{transform-origin:440px 205px;transition:transform .35s}
+.on .spr{transform:scaleY(1.55)}
+.lev{transform-origin:200px 400px;transform:rotate(-35deg);transition:transform .2s}
+.bon .lev,.on .lev{transform:rotate(0)}
+.fan{transform-origin:0 0}
+.on .fan,.fan.run{animation:spin .5s linear infinite}
+.slow .fan{animation:slow 2s ease-out forwards}
+@media (prefers-reduced-motion:reduce){.sun,.bob,.drip,.reach .ra,.ring circle{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🦖 Rex 的冰淇淋危機:繼電器</h1>
+<div id="stage"><div id="start"><button id="startBtn">▶ 開始播放</button></div></div>
+<div id="cap">按「開始播放」,看 Rex 怎麼用小短手開大風扇。</div>
+<div class="meta" id="meta">國中八年級・電與控制——繼電器・約 83 秒</div>
+<div class="ctrl">
+<button id="prev" aria-label="上一鏡">⏮</button>
+<button id="pp" class="go">▶</button>
+<button id="next" aria-label="下一鏡">⏭</button>
+<div class="track"><div id="bar"></div></div>
+<button id="vo" aria-pressed="false">🔇 朗讀</button>
+</div>
+<div class="chips" id="chips"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const svg=b=>`<svg viewBox="0 0 800 450" role="img">${b}</svg>`;
+const bg=c=>`<rect width="800" height="450" fill="${c}"/>`;
+const T=(x,y,s,t,f='#2b2d42',a='middle',x2='')=>`<text x="${x}" y="${y}" font-size="${s}" fill="${f}" text-anchor="${a}" ${x2}>${t}</text>`;
+const rex=(x,y,s=1,c='')=>`<g class="${c}" transform="translate(${x} ${y}) scale(${s})"><path d="M-55 10Q-125 0-150 55Q-90 55-50 45Z" fill="#4fb85f"/><rect x="-38" y="50" width="30" height="46" rx="14" fill="#4fb85f"/><rect x="8" y="50" width="30" height="46" rx="14" fill="#4fb85f"/><ellipse rx="62" ry="70" fill="#5cc46a"/><ellipse cx="10" cy="16" rx="38" ry="50" fill="#d7f3b5"/><g class="ra"><path d="M42 -2q24 4 30 14" stroke="#4fb85f" stroke-width="13" stroke-linecap="round" fill="none"/></g><ellipse cx="45" cy="-78" rx="58" ry="44" fill="#5cc46a"/><circle cx="68" cy="-92" r="11" fill="#fff"/><circle cx="71" cy="-92" r="5" fill="#2b2d42"/><path d="M52-62q22 14 44 0" stroke="#2b2d42" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="92" cy="-80" r="3" fill="#2b2d42"/></g>`;
+const fanG=(x,y,r,c='')=>`<g transform="translate(${x} ${y})"><circle r="${r}" fill="#fff" stroke="#2b2d42" stroke-width="4"/><g class="fan ${c}">${[0,120,240].map(a=>`<ellipse cy="${-r*.5}" rx="${r*.22}" ry="${r*.45}" fill="#5bc0eb" transform="rotate(${a})"/>`).join('')}</g><circle r="${r*.14}" fill="#2b2d42"/></g>`;
+const cone=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-13 10h26l-13 46z" fill="#e8a24a"/><circle cy="0" r="17" fill="#ffb3c7"/><path class="drip" d="M8 14q4 10 0 14q-4-4 0-14z" fill="#ffb3c7"/></g>`;
+const dia=(cls,st,r=1)=>`<g id="dia" class="${cls}">${bg('#eaf6ff')}
+<g fill="none" stroke="#9aa7b8" stroke-width="7" stroke-linejoin="round"><path d="M270 322H110V400H390V322"/><path d="M250 280V150H700V400H470V322"/></g>
+<g fill="none" stroke-width="7" stroke-linecap="round" stroke-dasharray="2 16"><path class="fb" stroke="#2f7bff" d="M270 322H110V400H390V322"/><path class="fo" stroke="#ff8a1f" d="M250 280V150H700V400H470V322"/></g>
+<g class="ring" fill="none" stroke="#2f7bff" stroke-width="4"><circle cx="330" cy="322" r="70"/><circle cx="330" cy="322" r="70" style="animation-delay:.5s"/></g>
+<rect x="270" y="300" width="120" height="45" rx="8" fill="#b8c4d6" stroke="#5b6b82" stroke-width="3"/>
+<g stroke="#5b6b82" stroke-width="4">${[290,310,330,350,370].map(x=>`<path d="M${x} 304v37"/>`).join('')}</g>
+<rect x="96" y="345" width="28" height="36" rx="5" fill="#ffd23f" stroke="#2b2d42" stroke-width="3"/>
+<circle cx="200" cy="400" r="6" fill="#2b2d42"/><circle cx="262" cy="400" r="6" fill="#2b2d42"/><line class="lev" x1="200" y1="400" x2="262" y2="400" stroke="#2b2d42" stroke-width="6" stroke-linecap="round"/>
+<rect x="450" y="318" width="40" height="10" rx="3" fill="#5b6b82"/><rect x="400" y="205" width="80" height="8" rx="3" fill="#5b6b82"/>
+<path class="spr" d="M440 213v6l-12 8 24 10-24 10 24 10-24 10 12 8v12" fill="none" stroke="#8e5bd8" stroke-width="4"/>
+<g class="arm"><rect x="250" y="274" width="220" height="12" rx="4" fill="#ff7a59" stroke="#2b2d42" stroke-width="2"/><circle cx="250" cy="280" r="8" fill="#2b2d42"/></g>
+${fanG(700,275,48)}
+${rex(80,160,.5)}
+<g stroke="#fff" stroke-width="5" stroke-linejoin="round" paint-order="stroke">
+<text class="lb" x="330" y="372" font-size="22" fill="#2b2d42" text-anchor="middle" style="animation-delay:${.4*r}s">電磁鐵</text>
+<text class="lb" x="330" y="256" font-size="22" fill="#2b2d42" text-anchor="middle" style="animation-delay:${.9*r}s">銜鐵</text>
+<text class="lb" x="500" y="240" font-size="22" fill="#8e5bd8" text-anchor="start" style="animation-delay:${1.4*r}s">彈簧</text>
+<text class="lb" x="470" y="352" font-size="22" fill="#2b2d42" text-anchor="middle" style="animation-delay:${1.9*r}s">接點</text></g>
+<text x="250" y="436" font-size="22" fill="#2f7bff" text-anchor="middle" font-weight="700">小電流 3V</text>
+<text x="480" y="132" font-size="22" fill="#ff8a1f" text-anchor="middle" font-weight="700">大電流 220V</text>
+${st?`<rect x="190" y="14" width="420" height="44" rx="22" fill="#2b2d42"/>${T(400,45,22,st,'#fff')}`:''}</g>`;
+const trio=(x,e,l)=>`<rect x="${x}" y="60" width="230" height="330" rx="18" fill="#fff" stroke="#2b2d42" stroke-width="4"/><text x="${x+115}" y="190" font-size="90" text-anchor="middle">${e}</text>${T(x+115,240,26,l)}${rex(x+115,330,.35,'bob')}`;
+const endSvg=()=>svg(bg('#bfe9ff')+`<rect y="320" width="800" height="130" fill="#ffd98a"/>${fanG(130,230,70,'run')}${rex(470,300,1.2)}${cone(590,296,1.1)}${T(400,60,40,'小電流,大力量!','#2b2d42')}`);
+const S=[
+{n:'1',tc:'00:00',t:7,cap:'旁白:恐龍島今天超級熱,Rex 只想吹風扇、吃冰淇淋。',sfx:'唧——  啪嗒',d:()=>svg(bg('#bfe9ff')+`<g transform="translate(690 80)"><g class="sun">${[0,45,90,135,180,225,270,315].map(a=>`<rect x="-6" y="-70" width="12" height="22" rx="5" fill="#ffd23f" transform="rotate(${a})"/>`).join('')}</g><circle r="44" fill="#ffd23f"/></g><rect y="250" width="800" height="55" fill="#5bc0eb"/><rect y="300" width="800" height="150" fill="#ffd98a"/><rect x="190" y="372" width="230" height="22" rx="10" fill="#ff7a59"/>${rex(300,285,1,'bob')}${cone(385,285)}<rect x="60" y="70" width="140" height="56" rx="20" fill="#fff" stroke="#2b2d42" stroke-width="3"/>${T(130,108,28,'好熱!')}`)},
+{n:'2',tc:'00:07',t:7,cap:'Rex:「開關在那裡,可是我的手……短短短!」',sfx:'ROAR!  嗯嗯嗯——',d:()=>svg(bg('#fdebd0')+`<rect y="380" width="800" height="70" fill="#e6c99a"/><rect x="480" y="60" width="120" height="260" rx="10" fill="#c0392b"/><rect x="520" y="90" width="40" height="150" rx="8" fill="#7f8c8d"/><rect x="505" y="85" width="70" height="34" rx="10" fill="#ecf0f1"/><rect x="455" y="335" width="170" height="40" rx="10" fill="#ff8a1f"/>${T(540,363,22,'大電流 220V','#fff')}${fanG(700,150,62)}${rex(220,300,1,'reach')}<path d="M300 300L500 200" stroke="#2b2d42" stroke-width="3" stroke-dasharray="8 8"/>${T(380,230,24,'搆不到!','#c0392b')}`)},
+{n:'3',tc:'00:14',t:6,cap:'旁白:大電流的開關又重又硬,小短手推不動。有什麼辦法?答案是……繼電器!',sfx:'咚!  叮!',d:()=>svg(bg('#ffe9c7')+rex(250,440,3.3)+`<path class="drip" d="M520 90q14 26 0 34q-14-8 0-34z" fill="#5bc0eb"/><path class="drip" d="M560 150q14 26 0 34q-14-8 0-34z" fill="#5bc0eb" style="animation-delay:.5s"/><text class="pop" x="680" y="110" font-size="80" text-anchor="middle" style="animation-delay:1.5s">💡</text><g class="pop" style="animation-delay:2.5s"><rect x="640" y="230" width="90" height="46" rx="12" fill="#fff" stroke="#2b2d42" stroke-width="4"/><circle cx="670" cy="253" r="10" fill="#2f7bff"/>${T(685,310,22,'小開關')}</g>`)},
+{n:'4',tc:'00:20',t:8,cap:'旁白:繼電器裡有四個主角:電磁鐵、銜鐵、彈簧和接點。小電路控制電磁鐵,大電路連到接點。',sfx:'叮、叮、叮、叮',d:()=>svg(dia('', '繼電器剖面圖',1))},
+{n:'5',tc:'00:28',t:8,cap:'Rex:「我只要輕輕一撥!」旁白:小電流通過線圈,電磁鐵就有磁力了。',sfx:'咔噠!(clack!)  嗡——',d:()=>svg(dia('','通電 → 產生磁力',0)),fx:[[900,()=>$('dia').classList.add('bon')]]},
+{n:'6',tc:'00:36',t:8,cap:'旁白:磁力把銜鐵吸下來,接點閉合,大電流通過,風扇轉起來啦!Rex:「涼——爽!」',sfx:'啪!  咔!  呼呼呼——',d:()=>svg(dia('bon','吸下 → 接點閉合 → 大電流通過',0)),fx:[[800,()=>$('dia').classList.add('on')]]},
+{n:'7',tc:'00:44',t:8,cap:'旁白:小開關關掉,電磁鐵就沒有磁力,彈簧把銜鐵拉回去,大電路也跟著斷開。',sfx:'咔噠!  嗙!  呼……呼……',d:()=>svg(dia('on bon','斷電 → 磁力消失 → 彈簧彈回',0)),fx:[[1500,()=>{const d=$('dia').classList;d.remove('on','bon');d.add('slow')}]]},
+{n:'8',tc:'00:52',t:7,cap:'旁白:生活中也常見:冷氣啟動、汽車大燈、門鈴,都用小開關控制大電流。',sfx:'嗶——  啪!  叮咚!',d:()=>svg(bg('#e8f7ee')+trio(30,'❄️','冷氣啟動')+trio(285,'🚗','汽車大燈')+trio(540,'🔔','叮咚!門鈴'))},
+{n:'9',tc:'00:59',t:0,cap:'旁白:來考考你!第一題,繼電器的主要功能是什麼?',sfx:'噹!',d:()=>svg(bg('#fff3c4')+rex(130,230,1.3,'bob')+`<text x="130" y="60" font-size="1" fill="none"> </text><rect x="250" y="30" width="520" height="70" rx="20" fill="#2b2d42"/>${T(510,78,34,'繼電器:用小電流控制大電流','#ffd23f')}<text x="60" y="80" font-size="60">👍</text>`),q:{q:'第 1 題:繼電器的主要功能是什麼?',o:['把電池變多','用小電流控制大電流','讓風扇變大'],a:1,e:'繼電器就是讓小電流當「指揮官」,去控制大電流。'}},
+{n:'10',tc:'01:07',t:0,cap:'旁白:第二題,電磁鐵通電有磁力後,會吸下哪一個零件?',sfx:'噹!',d:()=>svg(dia('on','電磁鐵通電了!',0)),q:{q:'第 2 題:電磁鐵通電後,會把哪個零件吸下來?',o:['彈簧','銜鐵','風扇'],a:1,e:'磁力吸下鐵片「銜鐵」,接點才會閉合。'}},
+{n:'11',tc:'01:15',t:0,cap:'旁白:最後一題,小開關關掉後,是誰把銜鐵拉回去?',sfx:'噹!',d:()=>svg(dia('','小開關關掉了!',0)),q:{q:'第 3 題:小開關關掉後,哪個零件把銜鐵拉回去?',o:['彈簧','冰淇淋','插座'],a:0,e:'沒有磁力了,彈簧把銜鐵彈回,大電路就斷開。'}},
+{n:'結',tc:'01:23',t:7,cap:'Rex:「小短手也能開大風扇,謝謝繼電器!」',sfx:'叮~  啾',d:endSvg}
+];
+let i=0,playing=false,timer=0,rem=0,t0=0,voice=false,fx=[];
+const st=$('stage'),pp=$('pp');
+function say(t){if(!voice||!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-TW';u.rate=1.05;speechSynthesis.speak(u)}
+function quiz(q){const el=document.createElement('div');el.className='qz';
+el.innerHTML=`<p class="qq">${q.q}</p><div class="qo">${q.o.map((o,k)=>`<button data-k="${k}">${'ABC'[k]}　${o}</button>`).join('')}</div>`;
+el.onclick=e=>{const b=e.target.closest('button');if(!b||b.closest('.qe')||el.dataset.d)return;el.dataset.d=1;
+const k=+b.dataset.k;el.querySelectorAll('.qo button').forEach((x,j)=>{if(j===q.a)x.classList.add('ok');else if(j===k)x.classList.add('no')});
+const p=document.createElement('p');p.className='qe';p.innerHTML=`<span>${k===q.a?'答對了!':'再想想~'}${q.e}</span><button>${i<S.length-2?'下一題 ▶':'看結尾 ▶'}</button>`;
+p.querySelector('button').onclick=()=>{playing=true;go(i+1)};el.append(p)};st.append(el)}
+function go(n){clearTimeout(timer);fx.forEach(clearTimeout);fx=[];if(window.speechSynthesis)speechSynthesis.cancel();
+i=Math.max(0,Math.min(S.length-1,n));const s=S[i];
+st.innerHTML=s.d()+`<div class="sfx">${s.sfx}</div>`;st.classList.toggle('pause',!playing);
+if(s.q)quiz(s.q);
+$('cap').textContent=s.cap;$('meta').textContent=`鏡 ${s.n==='結'?'11 結尾':s.n} / 11・${s.tc}${s.q?'・停格問答,請選答案':''}`;
+document.querySelectorAll('.chips button').forEach((b,k)=>b.classList.toggle('on',k===i));
+const bar=$('bar');bar.style.animation='none';bar.style.width=s.q?'100%':'0';void bar.offsetWidth;
+(s.fx||[]).forEach(([ms,f])=>fx.push(setTimeout(f,ms)));
+rem=s.t*1000;t0=Date.now();say(s.cap);
+if(!s.q){bar.style.animation=`prog ${s.t}s linear forwards`;if(playing)arm()}
+bar.style.animationPlayState=playing?'running':'paused';pp.textContent=playing?'⏸':'▶'}
+function arm(){clearTimeout(timer);timer=setTimeout(()=>{if(i<S.length-1)go(i+1);else{playing=false;pp.textContent='↻';st.classList.add('pause')}},rem)}
+function play(){if(!playing){playing=true;if(i===S.length-1&&rem<=0)return go(0);t0=Date.now();st.classList.remove('pause');$('bar').style.animationPlayState='running';if(!S[i].q)arm();pp.textContent='⏸'}
+else{playing=false;clearTimeout(timer);rem-=Date.now()-t0;st.classList.add('pause');$('bar').style.animationPlayState='paused';pp.textContent='▶'}}
+$('startBtn').onclick=()=>{playing=true;go(0)};
+pp.onclick=()=>{if(pp.textContent==='↻'){playing=true;go(0)}else play()};
+$('prev').onclick=()=>go(i-1);$('next').onclick=()=>go(i+1);
+$('vo').onclick=e=>{voice=!voice;e.target.textContent=voice?'🔊 朗讀':'🔇 朗讀';e.target.setAttribute('aria-pressed',voice);if(voice)say(S[i].cap);else if(window.speechSynthesis)speechSynthesis.cancel()};
+$('chips').innerHTML=S.map((s,k)=>`<button data-k="${k}" title="${s.tc}">${s.n}</button>`).join('');
+$('chips').onclick=e=>{const b=e.target.closest('button');if(b){playing=true;go(+b.dataset.k)}};
+st.innerHTML=S[0].d()+'<div id="start"><button id="startBtn2">▶ 開始播放</button></div>';
+st.classList.add('pause');
+st.onclick=e=>{if(e.target.id==='startBtn2'||e.target.id==='start'){playing=true;go(0)}};
+</script>
+</body>
+</html>
