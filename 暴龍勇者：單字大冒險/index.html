@@ -40,9 +40,10 @@ const Z=[[["afternoon","下午"],["evening","傍晚"],["fine","美好的"],["goo
 const N=[['🏡','新手村','國小單字'],['🌲','綠野森林','國中 Book 1'],['🏜️','沙漠遺跡','國中 Book 2'],['🌊','海岸洞窟','國中 Book 3'],['🏔️','雪山古城','國中 Book 4'],['🪦','幽靈沼澤','國中 Book 5'],['🌋','火山魔王城','國中 Book 6']];
 const MON=['👾','🐍','🦂','🦇','🐙','👻','🐺','🕷️','🦑','🧟','🤖','👹'],ALL=Z.flat(),SZ=10;
 const $=s=>document.querySelector(s),A=$('#app');
-let S;try{S=JSON.parse(localStorage.getItem('trex1'))}catch(e){}
-S=S||{xp:0,g:0,meat:2,orb:2,clr:{},wr:[],seen:0};
-const sv=()=>{try{localStorage.setItem('trex1',JSON.stringify(S))}catch(e){}};
+const nw=()=>({xp:0,g:0,meat:2,orb:2,clr:{},wr:[],seen:0});
+let DB={cur:'',p:{}},S=nw();try{DB=JSON.parse(localStorage.getItem('trex2'))||DB}catch(e){}
+try{const o=JSON.parse(localStorage.getItem('trex1'));if(o&&!Object.keys(DB.p).length)DB.p['舊進度']=o}catch(e){}
+const sv=()=>{try{if(DB.cur)DB.p[DB.cur]=S;localStorage.setItem('trex2',JSON.stringify(DB))}catch(e){}};
 const lv=()=>Math.floor(Math.sqrt(S.xp/40))+1,mh=()=>80+lv()*10,nSt=z=>Math.ceil(Z[z].length/SZ);
 const sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
 const say=t=>{try{const s=speechSynthesis;s.cancel();const u=new SpeechSynthesisUtterance(t.replace(/[….]+$/,''));const v=voice();if(v){u.voice=v;u.lang=v.lang}else u.lang='en-US';u.rate=.8;setTimeout(()=>s.speak(u),60)}catch(e){}};
@@ -50,9 +51,9 @@ const nm=s=>s.toLowerCase().replace(/[^a-z]/g,'');
 let B;
 function intro(){A.innerHTML=`<div class=story><div class=hero>🦖</div><h2>暴龍勇者 Rexy</h2><p>單字隕石撞進恐龍王國，所有英文單字都變成了怪物！<br>只有會說英文的暴龍勇者 Rexy 能擊退牠們。<br>答對單字就能咬碎怪物，答錯會被反擊。<br>一起踏上冒險吧！</p><button onclick="S.seen=1;sv();home()">🦖 出發！</button></div>`}
 function home(){bgm('town');const nd=40*lv()**2,pv=40*(lv()-1)**2;
-A.innerHTML=`<div class=top><div class=hero>🦖</div><div style="flex:1"><b>暴龍勇者 Lv.${lv()}</b><div class=bar><i style="width:${(S.xp-pv)/(nd-pv)*100}%"></i></div><small>經驗 ${S.xp}　💰${S.g}　🍖${S.meat}　🔮${S.orb}</small></div></div>
+A.innerHTML=`<div class=top><div class=hero>🦖</div><div style="flex:1"><b>${esc(DB.cur)} Lv.${lv()}</b><div class=bar><i style="width:${(S.xp-pv)/(nd-pv)*100}%"></i></div><small>經驗 ${S.xp}　💰${S.g}　🍖${S.meat}　🔮${S.orb}</small></div></div>
 <h2>選擇冒險地圖（共 ${ALL.length} 個單字）</h2><div class=zs>${Z.map((w,i)=>{let c=0;for(let s=0;s<nSt(i);s++)if(S.clr[i+'-'+s])c++;return `<button class=zone onclick="zone(${i})"><span>${N[i][0]}</span><b>${N[i][1]}</b><small>${N[i][2]}，${w.length} 字</small><div class=bar><i style="width:${c/nSt(i)*100}%"></i></div><small>已通關 ${c}/${nSt(i)}</small></button>`}).join('')}</div>
-<div class=row><button onclick="battle(-1)">🔁 複習錯題（${S.wr.length}）</button><button onclick="battle(-2)">🎲 隨機挑戰</button></div><h2>發音設定</h2><div class=row><select id=vs aria-label="英文發音聲音" onchange="S.vo=this.value;sv();say('Hello, Rexy!')"></select><button onclick="say('pronunciation')">🔊 試聽</button></div><p><small>提示：Windows 請用 Edge（選有 Natural 的聲音）、Android 用 Chrome（Google US English）、iPhone 與 Mac 選 Premium 或 Enhanced 聲音，發音最自然。</small></p>`;fillV()}
+<div class=row><button onclick="battle(-1)">🔁 複習錯題（${S.wr.length}）</button><button onclick="battle(-2)">🎲 隨機挑戰</button></div><h2>角色與存檔</h2><div class=row><button onclick="logout()">👤 切換角色</button><button onclick="exp()">📤 備份／轉移存檔</button></div><h2>發音設定</h2><div class=row><select id=vs aria-label="英文發音聲音" onchange="S.vo=this.value;sv();say('Hello, Rexy!')"></select><button onclick="say('pronunciation')">🔊 試聽</button></div><p><small>提示：Windows 請用 Edge（選有 Natural 的聲音）、Android 用 Chrome（Google US English）、iPhone 與 Mac 選 Premium 或 Enhanced 聲音，發音最自然。</small></p>`;fillV()}
 function zone(i){bgm('town');A.innerHTML=`<button onclick="home()">← 回地圖</button><h2>${N[i][0]} ${N[i][1]}</h2><p><small>每一關 ${SZ} 個單字，最後一關是魔王。</small></p><div class=sg>${Array.from({length:nSt(i)},(_,s)=>`<button class="${S.clr[i+'-'+s]?'c':''}" onclick="battle(${i},${s})">${s==nSt(i)-1?'👑':MON[s%MON.length]}<br>${s+1}${S.clr[i+'-'+s]?' ⭐':''}</button>`).join('')}</div>`}
 function battle(z,s){let w;
 if(z>=0)w=Z[z].slice(s*SZ,s*SZ+SZ);else if(z==-1)w=sh(S.wr).slice(0,SZ).map(x=>x.split('|'));else w=sh(ALL).slice(0,SZ);
@@ -96,5 +97,11 @@ function mstop(){clearInterval(MU.tm);MU.tm=0;MU.th=null}
 function sfx(k){if(S.mu===0)return;const c=mctx();if(!c)return;const P={ok:[[72,76,79],.07,'square'],no:[[55,50],.15,'sawtooth'],win:[[60,64,67,72,76,79,84],.11,'square'],lose:[[60,57,53,48],.22,'triangle']}[k];P[0].forEach((m,i)=>tone(P[2],m,c.currentTime+i*P[1],P[1]*2,.9))}
 const mt=document.createElement('button');mt.id='mt';mt.setAttribute('aria-label','背景音樂開關');mt.textContent=S.mu===0?'🔇':'🎵';mt.onclick=()=>{S.mu=S.mu===0?1:0;sv();mt.textContent=S.mu===0?'🔇':'🎵';S.mu===0?mstop():bgm(MU.want)};document.body.appendChild(mt);
 addEventListener('pointerdown',()=>{if(S.mu!==0)bgm(MU.want)});
-S.seen?home():intro();
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),lvOf=p=>Math.floor(Math.sqrt(p.xp/40))+1;
+function login(){const n=Object.keys(DB.p);A.innerHTML=`<div class=story><div class=hero>🦖</div><h2>暴龍勇者：單字大冒險</h2><p>輸入你的角色名稱，進度會自動存檔。<br>下次輸入同一個名字，就能從上次的地方繼續！</p><input id=nm maxlength=12 placeholder="角色名稱" autocomplete=off><div class=row><button onclick="go($('#nm').value)">⚔️ 開始／繼續冒險</button></div>${n.length?`<h2>這台裝置上的角色</h2><div class=row>${n.map(k=>`<button data-n="${esc(k)}" onclick="go(this.dataset.n)">🦖 ${esc(k)}<br><small>Lv.${lvOf(DB.p[k])}</small></button>`).join('')}</div>`:''}<h2>換裝置繼續玩</h2><div class=row><button onclick="imp()">📥 貼上存檔碼讀取</button></div></div>`;$('#nm').onkeydown=e=>{if(e.key=='Enter')go(e.target.value)}}
+function go(n){n=(n||'').trim().slice(0,12);if(!n){alert('請先輸入角色名稱');return}DB.cur=n;S=DB.p[n]||nw();sv();S.seen?home():intro()}
+function logout(){sv();DB.cur='';S=nw();try{localStorage.setItem('trex2',JSON.stringify(DB))}catch(e){}mstop();login()}
+function exp(){const c=btoa(unescape(encodeURIComponent(JSON.stringify({n:DB.cur,s:S}))));A.innerHTML=`<button onclick="home()">← 回地圖</button><h2>備份／轉移存檔</h2><p><small>複製下面的存檔碼，到另一台裝置的登入畫面按「貼上存檔碼讀取」，就能接著玩。也建議先存一份備份，以免清除瀏覽器資料後進度消失。</small></p><textarea id=sc readonly style="width:100%;height:150px;font:12px monospace;background:var(--p);color:var(--tx);border:2px solid var(--bd);border-radius:12px;padding:8px">${c}</textarea><div class=row><button onclick="$('#sc').select();try{navigator.clipboard.writeText($('#sc').value)}catch(e){document.execCommand('copy')}this.textContent='✅ 已複製'">📋 複製存檔碼</button></div>`}
+function imp(){const c=prompt('請貼上存檔碼');if(!c)return;try{const o=JSON.parse(decodeURIComponent(escape(atob(c.trim()))));if(!o.n||typeof o.s.xp!='number')throw 0;if(DB.p[o.n]&&lvOf(DB.p[o.n])>lvOf(o.s)&&!confirm('這台裝置上「'+o.n+'」的進度比較高，要用存檔碼覆蓋嗎？'))return;DB.p[o.n]=o.s;go(o.n)}catch(e){alert('存檔碼無法讀取，請確認有完整複製。')}}
+DB.cur&&DB.p[DB.cur]?(S=DB.p[DB.cur],S.seen?home():intro()):login();
 </script></body></html>
