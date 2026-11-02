@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>暴龍勇者：自然科學大冒險</title>
+<style>
+:root{--bg:#dff3ff;--p:#fff;--tx:#14213d;--mu:#5c6b8a;--ac:#2b9348;--or:#fb8500;--rd:#d62839;--bd:#b5d6ee;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#101a33;--p:#1b2850;--tx:#eef2ff;--mu:#9fb0d9;--ac:#5fd68a;--or:#ffb703;--rd:#ff6b6b;--bd:#2f4080}}
+:root[data-theme=dark]{--bg:#101a33;--p:#1b2850;--tx:#eef2ff;--mu:#9fb0d9;--ac:#5fd68a;--or:#ffb703;--rd:#ff6b6b;--bd:#2f4080}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 "PingFang TC","Microsoft JhengHei","Noto Sans TC",sans-serif;min-height:100vh}
+#app{max-width:720px;margin:0 auto;padding:14px}
+button{font:inherit;color:inherit;background:var(--p);border:2px solid var(--bd);border-radius:14px;padding:10px 14px;cursor:pointer}
+button:hover{border-color:var(--or)}button:focus-visible,input:focus-visible{outline:3px solid var(--or)}
+h2{margin:18px 0 8px;font-size:20px}
+.top{display:flex;gap:12px;align-items:center;background:var(--p);border-radius:18px;padding:12px;border:2px solid var(--bd)}
+.hero{font-size:54px;line-height:1;transform:scaleX(-1)}
+.bar{height:10px;background:var(--bd);border-radius:9px;overflow:hidden;margin:4px 0}.bar i{display:block;height:100%;background:var(--ac);transition:width .4s}.bar.e i{background:var(--rd)}
+small{color:var(--mu)}
+.zs{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.zone{display:flex;flex-direction:column;gap:2px;text-align:left}.zone span{font-size:34px}.zone b{font-size:18px}
+.row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}.row button{flex:1}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}.sg button{padding:8px 0;text-align:center}.sg .c{border-color:var(--ac)}
+.arena{display:flex;justify-content:space-between;align-items:flex-end;background:var(--p);border:2px solid var(--bd);border-radius:18px;padding:12px;gap:10px}
+.fighter{flex:1;text-align:center}.fighter .sp{font-size:62px;line-height:1.1;display:inline-block}.fighter.h .sp{transform:scaleX(-1)}
+.boss .sp{font-size:84px}.hit{animation:sk .35s}@keyframes sk{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.hero.hit,.h .hit{animation:sk2 .35s}@keyframes sk2{25%{transform:scaleX(-1) translateX(-8px)}75%{transform:scaleX(-1) translateX(8px)}}
+.q{background:var(--p);border:2px solid var(--bd);border-radius:18px;padding:16px;margin:12px 0;text-align:center}
+.q .w{font-size:34px;font-weight:800;margin:4px 0}.q .t{color:var(--mu);font-size:14px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.opts button{padding:14px 8px;font-size:18px}
+.ok{background:var(--ac)!important;color:#fff;border-color:var(--ac)!important}.no{background:var(--rd)!important;color:#fff;border-color:var(--rd)!important}
+input{font:inherit;font-size:22px;width:100%;padding:10px;border-radius:12px;border:2px solid var(--bd);background:var(--bg);color:var(--tx);text-align:center}
+.fb{min-height:48px;font-weight:700;margin-top:8px}
+.items{display:flex;gap:8px;justify-content:center}
+.story{background:var(--p);border:2px solid var(--bd);border-radius:18px;padding:18px;text-align:center}.story .hero{font-size:90px}
+select{font:inherit;flex:2;min-width:0;padding:10px;border-radius:14px;border:2px solid var(--bd);background:var(--p);color:var(--tx)}
+#mt{position:fixed;right:10px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:5;padding:6px 10px;border-radius:50%}
+ul.wl{list-style:none;padding:0;columns:1;font-size:15px}
+@media(max-width:420px){.opts{grid-template-columns:1fr}.fighter .sp{font-size:48px}ul.wl{columns:1}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body><div id="app"></div>
+<script>
+const Z=[[["動物的覓食行為和什麼有密切關係？","身體構造和食物類型"],["環境溫度過低時，動物可以怎麼維持體溫？","晒太陽、聚集在一起取暖"],["環境溫度過高時，動物可以怎麼維持體溫？","躲到樹蔭下、洞穴中"],["有些動物會隨著季節變化，做什麼來生存？","遷移到適合的環境"],["自我保護的方法大致分成哪兩類？","利用外形顏色花紋、運用身體構造"],["壁虎遇到危險會斷尾逃走，這是哪一類自我保護？","運用身體構造"],["昆蟲外形像樹枝，不容易被發現，這是什麼？","偽裝"],["毒蛙有鮮豔的顏色來警告敵人，這是什麼？","警戒色"],["身體顏色和環境相近，讓敵人不容易發現，稱為？","保護色"],["無毒的蛇外形像毒蛇來嚇阻敵人，這是什麼？","模仿"],["動物維持體溫，是為了適應什麼？","環境溫度的變化"],["動物為了求生存，有哪三種策略？","覓食、適應環境、自我保護"]],[["個體間扮演不同角色、彼此分工合作的行為稱為？","社會行為"],["哪兩種動物有社會行為？","螞蟻、臺灣獼猴"],["築巢、求偶、交配、護卵、育幼的目的是？","幫助繁衍後代"],["胚胎在母體內發育、產出完整個體的繁殖方式是？","胎生"],["胚胎在母體外發育、產出一顆顆卵的繁殖方式是？","卵生"],["人、貓、兔的胚胎在哪裡發育？","母體內"],["鳥、龜、昆蟲的胚胎在哪裡發育？","母體外"],["親代的特徵會怎麼樣？","遺傳給子代"],["親代與子代在外形上有什麼關係？","有許多相似的特徵"],["小天鵝跟著鴨媽媽走，這是什麼行為？","印痕行為"],["動物行為學之父是誰？","勞倫茲"],["發現生物會代代相傳與演化的英國科學家是誰？","達爾文"]],[["聲音的大小稱為什麼？","音量"],["聲音的高低稱為什麼？","音調"],["不同發聲物體因材料、結構不同而具有的獨特性是？","音色"],["音量、音調與音色合稱為？","聲音三要素"],["聽起來舒服、愉悅的聲音稱為？","樂音"],["音量太大、超過管制標準而干擾情緒的聲音稱為？","噪音"],["測量音量的儀器叫什麼？","分貝計"],["音量的單位是什麼？","分貝"],["分貝數越高，音量會怎麼樣？","越大"],["捷運軌道旁設置隔音牆，是為了做什麼？","阻隔噪音"],["吹直笛時，是什麼在振動而發出聲音？","空氣柱"],["按壓的笛孔越少、空氣柱越短，聲音是高還是低？","高"],["哪些因素會影響發聲物體的音調？","長短、粗細、鬆緊"],["弦較粗、較長、較鬆時，烏克麗麗的聲音比較？","低"],["敲擊鐵琴較長的金屬片，聲音比較？","低"],["吉他、烏克麗麗為什麼要有音箱？","使整個音箱一起振動，擴大音量"]],[["光從空氣斜斜射入水中，行進路線改變，稱為？","折射"],["吸管放進水杯看起來像斷掉，是因為光發生了什麼？","行進路線改變"],["從岸上看溪底，溪水的深度看起來比實際？","淺"],["放大鏡屬於哪一種透鏡？","凸透鏡"],["放大鏡的鏡片有什麼特徵？","中間厚、四周較薄"],["光從空氣進入放大鏡後，路線會怎麼改變？","折往中間匯聚"],["不可以用放大鏡做什麼，會使眼睛受傷？","看太陽"],["透過放大鏡看遠方的物體，會看到什麼影像？","倒立的影像"],["放大鏡與物體有最適當的距離時，影像會怎樣？","被放大"],["陽光是由什麼所組成的？","不同的色光"],["要形成彩虹，陽光要照射到空氣中的什麼？","小水滴"],["如何在陽光下用噴霧器製造彩虹色光？","背對陽光噴水霧"],["牛頓用什麼讓白光分散成七彩色光？","三稜鏡"],["為什麼會先看到閃電，才聽到打雷？","光比聲音傳播得快"],["光的傳播速度大約是每秒多少？","3億公尺"],["聲音在空氣中的傳播速度大約是每秒多少？","340公尺"]]];
+const N=[["🌿","草原求生","第1單元 動物世界①"],["🏕️","動物部落","第1單元 動物世界②"],["🏰","聲音城堡","第2單元 聲光世界①"],["⚡","光之神殿","第2單元 聲光世界②"]];
+const MON=['👾','🐍','🦂','🦇','🐙','👻','🐺','🕷️','🦑','🧟','🤖','👹'],ALL=Z.flat(),SZ=4,QA=1;
+const $=s=>document.querySelector(s),A=$('#app');
+const nw=()=>({xp:0,g:0,meat:2,orb:2,clr:{},wr:[],seen:0});
+let DB={cur:'',p:{}},S=nw();try{DB=JSON.parse(localStorage.getItem('trex2'))||DB}catch(e){}
+try{const o=JSON.parse(localStorage.getItem('trex1'));if(o&&!Object.keys(DB.p).length)DB.p['舊進度']=o}catch(e){}
+const sv=()=>{try{if(DB.cur)DB.p[DB.cur]=S;localStorage.setItem('trex2',JSON.stringify(DB))}catch(e){}};
+const lv=()=>Math.floor(Math.sqrt(S.xp/40))+1,mh=()=>80+lv()*10,nSt=z=>Math.ceil(Z[z].length/SZ);
+const sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+const say=t=>{if(QA)return;try{const s=speechSynthesis;s.cancel();const u=new SpeechSynthesisUtterance(t.replace(/[….]+$/,''));const v=voice();if(v){u.voice=v;u.lang=v.lang}else u.lang='en-US';u.rate=.8;setTimeout(()=>s.speak(u),60)}catch(e){}};
+const nm=s=>s.toLowerCase().replace(/[^a-z]/g,'');
+let B;
+function intro(){A.innerHTML=`<div class=story><div class=hero>🦖</div><h2>暴龍勇者 Rexy</h2><p>知識隕石撞進恐龍王國，所有科學知識都變成了怪物！<br>只有最聰明的暴龍勇者 Rexy 能擊退牠們。<br>答對題目就能咬碎怪物，答錯會被反擊。<br>一起踏上冒險吧！</p><button onclick="S.seen=1;sv();home()">🦖 出發！</button></div>`}
+function home(){bgm('town');const nd=40*lv()**2,pv=40*(lv()-1)**2;
+A.innerHTML=`<div class=top><div class=hero>🦖</div><div style="flex:1"><b>${esc(DB.cur)} Lv.${lv()}</b><div class=bar><i style="width:${(S.xp-pv)/(nd-pv)*100}%"></i></div><small>經驗 ${S.xp}　💰${S.g}　🍖${S.meat}　🔮${S.orb}</small></div></div>
+<h2>選擇冒險地圖（共 ${ALL.length} 題）</h2><div class=zs>${Z.map((w,i)=>{let c=0;for(let s=0;s<nSt(i);s++)if(S.clr[i+'-'+s])c++;return `<button class=zone onclick="zone(${i})"><span>${N[i][0]}</span><b>${N[i][1]}</b><small>${N[i][2]}，${w.length} 題</small><div class=bar><i style="width:${c/nSt(i)*100}%"></i></div><small>已通關 ${c}/${nSt(i)}</small></button>`}).join('')}</div>
+<div class=row><button onclick="battle(-1)">🔁 複習錯題（${S.wr.length}）</button><button onclick="battle(-2)">🎲 隨機挑戰</button></div><h2>角色與存檔</h2><div class=row><button onclick="logout()">👤 切換角色</button><button onclick="exp()">📤 備份／轉移存檔</button></div>`;fillV()}
+function zone(i){bgm('town');A.innerHTML=`<button onclick="home()">← 回地圖</button><h2>${N[i][0]} ${N[i][1]}</h2><p><small>每一關 ${SZ} 題，最後一關是魔王。</small></p><div class=sg>${Array.from({length:nSt(i)},(_,s)=>`<button class="${S.clr[i+'-'+s]?'c':''}" onclick="battle(${i},${s})">${s==nSt(i)-1?'👑':MON[s%MON.length]}<br>${s+1}${S.clr[i+'-'+s]?' ⭐':''}</button>`).join('')}</div>`}
+function battle(z,s){let w;
+if(z>=0)w=Z[z].slice(s*SZ,s*SZ+SZ);else if(z==-1)w=sh(S.wr).slice(0,SZ).map(x=>x.split('|'));else w=sh(ALL).slice(0,SZ);
+if(!w.length){alert('目前沒有錯題，繼續保持！');return}
+const q=w.map((x,j)=>({w:x,t:QA?'ez':j==w.length-1&&x[0].length<=14&&w.length>3?'sp':j%3==2?'rv':'ez'}));
+const boss=z>=0&&s==nSt(z)-1;
+B={z,s,q,tot:w.length,w,hp:mh(),mh:mh(),ok:0,combo:0,done:0,pool:z>=0?Z[z]:ALL,mon:boss?'🐉':z<0?'👹':MON[s%MON.length],boss,lock:0,lv0:lv()};ask()}
+function hud(){return `<button onclick="if(confirm('離開戰鬥？'))home()">← 撤退</button><div class=arena><div class="fighter h"><span class=sp id=hs>🦖</span><div class="bar e"><i id=hb></i></div><small id=ht></small></div><div class="fighter ${B.boss?'boss':''}"><span class=sp id=ms>${B.mon}</span><div class="bar e"><i id=mb></i></div><small>怪物 ${B.q.length}/${B.tot}</small></div></div>`}
+function upd(){$('#hb').style.width=Math.max(0,B.hp/B.mh*100)+'%';$('#ht').textContent=`HP ${Math.max(0,B.hp)}/${B.mh}`;$('#mb').style.width=B.q.length/B.tot*100+'%'}
+function ask(){const c=B.q[0];if(!c)return win();bgm(B.boss?'boss':'battle');B.lock=0;B.c=c;const[en,zh]=c.w;
+const mk=g=>{const o=new Set([g(c.w)]);for(const x of sh(B.pool)){if(o.size>=4)break;if(x[0]!==en)o.add(g(x))}return sh([...o])};
+let body;
+if(c.t=='sp')body=`<div class=t>拼拼看！魔王咒語</div><div class=w>${zh}</div><div class=t>${en[0]+en.slice(1).replace(/[A-Za-z]/g,' _')}</div><input id=in autocomplete=off autocapitalize=off spellcheck=false placeholder="輸入英文單字"><div class=row><button onclick="chk()">⚔️ 攻擊</button></div>`;
+else{const rv=c.t=='rv';B.opts=mk(rv?x=>x[0]:x=>x[1]);B.ans=rv?en:zh;
+body=`<div class=t>${rv?'這句中文怎麼說？':QA?'怪物出題！選出正確答案':'這個怪物的單字是什麼意思？'}</div><div class=w style="${QA?'font-size:21px;line-height:1.5':''}">${rv?zh:en}</div>${rv||QA?'':'<button onclick="say(B.c.w[0])">🔊 聽發音</button>'}<div class=opts>${B.opts.map((o,i)=>`<button id=o${i} onclick="pick(${i})">${o}</button>`).join('')}</div>`}
+A.innerHTML=hud()+`<div class=q>${body}<div class=fb id=fb></div></div><div class=items><button onclick="meat()">🍖 回血 ×${S.meat}</button>${c.t=='sp'?'':`<button onclick="orb()">🔮 刪去2個 ×${S.orb}</button>`}</div>`;upd();
+if(c.t=='ez')say(en);const i=$('#in');if(i){i.focus();i.onkeydown=e=>{if(e.key=='Enter')chk()}}}
+function meat(){if(S.meat<1||B.hp>=B.mh)return;S.meat--;B.hp=Math.min(B.mh,B.hp+40);sv();upd();document.querySelector('.items button').textContent='🍖 回血 ×'+S.meat}
+function orb(){if(S.orb<1||B.lock)return;const w=B.opts.map((o,i)=>i).filter(i=>B.opts[i]!==B.ans);if(w.length<2)return;S.orb--;sv();sh(w).slice(0,2).forEach(i=>{const b=$('#o'+i);b.disabled=true;b.style.opacity=.3});document.querySelectorAll('.items button')[1].textContent='🔮 刪去2個 ×'+S.orb}
+function pick(i){if(B.lock)return;B.lock=1;const good=B.opts[i]==B.ans;$('#o'+i).classList.add(good?'ok':'no');if(!good){const k=B.opts.indexOf(B.ans);$('#o'+k).classList.add('ok')}res(good)}
+function chk(){if(B.lock)return;B.lock=1;res(nm($('#in').value)==nm(B.c.w[0]))}
+function res(good){const c=B.c,[en,zh]=c.w,k=en+'|'+zh,f=$('#fb');
+if(good){B.ok++;B.combo++;S.xp+=10+Math.min(B.combo,5);S.wr=S.wr.filter(x=>x!=k);B.q.shift();B.done++;if(!B.got)B.got=[];B.got.push(c.w);
+sfx('ok');$('#ms').classList.add('hit');f.textContent=B.combo>=3?`🔥 連擊 ×${B.combo}！暴龍咬！`:'✅ 答對了！暴龍咬！';say(en);upd();sv();setTimeout(ask,900)}
+else{B.combo=0;B.hp-=20;if(!S.wr.includes(k))S.wr.push(k);B.q.shift();if(!c.re)B.q.push({w:c.w,t:'ez',re:1});
+sfx('no');$('#hs').classList.add('hit');f.innerHTML=`❌ 正解：<b>${QA?zh:en}</b>${QA?'':' = '+zh}<div class=row><button id=nx>${B.hp<=0?'💀 繼續':'記住了，繼續'}</button></div>`;say(en);upd();sv();$('#nx').onclick=()=>B.hp<=0?lose():ask()}}
+function lose(){sfx('lose');A.innerHTML=`<div class=story><div class=hero>😵</div><h2>Rexy 倒下了…</h2><p>別氣餒！錯的單字已加入「複習錯題」。</p><div class=row><button onclick="battle(${B.z},${B.s})">⚔️ 再挑戰</button><button onclick="home()">回地圖</button></div></div>`}
+function win(){sfx('win');const xp=20+B.ok*2,g=10+B.ok;S.xp+=xp;S.g+=g;const r=Math.random()<.5?'🍖 肉排':'🔮 魔法水晶';Math.random()<.5?S.meat++:S.orb++;
+if(B.z>=0)S.clr[B.z+'-'+B.s]=1;sv();const up=lv()>B.lv0;
+A.innerHTML=`<div class=story><div class=hero>🦖</div><h2>${B.boss?'魔王被打敗了！':'勝利！'}</h2><p>獲得經驗 +${xp}　💰 +${g}　獲得道具：${r}${up?`<br><b>🎉 升級！Lv.${lv()}</b>`:''}</p><ul class=wl>${B.w.map(x=>`<li>${QA?x[0]+'<br><b>'+x[1]+'</b>':'<b>'+x[0]+'</b> '+x[1]}</li>`).join('')}</ul><div class=row><button onclick="${B.z>=0&&B.s+1<nSt(B.z)?`battle(${B.z},${B.s+1})`:'home()'}">⚔️ ${B.z>=0&&B.s+1<nSt(B.z)?'下一關':'回地圖'}</button><button onclick="${B.z>=0?`zone(${B.z})`:'home()'}">回關卡選單</button></div></div>`}
+function voice(){try{const v=speechSynthesis.getVoices().filter(x=>/^en[-_](US|GB|AU)/i.test(x.lang));if(!v.length)return null;return v.find(x=>x.name==S.vo)||[/Natural|Online/i,/Premium|Enhanced/i,/Google US/i,/Samantha|Ava|Allison|Evan|Zoe/i].map(r=>v.find(x=>r.test(x.name)&&/US/i.test(x.lang))).find(Boolean)||v.find(x=>/US/i.test(x.lang))||v[0]}catch(e){return null}}
+function fillV(){const e=$('#vs');if(!e)return;const v=speechSynthesis.getVoices().filter(x=>/^en[-_]/i.test(x.lang)),c=voice();e.innerHTML=v.length?v.map(x=>`<option ${c&&c.name==x.name?'selected':''}>${x.name}</option>`).join(''):'<option>找不到英文語音</option>'}
+try{speechSynthesis.onvoiceschanged=fillV}catch(e){}
+const MU={want:'town'},TH={town:{bpm:104,r:60,l:[12,14,16,14,19,16,14,12,16,19,21,19,16,14,16,null],b:[0,null,7,null,5,null,7,null,0,null,7,null,9,null,7,null]},battle:{bpm:144,r:57,h:1,l:[12,15,19,15,12,15,17,15,12,15,19,22,19,17,15,12],b:[0,0,0,0,-4,-4,-4,-4,-2,-2,-2,-2,-5,-5,-5,-5]},boss:{bpm:170,r:50,h:1,l:[12,13,17,13,12,13,19,17,12,13,17,20,19,17,13,12],b:[0,0,12,0,0,0,12,0,-2,-2,10,-2,-4,-4,8,-4]}};
+function mctx(){if(!MU.c){try{const c=MU.c=new(window.AudioContext||window.webkitAudioContext)();MU.g=c.createGain();MU.g.gain.value=.13;MU.g.connect(c.destination);const n=c.createBuffer(1,2205,44100),d=n.getChannelData(0);for(let i=0;i<2205;i++)d[i]=Math.random()*2-1;MU.n=n}catch(e){}}if(MU.c&&MU.c.state=='suspended')MU.c.resume();return MU.c}
+function tone(ty,m,t,d,v){const c=MU.c,o=c.createOscillator(),g=c.createGain();o.type=ty;o.frequency.value=440*2**((m-69)/12);g.gain.setValueAtTime(v*.5,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(MU.g);o.start(t);o.stop(t+d+.02)}
+function hat(t){const c=MU.c,s=c.createBufferSource(),g=c.createGain();s.buffer=MU.n;g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+.05);s.connect(g);g.connect(MU.g);s.start(t)}
+function sched(){const c=MU.c,T=TH[MU.th];if(!c||!T||c.state!='running')return;const d=60/T.bpm/2;if(MU.t<c.currentTime)MU.t=c.currentTime+.05;while(MU.t<c.currentTime+.25){const k=MU.i%16,l=T.l[k],b=T.b[k];if(l!=null)tone('square',T.r+l,MU.t,d*.9,.5);if(b!=null)tone('triangle',T.r+b-12,MU.t,d*1.8,.9);if(T.h&&k%2)hat(MU.t);MU.i++;MU.t+=d}}
+function bgm(th){MU.want=th;if(S.mu===0)return;const c=mctx();if(!c)return;if(MU.th===th&&MU.tm)return;MU.th=th;MU.i=0;MU.t=c.currentTime+.08;if(!MU.tm)MU.tm=setInterval(sched,60)}
+function mstop(){clearInterval(MU.tm);MU.tm=0;MU.th=null}
+function sfx(k){if(S.mu===0)return;const c=mctx();if(!c)return;const P={ok:[[72,76,79],.07,'square'],no:[[55,50],.15,'sawtooth'],win:[[60,64,67,72,76,79,84],.11,'square'],lose:[[60,57,53,48],.22,'triangle']}[k];P[0].forEach((m,i)=>tone(P[2],m,c.currentTime+i*P[1],P[1]*2,.9))}
+const mt=document.createElement('button');mt.id='mt';mt.setAttribute('aria-label','背景音樂開關');mt.textContent=S.mu===0?'🔇':'🎵';mt.onclick=()=>{S.mu=S.mu===0?1:0;sv();mt.textContent=S.mu===0?'🔇':'🎵';S.mu===0?mstop():bgm(MU.want)};document.body.appendChild(mt);
+addEventListener('pointerdown',()=>{if(S.mu!==0)bgm(MU.want)});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),lvOf=p=>Math.floor(Math.sqrt(p.xp/40))+1;
+function login(){const n=Object.keys(DB.p);A.innerHTML=`<div class=story><div class=hero>🦖</div><h2>暴龍勇者：自然科學大冒險</h2><p>輸入你的角色名稱，進度會自動存檔。<br>下次輸入同一個名字，就能從上次的地方繼續！</p><input id=nm maxlength=12 placeholder="角色名稱" autocomplete=off><div class=row><button onclick="go($('#nm').value)">⚔️ 開始／繼續冒險</button></div>${n.length?`<h2>這台裝置上的角色</h2><div class=row>${n.map(k=>`<button data-n="${esc(k)}" onclick="go(this.dataset.n)">🦖 ${esc(k)}<br><small>Lv.${lvOf(DB.p[k])}</small></button>`).join('')}</div>`:''}<h2>換裝置繼續玩</h2><div class=row><button onclick="imp()">📥 貼上存檔碼讀取</button></div></div>`;$('#nm').onkeydown=e=>{if(e.key=='Enter')go(e.target.value)}}
+function go(n){n=(n||'').trim().slice(0,12);if(!n){alert('請先輸入角色名稱');return}DB.cur=n;S=DB.p[n]||nw();sv();S.seen?home():intro()}
+function logout(){sv();DB.cur='';S=nw();try{localStorage.setItem('trex2',JSON.stringify(DB))}catch(e){}mstop();login()}
+function exp(){const c=btoa(unescape(encodeURIComponent(JSON.stringify({n:DB.cur,s:S}))));A.innerHTML=`<button onclick="home()">← 回地圖</button><h2>備份／轉移存檔</h2><p><small>複製下面的存檔碼，到另一台裝置的登入畫面按「貼上存檔碼讀取」，就能接著玩。也建議先存一份備份，以免清除瀏覽器資料後進度消失。</small></p><textarea id=sc readonly style="width:100%;height:150px;font:12px monospace;background:var(--p);color:var(--tx);border:2px solid var(--bd);border-radius:12px;padding:8px">${c}</textarea><div class=row><button onclick="$('#sc').select();try{navigator.clipboard.writeText($('#sc').value)}catch(e){document.execCommand('copy')}this.textContent='✅ 已複製'">📋 複製存檔碼</button></div>`}
+function imp(){const c=prompt('請貼上存檔碼');if(!c)return;try{const o=JSON.parse(decodeURIComponent(escape(atob(c.trim()))));if(!o.n||typeof o.s.xp!='number')throw 0;if(DB.p[o.n]&&lvOf(DB.p[o.n])>lvOf(o.s)&&!confirm('這台裝置上「'+o.n+'」的進度比較高，要用存檔碼覆蓋嗎？'))return;DB.p[o.n]=o.s;go(o.n)}catch(e){alert('存檔碼無法讀取，請確認有完整複製。')}}
+DB.cur&&DB.p[DB.cur]?(S=DB.p[DB.cur],S.seen?home():intro()):login();
+</script></body></html>
