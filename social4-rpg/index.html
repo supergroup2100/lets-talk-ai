@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta name="color-scheme" content="light">
+<title>咖皮隊長的社會科大冒險 | 四上考前總複習 RPG</title>
+<style>
+html{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg1:#EAF6FF;--bg2:#DFF3E4;--brown:#5B7B4F;--dark:#274028;--green:#5DA85F;--orange:#FF9F45;--pink:#FF7B9C;--blue:#4EA8DE;--yellow:#FFD93D;--card:#fff;color-scheme:light}
+body{font-family:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;background:linear-gradient(180deg,var(--bg1),var(--bg2));background-color:#EAF6FF;color:var(--dark);min-height:100vh}
+.topbar{position:sticky;top:0;z-index:50;background:#f7fdf8;border-bottom:3px solid var(--brown);display:flex;align-items:center;gap:10px;padding:8px 14px}
+.capymini{width:44px;height:44px;flex:0 0 44px}
+.stats{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.pill{background:#fff;border:2px solid var(--brown);border-radius:999px;padding:4px 12px;font-weight:800;font-size:14px;color:var(--dark)}
+.wrap{max-width:960px;margin:0 auto;padding:16px 14px 90px}
+.screen{display:none;animation:pop .35s ease}
+.screen.active{display:block}
+@keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.hero{background:#fff;background-color:#fff;border:4px solid var(--brown);border-radius:28px;padding:26px 20px;text-align:center;box-shadow:0 10px 0 #cfe3cf;position:relative;overflow:hidden;color:var(--dark)}
+.hero:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 10%,#fff3 0 120px,transparent 121px),radial-gradient(circle at 90% 80%,#FFD93D33 0 160px,transparent 161px);pointer-events:none}
+.capybara-big{width:210px;height:175px;margin:6px auto}
+h1{font-size:30px;line-height:1.3;color:var(--dark)}
+h2{color:var(--dark)}
+.sub{color:#3d6b45;margin-top:8px;font-size:16px}
+.btn{display:inline-block;border:3px solid var(--dark);border-radius:18px;padding:12px 22px;font-size:18px;font-weight:900;cursor:pointer;background:var(--yellow);color:var(--dark);box-shadow:0 5px 0 var(--dark);transition:.15s;margin:6px}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--dark)}
+.btn.green{background:#8FE388}.btn.blue{background:#AEE3FF}.btn.pink{background:#FFC2D4}.btn.white{background:#fff}.btn.small{font-size:15px;padding:9px 15px}
+input.name{font-size:18px;padding:12px;border:3px solid var(--brown);border-radius:14px;width:min(320px,90%);text-align:center;background:#fff;color:var(--dark)}
+.map{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
+.level{background:#fff;background-color:#fff;border:3px solid var(--brown);border-radius:20px;padding:14px;text-align:center;cursor:pointer;position:relative;box-shadow:0 6px 0 #cfe3cf;color:var(--dark)}
+.level.locked{filter:grayscale(1);opacity:.6;cursor:not-allowed}
+.level.done{border-color:var(--green);background:#f0fff0;background-color:#f0fff0}
+.level .emoji{font-size:44px}.level h3{font-size:17px;margin:6px 0}.level p{font-size:13px;color:#3d6b45}
+.stars{color:#f5a623;font-size:15px}
+.dialog{background:#fff;background-color:#fff;border:3px solid var(--brown);border-radius:20px;padding:14px;display:flex;gap:12px;align-items:flex-start;margin:12px 0;color:var(--dark)}
+.dialog .face{flex:0 0 96px;text-align:center}
+.dialog .face svg{width:96px;height:auto}
+.bubble{flex:1}.bubble .who{font-weight:900;color:var(--brown)}.bubble .text{font-size:17px;line-height:1.7;min-height:52px;color:var(--dark)}
+.card{background:#fff;background-color:#fff;border:3px solid var(--brown);border-radius:22px;padding:18px;margin:12px 0;box-shadow:0 6px 0 #cfe3cf;color:var(--dark)}
+.quizQ{font-size:20px;font-weight:900;margin-bottom:6px;color:var(--dark);line-height:1.6}
+.quizSub{color:#3d6b45;margin-bottom:12px}
+.optGrid{display:grid;gap:10px}
+.opt{border:3px solid var(--brown);border-radius:16px;padding:13px;font-size:18px;font-weight:800;background:#f8fdf9;background-color:#f8fdf9;color:var(--dark);cursor:pointer;text-align:left;display:flex;gap:10px;align-items:center}
+.opt:hover{background:#EAF6FF}.opt.correct{background:#c8f7c5;border-color:#2e9e44}.opt.wrong{background:#ffd6d6;border-color:#d33;animation:shake .3s}
+.opt:disabled{cursor:default}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.mascot svg{width:92px;height:auto}
+.mascot-big svg{width:170px;height:auto}
+.mini-row svg{width:88px;height:auto;display:block}
+.bob{animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.paw{position:fixed;bottom:-40px;z-index:1;opacity:.35;pointer-events:none;animation:rise linear infinite}
+@keyframes rise{from{transform:translateY(0) rotate(-20deg)}to{transform:translateY(-110vh) rotate(20deg)}}
+.wrap{position:relative;z-index:2}
+.curiosity{background:linear-gradient(135deg,#FFF9E6,#EAFBF0);background-color:#FFF9E6;border:3px solid var(--orange);border-radius:18px;padding:14px;margin-top:12px;color:var(--dark)}
+.curiosity h4{color:#b0651a}.curiosity p{font-size:15px;line-height:1.8;margin-top:6px}
+.feedback{min-height:30px;font-size:17px;font-weight:900;margin-top:10px;text-align:center;color:var(--dark)}
+.progress{height:14px;background:#eee;background-color:#eee;border:2px solid var(--brown);border-radius:999px;overflow:hidden;margin:8px 0}
+.progress>div{height:100%;background:linear-gradient(90deg,var(--green),#8FE388);width:0%;transition:.4s}
+.badgeRow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.badge{background:#fff;border:2px solid var(--brown);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:800;color:var(--dark)}
+.badge.got{background:var(--yellow)}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
+.noteTab{border:3px solid var(--brown);border-radius:14px;padding:8px 14px;font-weight:900;background:#fff;cursor:pointer;font-size:15px;margin:4px}
+.noteTab.on{background:var(--yellow)}
+.noteBody{background:#fff;border:3px solid var(--brown);border-radius:20px;padding:18px;margin-top:10px}
+.noteBody li{font-size:16px;line-height:2;margin-left:-10px}
+.noteBody b{color:var(--brown)}
+.footerNav{position:fixed;bottom:0;left:0;right:0;background:#f7fdf8;background-color:#f7fdf8;border-top:3px solid var(--brown);display:flex;gap:8px;padding:10px;justify-content:center;z-index:60}
+.kbd{font-size:13px;color:#3d6b45;text-align:center;margin-top:10px}
+@media(max-width:600px){h1{font-size:24px}.capybara-big{width:170px;height:140px}.dialog .face{flex:0 0 72px}.dialog .face svg{width:72px}.quizQ{font-size:18px}.opt{font-size:16px}}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="topbar">
+<svg class="capymini" viewBox="0 0 120 100"><ellipse cx="60" cy="62" rx="34" ry="22" fill="#B07A45" stroke="#4A2F16" stroke-width="4"/><ellipse cx="60" cy="58" rx="26" ry="14" fill="#D2A679"/><ellipse cx="32" cy="30" rx="9" ry="11" fill="#B07A45" stroke="#4A2F16" stroke-width="3"/><ellipse cx="88" cy="30" rx="9" ry="11" fill="#B07A45" stroke="#4A2F16" stroke-width="3"/><circle cx="45" cy="48" r="4.5" fill="#222"/><circle cx="75" cy="48" r="4.5" fill="#222"/><ellipse cx="60" cy="60" rx="7" ry="5" fill="#4A2F16"/><path d="M53 70 q7 6 14 0" stroke="#4A2F16" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+<div><b>咖皮隊長的社會科大冒險</b><br><span style="font-size:12px">四上 1-1～2-2 考前總複習 RPG</span></div>
+<div class="stats"><div class="pill">🪙 <span id="coins">0</span></div><div class="pill">⭐ <span id="xp">0</span></div><div class="pill">🗺️ <span id="worldCnt">0</span>/5</div></div>
+</div>
+<div class="wrap">
+
+<!-- START -->
+<div class="screen active" id="scr-start">
+<div class="hero">
+<div id="startPals" class="mini-row"></div>
+<h1>🦫 咖皮隊長的<br>社會科大冒險！</h1>
+<p class="sub">給聰明的你 · 四年級考前總複習<br>5 個世界 · 51 題 · 地圖 × 地形 × 氣候 × 傳統住屋 × 器物<br>不是死背！跟著咖皮去探索家鄉！</p>
+<div style="margin:14px 0"><input class="name" id="playerName" placeholder="輸入你的名字，例如：小芸" value=""></div>
+<div><button class="btn green" onclick="startGame()">🚀 開始冒險！</button><button class="btn white small" onclick="showScreen('scr-notes')">📖 重點整理</button></div>
+<p class="kbd">🔊 請開聲音，咖皮會唸題目給你聽 · 建議用平板或電腦玩 · 進度自動儲存</p>
+<div class="badgeRow" id="startBadges"></div>
+</div>
+<div class="card"><b>👩‍🏫 給爸媽 / 老師：</b><span style="font-size:15px">本遊戲依據康軒四上社會 1-1～2-2 課本內容設計：從地圖看家鄉、家鄉的地形、氣候與水資源、傳統住屋、生活器物。每關 10～11 題、答錯會立刻講解原因（複習型設計），集滿 5 世界才能挑戰「叉叉魔王」總決戰。全程無廣告、免安裝，GitHub Pages 直接分享連結。</span></div>
+</div>
+
+<!-- MAP -->
+<div class="screen" id="scr-map">
+<div class="dialog"><div class="face" id="mapFace">🦫</div><div class="bubble"><div class="who">咖皮隊長</div><div class="text" id="mapDialog">嗨！我是咖皮隊長！叉叉魔王把家鄉的知識都藏起來了！跟我去 5 個世界把它們找回來吧！</div></div></div>
+<div class="progress"><div id="mapProg"></div></div>
+<div style="text-align:center;font-size:14px" id="mapProgText"></div>
+<div class="map" id="mapGrid"></div>
+<div style="text-align:center;margin-top:12px"><button class="btn blue small" onclick="showScreen('scr-notes')">📖 重點整理</button><button class="btn pink small" id="bossBtn" onclick="finalBoss()">👾 挑戰叉叉魔王</button><button class="btn white small" onclick="resetSave()">🗑️ 重來</button></div>
+</div>
+
+<!-- NOTES -->
+<div class="screen" id="scr-notes">
+<div class="card"><h2>📖 考前重點整理</h2><p class="quizSub">點單元標籤切換 · 考前快速複習一遍！</p><div id="noteTabs"></div><div class="noteBody" id="noteBody"></div><div style="text-align:center;margin-top:12px"><button class="btn small" onclick="goBack()">⬅ 回去</button></div></div>
+</div>
+
+<!-- PLAY -->
+<div class="screen" id="scr-play">
+<div class="dialog"><div class="face" id="playFace">🦫</div><div class="bubble"><div class="who" id="playWho">咖皮隊長</div><div class="text" id="playDialog"></div></div></div>
+<div class="progress"><div id="playProg"></div></div>
+<div class="card" id="playCard" style="display:none"></div>
+<div class="feedback" id="playFb"></div>
+<div style="text-align:center"><button class="btn white small" onclick="showScreen('scr-map')">🗺️ 地圖</button><button class="btn blue small" onclick="replayAudio()">🔊 再聽一次題目</button></div>
+</div>
+
+<!-- WIN -->
+<div class="screen" id="scr-win">
+<div class="hero"><div id="winCapy" class="mascot-big"></div><div style="font-size:60px">🏆🎉</div><h1>太厲害了！<br><span id="winName">小英雄</span> 打敗叉叉魔王！</h1><p class="sub" id="winStats"></p><div class="badgeRow" id="winBadges"></div><div><button class="btn green" onclick="showScreen('scr-map')">🗺️ 回地圖</button><button class="btn blue" onclick="window.print()">🖨️ 列印獎狀</button></div></div>
+</div>
+
+</div>
+<div class="footerNav"><button class="btn white small" onclick="showScreen('scr-start')">🏠 首頁</button><button class="btn white small" onclick="showScreen('scr-map')">🗺️ 地圖</button><button class="btn white small" onclick="showScreen('scr-notes')">📖 重點</button><button class="btn white small" onclick="toggleMute()">🔊/🔇 <span id="muteT">聲音開</span></button></div>
+
+<script>
+"use strict";
+/* ============ 世界資料 ============ */
+const LEVELS=[
+{id:0,emoji:"🗺️",title:"地圖村",sub:"1-1 從地圖看家鄉",desc:"讀地圖、找家鄉",mascot:"guide",story:"歡迎來到地圖村！叉叉魔王把村裡的地圖全部弄亂了，行政區圖、地形圖、觀光導覽圖全都混在一起！快用你學會的「地圖四要素」把地圖們送回正確的地方吧！"},
+{id:1,emoji:"⛰️",title:"地形山",sub:"1-2 家鄉的地形",desc:"平原盆地台地丘陵山地",mascot:"study",story:"前面是地形山！山上有平原、盆地、台地、丘陵和山地五種地形。居民要在哪裡種稻、種茶、蓋房子呢？考考你對地形的了解！"},
+{id:2,emoji:"🌦️",title:"氣候水鄉",sub:"1-3 氣候、水資源與生活",desc:"氣溫雨量與水資源",mascot:"guide",story:"氣候水鄉常常下雨喔！基隆四季多雨、高雄夏雨冬少。這裡的居民會看氣溫圖和雨量圖安排生活，你能幫他們選出正確的答案嗎？"},
+{id:3,emoji:"🏠",title:"古厝村",sub:"2-1 傳統住屋",desc:"石板屋、三合院與保存",mascot:"happy",story:"古厝村裡有排灣族的石板屋、達悟族的地下屋，還有漢人的三合院！先民就地取材的智慧都藏在房子裡，快來找出答案！"},
+{id:4,emoji:"🍚",title:"器物街",sub:"2-2 器物與生活",desc:"魚筌、土灶與減塑",mascot:"guide",story:"器物街上擺滿了早期的生活器物：魚筌、木杵、土灶、菜櫥……它們都是先民從大自然取材做出來的。最後還要面對減塑大挑戰！"}];
+const LMASCOT=["guide","study","guide","happy","guide"];
+
+/* ============ 題庫（50 題） ============ */
+const QUESTIONS=[
+/* --- 世界1 地圖村 (1-1) --- */
+{w:0,q:"我們出生、成長，或是長期生活的地方，稱為什麼？",o:["家鄉","首都","車站","部落"],a:0,e:"課本說：出生、成長或長期生活的地方都是我們的家鄉。因為有人搬過家，所以有些人的家鄉可能不只一個。"},
+{w:0,q:"想認識家鄉包含了哪些行政區、又有哪些主要交通路線，分別要閱讀哪兩種地圖？",o:["行政區圖和交通路線圖","觀光導覽圖和地形圖","地形圖和行政區圖","觀光導覽圖和交通路線圖"],a:0,e:"不同種類的地圖顯示的資訊不同：想知道有哪些行政區，看行政區圖；想知道主要交通路線，看交通路線圖。"},
+{w:0,q:"想知道家鄉的地勢高低或河川分布情形，可以閱讀哪一種地圖？",o:["地形圖","行政區圖","觀光導覽圖","交通路線圖"],a:0,e:"地形圖可以讓我們知道家鄉的地勢有高有低、有沒有河川流過。"},
+{w:0,q:"想知道家鄉有哪些好吃、好玩的景點，可以閱讀哪一種地圖？",o:["觀光導覽圖","地形圖","行政區圖","交通路線圖"],a:0,e:"觀光導覽圖上會標示景點，歡迎大家來家鄉玩！"},
+{w:0,q:"在地圖上通常會標示哪些要素，讓我們方便閱讀與使用？",o:["圖名、方向標、比例尺、圖例","圖名、顏色、照片、頁碼","方向標、街道、建築物、停車場","比例尺、等高線、經緯度、圖框"],a:0,e:"地圖的四要素就是：圖名（這張地圖叫什麼）、方向標（東南西北）、比例尺（縮小的程度）、圖例（符號的意思）。"},
+{w:0,q:"在地圖上運用簡單的符號，表示實際景物的說明，這是地圖的什麼要素？",o:["圖例","圖名","方向標","比例尺"],a:0,e:"圖例用簡單的符號代表實際景物，例如：學校、醫院、公園各有自己的符號。"},
+{w:0,q:"「0 75 150 公尺」這種標示，表示實際距離在地圖上被縮小的程度，這是什麼？",o:["比例尺","圖例","方向標","圖名"],a:0,e:"比例尺表示實際距離被縮小的程度。圖上這段長度，就代表實際距離 75 公尺。"},
+{w:0,q:"地圖的名稱，通常是根據什麼來命名的？",o:["地圖的主題或區域範圍","畫地圖的人的名字","地圖的價格","印地圖的公司"],a:0,e:"例如「嘉義市東區地圖」就是根據區域範圍來命名；「行政區圖」則是根據主題命名。"},
+{w:0,q:"在家鄉的電子地圖上切換成「衛星模式」，可以看見什麼？",o:["家鄉的道路和密集的房子，還有山地和樹林","只有行政區的界線","只有景點的介紹文字","家鄉的歷史照片"],a:0,e:"地圖模式可以更快找到道路或景物名稱；衛星模式則能看見密集的房子、山地和樹林。"},
+{w:0,q:"同學們利用電子地圖製作探索地圖，下列哪個步驟排在最前面？",o:["查詢電子地圖","參訪景點","製作地圖","設計圖例"],a:0,e:"探索家鄉的正確步驟：①查詢電子地圖 ②設計圖例 ③製作地圖 ④參訪景點，最後依循地圖和行程規劃走訪家鄉。"},
+/* --- 世界2 地形山 (1-2) --- */
+{w:1,q:"地形是指什麼？",o:["地表高低起伏的型態","天空雲朵的形狀","河流流動的方向","道路寬窄的變化"],a:0,e:"地形是指地表高低起伏的型態。常見的地形有平原、盆地、台地、丘陵、山地等。"},
+{w:1,q:"常見的地形種類有哪些？",o:["平原、盆地、台地、丘陵、山地","高山、深谷、沙漠、冰原、島嶼","城市、鄉村、漁村、山城、港口","東部、西部、南部、北部、中部"],a:0,e:"認識家鄉地形的五種基本型態：平原、盆地、台地、丘陵、山地。"},
+{w:1,q:"「四周高，中間低平」的地形是哪一種？（例如：南投埔里盆地）",o:["盆地","台地","平原","丘陵"],a:0,e:"盆地四周被山圍繞，中間低平；因為地形平坦、交通便利，常形成熱鬧的都市。"},
+{w:1,q:"「頂部平坦，邊緣以陡坡和低地相接」的地形是哪一種？（例如：臺中大肚台地）",o:["台地","丘陵","盆地","山地"],a:0,e:"從空中鳥瞰，台地的頂部是平的，邊緣則是陡坡，和低地相接。"},
+{w:1,q:"「高度在 1000 公尺以上」的高聳地形是哪一種？",o:["山地","丘陵","台地","平原"],a:0,e:"山地高度在 1000 公尺以上，例如臺灣的中央山脈。"},
+{w:1,q:"「高度不超過 1000 公尺、坡度較平緩」的地形是哪一種？（例如：苗栗丘陵）",o:["丘陵","山地","台地","盆地"],a:0,e:"丘陵比山地矮、坡度也比較平緩，很適合開闢茶園和果園。"},
+{w:1,q:"觀察到家鄉是「平坦廣闊」，常可見一大片稻田，這是哪一種地形？",o:["平原","丘陵","山地","台地"],a:0,e:"平原平坦廣闊，有利於種植作物，例如臺東池上就以大片稻田聞名。"},
+{w:1,q:"在靠海的平原地區，常會看到一池池魚塭，這種聚落稱為什麼？",o:["漁村","農村","都市","山村"],a:0,e:"地形平坦的地方可能形成農村或都市；靠海的平原因為有魚塭，常形成漁村。"},
+{w:1,q:"新北市石碇區位在丘陵，很久以前居民就在這裡種茶、製茶，主要的自然條件是什麼？",o:["氣候適宜、排水良好","天天下雨、陽光很少","地勢陡峭、沒有道路","氣溫極低、終年積雪"],a:0,e:"丘陵坡度平緩、排水良好，氣候又適宜，是種茶、製茶的好地方。"},
+{w:1,q:"臺中市和平區位在山地，居民大多以什麼為生？",o:["種植水果","曬製海鹽","捕魚","採煤"],a:0,e:"地形起伏較大的山地，居民大多選擇在坡度較平緩的山坡地種植水果為生。"},
+/* --- 世界3 氣候水鄉 (1-3) --- */
+{w:2,q:"氣候是指什麼？",o:["一個地區長時間的天氣平均狀況","今天早上的天空有幾朵雲","明天中午的温度","颱風來的時間"],a:0,e:"氣候是長時間的天氣平均狀況；今天的陰晴雨雪則是「天氣」。"},
+{w:2,q:"要認識家鄉的氣候，可以從觀察什麼圖開始？",o:["氣溫圖和雨量圖","地形圖和行政區圖","路線圖和觀光圖","星座圖和月亮圖"],a:0,e:"從氣溫圖看夏熱冬冷還是一年四季都熱，從雨量圖看四季多雨還是夏雨冬少。"},
+{w:2,q:"屏東恆春 1 月的平均氣溫是 21.1℃、7 月是 28.7℃，可以判斷恆春的氣候特色是什麼？",o:["四季氣溫高，冬夏溫差小","夏天很熱，冬天非常寒冷","全年都下雪","只有春天氣溫高"],a:0,e:"屏東位在臺灣南部，四季氣溫高。和冬 16.6℃、夏 28.9℃ 的宜蘭相比，冬天溫暖多了。"},
+{w:2,q:"「這裡每個月的降雨量多，只有夏季 7 月的平均降雨量低於 200 毫米」，這是哪裡的特色？",o:["基隆","高雄","屏東","臺南"],a:0,e:"基隆四季多雨，被稱為雨都，只有 7 月降雨量較少。"},
+{w:2,q:"高雄市各月平均降雨量的特色是什麼？",o:["夏季多雨、冬季少雨","四季降雨量平均","全年都很乾燥","冬季比夏季多雨"],a:0,e:"高雄夏季 6～8 月降雨量都超過 300 毫米；冬季 2 月最少，只有 17.7 毫米。"},
+{w:2,q:"新北市瑞芳區九份常常下雨，住家的屋頂用瀝青製成的油毛氈，這是為什麼？",o:["油毛氈是很好的防雨建材","油毛氈可以吸收雨水","屋頂要黑色比較漂亮","油毛氈可以保暖"],a:0,e:"居民會依不同的氣候選擇合適的建材：多雨的地方要用防雨效果好的屋頂。"},
+{w:2,q:"澎湖縣七美鄉雨下得比較少，居民選擇種植需水較少的花生，這反映了什麼道理？",o:["居民會依氣候種植適合的作物","居民喜歡吃花生","花生的價格最高","澎湖沒有其他作物"],a:0,e:"氣候會影響作物的選擇：雨水少的地方，要種植耐旱、需水較少的作物。"},
+{w:2,q:"下列哪些都是家鄉重要的水資源？",o:["河川、湖泊、地下水、海洋","眼淚、雨水、汽水、汗水","水杯、水壺、水塔、水管","雲、霧、霜、露"],a:0,e:"河川、湖泊、地下水與海洋都是家鄉重要的水資源，提供居民日常所需。"},
+{w:2,q:"位於中部的濁水溪，夏季河水量較多、冬季部分河床裸露，主要原因是什麼？",o:["河川的水量會因季節的降雨量而不同","河川夏天會自己變大","冬天有人把河水喝光","河川冬天會結冰"],a:0,e:"河水多會流入海洋或滲入地下成為地下水；降雨多的季節，河川水量就多。"},
+{w:2,q:"政府在部分河川中、上游建有水庫，水庫的功能包含下列哪些？",o:["供給民生與工業用水、灌溉、水力發電","製造雨水","保存魚類標本","提供觀光夜市用電"],a:0,e:"水庫具有供給民生與工業用水、灌溉、水力發電等功能，和居民生活息息相關。"},
+{w:2,q:"想獲得家鄉的氣溫和降雨量資料，可以查詢哪個網站？",o:["中央氣象署網站","觀光導覽網站","學校首頁","網路商店"],a:0,e:"小探究家步驟②：要獲得氣溫和降雨量資料，可以查詢中央氣象署的網站。"},
+/* --- 世界4 古厝村 (2-1) --- */
+{w:3,q:"原住民族常使用的建築材料有哪些？",o:["石板、木頭、竹子、茅草","鋼筋、水泥、玻璃、磁磚","塑膠、鋁片、橡皮、油漆","磚頭、磁磚、大理石、塑膠"],a:0,e:"原住民族會就地取材，使用石板、木頭、竹子、茅草等材料搭建傳統住屋。"},
+{w:3,q:"排灣族與魯凱族的石板屋被稱為「會呼吸的房子」，而且住起來冬暖夏涼，主要原因是什麼？",o:["石板交錯堆疊又厚，煙還能從縫隙往外飄","房子四周都是窗戶","屋頂會隨天氣開關","石板會自己變熱變冷"],a:0,e:"石板厚，夏天隔熱、冬天保暖；升火的煙可讓木頭防腐防蟲，並順著石板縫隙飄出，所以被稱為「會呼吸的房子」。"},
+{w:3,q:"為了躲避強風的侵襲，用木頭、石頭興建低矮的半地下式住屋「地下屋」，是哪一族的傳統住屋？",o:["雅美族（達悟族）","排灣族","泰雅族","阿美族"],a:0,e:"雅美族（達悟族）人以木頭、石頭興建半地下式住屋，例如臺東縣蘭嶼鄉野銀部落。"},
+{w:3,q:"漢人的「竹管仔厝」是怎麼建造的？",o:["用竹子當建築骨架，再敷上泥土","用竹子編成門窗而已","竹子只用來做家具","把竹子燒成灰蓋房子"],a:0,e:"居民用竹子當骨架、再敷上泥土建造竹管仔厝，例如雲林縣麥寮鄉。"},
+{w:3,q:"漢人的「土埆厝」是怎麼建造的？",o:["以石塊作為基礎，再用稻稈及泥土和水做成土磚建造","用塑膠板拼成","用整棵大樹挖空做成","用冰塊堆疊而成"],a:0,e:"先用石塊穩固房屋基礎，再以稻稈及泥土和水做成土磚，一塊塊砌成土埆厝，例如新北市深坑區。"},
+{w:3,q:"早期住屋從「一條龍」到「單伸手」再到「三合院」，形式改變的主要原因是什麼？",o:["家中人口增加、經濟條件改善","天氣突然變冷","想換新顏色","路線經過家門口"],a:0,e:"人口少時先蓋正身（一條龍），人口增加加上單邊護龍（單伸手），再加另一邊護龍成為三合院；家境富裕也可能直接興建三合院。"},
+{w:3,q:"三合院正身中間的「正廳」，主要用途是什麼？",o:["供奉神明和祖先牌位，祭拜和接待客人","晾曬稻穀","養魚和潑水","堆放農具和柴火"],a:0,e:"正廳供奉神明和祖先牌位，是祭拜神明、祖先和接待客人的地方，也是三合院最重要的空間。"},
+{w:3,q:"三合院前方的「稻埕」，可以用來做哪些事情？",o:["晒穀、孩童遊戲、乘涼聊天、祭拜請客","只有種菜","只可以停車","只能養雞"],a:0,e:"稻埕是多用途的場所：晒穀、遊戲、乘涼聊天、彈唱戲曲、祭拜和請客都可以。"},
+{w:3,q:"人站在正廳前、面朝外時，三合院房間安排的原則是什麼？",o:["以左為尊，左大右小","以右為尊，右大左小","中間最大，左右一樣","後面的房間最大"],a:0,e:"傳統觀念以左為尊，所以房間會依「左大右小」的原則分配。"},
+{w:3,q:"為了保存先民的智慧結晶，政府和民間推動傳統建築的維護與保存，下列哪項是正確的作法？",o:["列為古蹟、規劃為聚落保存區、改建為特色餐廳","全部拆除改蓋大樓","改成停車場","移到別的國家"],a:0,e:"例如澎湖縣西嶼鄉二崁村被選定為文化聚落保存區，有些傳統住屋成為觀光景點，為老建築找到新生命。"},
+/* --- 世界5 器物街 (2-2) --- */
+{w:4,q:"阿美族的「魚筌」是用什麼材料做的？有什麼用途？",o:["竹子和藤編織，用來捕魚","石頭和泥土，用來存水","木板和鐵釘，用來裝魚乾","塑膠和繩子，用來裝水果"],a:0,e:"原住民族善於利用竹子、藤、木頭等材料做出實用器物；魚筌形狀像漏斗，魚游進去就不容易游出來。"},
+{w:4,q:"魚筌放在溪裡時，旁邊都是空隙，這樣設計的用意是什麼？",o:["讓小魚可以游出去繼續長大，魚群生生不息","讓水流進來比較快","這樣比較省材料","方便曬太陽"],a:0,e:"小魚能從縫隙游出去繼續長大，等牠們長大後又會游進來，這樣魚群就能生生不息，是祖先的智慧。"},
+{w:4,q:"原住民族用木頭做成的「木杵」，可以用來做什麼？",o:["搗製食物","捕魚","量身高","蓋房子"],a:0,e:"木杵可以搗製食物；另外也會用植物葉子（如月桃葉）包裹食物，都是就地取材的智慧。"},
+{w:4,q:"早期的「土灶」要用木柴燒火，居民是怎麼控制火力大小的？",o:["增加或減少木柴","用開關調整","用扇子扇風決定","倒入冷水冷卻"],a:0,e:"灶要用木柴燒火，以增加或減少木柴來控制火力大小，可用來煮菜、蒸粿。"},
+{w:4,q:"菜櫥、水桶、砧板這些傳統器物，主要是用什麼材料製作的？",o:["木材","塑膠","玻璃","金屬"],a:0,e:"漢人常從周遭環境取材，用木材製作菜櫥、水桶、砧板等器物。"},
+{w:4,q:"木柴燒完的灰燼還能悶熟地瓜，冷卻後又可以做菜園的肥料，這體現了什麼智慧？",o:["物盡其用","省電","美觀","方便運送"],a:0,e:"從木柴燃燒到灰燼的利用，都是先民物盡其用的智慧：餘溫悶地瓜，灰燼當肥料。"},
+{w:4,q:"現代生活中，塑膠器物為什麼被人們大量使用？",o:["輕便又便宜","不會壞掉","可以吃","會發光"],a:0,e:"塑膠器物輕便又便宜，於是取代了傳統竹、木製造的器物。"},
+{w:4,q:"大量使用塑膠器物，對環境有什麼影響？",o:["不易在自然環境中分解，丟棄後變成難以處理的垃圾","會讓空氣變甜","會讓河川變乾淨","會自動回收"],a:0,e:"塑膠雖然方便，但不易分解，丟棄後成為難處理的垃圾，因此要減少使用。"},
+{w:4,q:"臺灣環保團體舉辦淨灘行動，每年撿到的海洋廢棄物中，數量最多的是什麼？",o:["塑膠器物（例如寶特瓶）","玻璃瓶","木頭","石頭"],a:0,e:"民國 112 年統計資料顯示，海洋廢棄物以塑膠器物為多數，其中寶特瓶就高達 6 萬多件。"},
+{w:4,q:"響應減塑運動，我們在生活中可以怎麼做？",o:["選擇對環境友善、能重複使用的器物，例如不鏽鋼吸管","把塑膠丟進海裡","多用一次性塑膠餐具","把垃圾埋起來"],a:0,e:"愈來愈多人注意到塑膠對環境的影響，改用可重複使用的器物，對環境比較友善。"}
+];
+
+/* ============ 重點整理 ============ */
+const NOTES=[
+["從地圖看家鄉（1-1）",["<b>家鄉</b>：出生、成長或長期生活的地方；有些人的家鄉不只一個。","<b>依主題選地圖</b>：行政區圖（有哪些行政區）、交通路線圖（交通路線）、地形圖（地勢高低、河川分布）、觀光導覽圖（景點）。","<b>地圖四要素</b>：圖名、方向標、比例尺、圖例。","<b>比例尺</b>表示實際距離被縮小的程度；<b>圖例</b>用符號表示實際景物。","<b>電子地圖</b>：輸入地點搜尋、放大縮小、切換模式——地圖模式找道路景物名稱，衛星模式看房子、山地和樹林。","<b>探索家鄉四步驟</b>：查詢電子地圖 → 設計圖例 → 製作地圖 → 參訪景點。"]],
+["家鄉的地形（1-2）",["<b>地形</b>＝地表高低起伏的型態；五大地形：平原、盆地、台地、丘陵、山地。","<b>平原</b>：平坦廣闊（如臺東池上稻田）。<b>盆地</b>：四周高中間低（如埔里盆地）。","<b>台地</b>：頂部平坦、邊緣陡坡（如大肚台地）。<b>丘陵</b>：不超過 1000 公尺、坡度平緩（如苗栗丘陵）。<b>山地</b>：1000 公尺以上（如中央山脈）。","<b>地形與生活</b>：平原、盆地、台地有利種作物、蓋房、交通建設，形成農村或都市；靠海平原可見魚塭漁村。","丘陵或山地多在坡度平緩處開闢<b>茶園、果園</b>；山地居民多以種植水果為生。","地形影響居民生活，居民的活動也改變地表景觀。"]],
+["氣候、水資源與生活（1-3）",["<b>氣候</b>＝一個地區長時間的天氣平均狀況；從<b>氣溫圖、雨量圖</b>開始認識。","<b>氣溫</b>：宜蘭夏熱冬冷（1 月 16.6℃）；屏東恆春四季氣溫高（1 月 21.1℃）。","<b>雨量</b>：基隆四季多雨；高雄夏季多雨、冬季少雨（2 月僅 17.7 毫米）。","<b>氣候與生活</b>：多雨的九份用油毛氈防雨；少雨的澎湖種耐旱的花生；居民依氣候選建材、作物和休閒活動。","<b>水資源</b>：河川、湖泊、地下水、海洋；河川水量隨季節降雨量不同（如濁水溪夏多冬少）。","<b>水庫功能</b>：供給民生與工業用水、灌溉、水力發電。避免汙染、珍惜愛護水資源。","查氣溫雨量資料 → <b>中央氣象署網站</b>；戶外教育前先查氣候、準備衣物用具。"]],
+["家鄉的傳統住屋（2-1）",["<b>原住民族就地取材</b>：石板、木頭、竹子、茅草。","<b>石板屋</b>（排灣族、魯凱族）：石板交錯堆疊，冬暖夏涼，煙從縫隙飄出防腐防蟲——「會呼吸的房子」。","<b>地下屋</b>（雅美族／達悟族，蘭嶼）：木頭石頭建的半地下式住屋，可躲避強風。","<b>漢人傳統住屋</b>：竹管仔厝（竹子骨架＋敷泥土）、土埆厝（石塊基礎＋稻稈泥土土磚）、磚瓦古厝。","<b>住屋形式演變</b>：一條龍 → 單伸手 → 三合院，原因是人口增加、經濟改善。","<b>三合院</b>：正廳（祭拜、接待）、稻埕（晒穀、活動）；以左為尊，房間左大右小。","<b>保存與新生命</b>：列為古蹟、規劃聚落保存區（如澎湖二崁村）、改建為特色餐廳。"]],
+["器物與生活（2-2）",["<b>原住民族器物</b>：魚筌（竹、藤，捕魚）、木杵（搗製食物）、月桃葉（包裹食物）。","<b>魚筌留縫隙</b>的巧思：小魚能游出去繼續長大，魚群生生不息。","<b>漢人器物</b>：土灶（木柴控制火力）、菜櫥、水桶、砧板（木材）、包粿粽的植物葉子。","<b>物盡其用</b>：木柴灰燼餘溫悶地瓜，冷卻後當菜園肥料。","<b>現代器物</b>：玻璃、金屬、塑膠；塑膠輕便便宜，但不易分解，成為難處理的垃圾。","<b>減塑</b>：選擇對環境友善、能重複使用的器物；淨灘撿到的海洋廢棄物以塑膠最多。","<b>學習策略——階層圖</b>：把主概念畫在最上方，向下擴展次概念，整理器物的材質與用途。"]]
+];
+
+/* ============ 狀態 ============ */
+let state={name:"",coins:0,xp:0,done:{},stars:{},muted:false,curLevel:0,qIndex:0,qScore:0,qTotal:0,lastQ:"",lastScreen:"scr-map",uiToken:0,prevScreen:"scr-start",bossMode:false,bossIdx:0,bossScore:0,bossHp:2,noteTab:0};
+function load(){try{const s=JSON.parse(localStorage.getItem("social4adv")||"{}");if(s.name)state.name=s.name;if(s.coins!=null)state.coins=s.coins;if(s.xp!=null)state.xp=s.xp;if(s.done)state.done=s.done;if(s.stars)state.stars=s.stars;}catch(e){}}
+function save(){try{localStorage.setItem("social4adv",JSON.stringify({name:state.name,coins:state.coins,xp:state.xp,done:state.done,stars:state.stars}))}catch(e){}}
+function updateTop(){document.getElementById("coins").textContent=state.coins;document.getElementById("xp").textContent=state.xp;document.getElementById("worldCnt").textContent=Object.keys(state.done).length}
+function goBack(){showScreen(state.prevScreen||"scr-start")}
+function showScreen(id){const cur=document.querySelector(".screen.active");if(cur&&cur.id!==id)state.prevScreen=cur.id;state.uiToken++;stopAudio();document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0);if(id==="scr-map")renderMap();if(id==="scr-notes")renderNotes();if(id==="scr-start")renderStartBadges()}
+function later(fn,ms){const t=state.uiToken;setTimeout(()=>{if(t===state.uiToken)fn()},ms)}
+function shuffleArr(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t}return a}
+
+/* ============ 語音 ============ */
+function stopAudio(){try{speechSynthesis.cancel()}catch(e){}}
+function speakZh(text){if(state.muted||!text)return;try{const u=new SpeechSynthesisUtterance(text);u.lang="zh-TW";u.rate=0.95;u.pitch=1.05;const vs=speechSynthesis.getVoices()||[];const pick=vs.find(v=>v.lang&&v.lang.toLowerCase().indexOf("zh-tw")===0&&["HsiaoChen","HsiaoYu","YunJhe","Google 國語","Microsoft Hsui","Microsoft Yun"].some(p=>v.name.indexOf(p)>=0))||vs.find(v=>v.lang&&v.lang.toLowerCase().indexOf("zh")===0)||vs.find(v=>v.lang&&v.lang.toLowerCase().indexOf("zh-tw")>=0);if(pick)u.voice=pick;speechSynthesis.speak(u)}catch(e){}}
+function replayAudio(){speakZh(state.lastQ)}
+function toggleMute(){state.muted=!state.muted;document.getElementById("muteT").textContent=state.muted?"已靜音":"聲音開";if(state.muted)stopAudio()}
+function beep(ok){if(state.muted)return;try{const ctx=new (window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator();const g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=ok?700:200;o.type=ok?"sine":"sawtooth";g.gain.value=0.15;o.start();o.frequency.linearRampToValueAtTime(ok?1000:120,0.25);o.stop(ctx.currentTime+0.3);}catch(e){}}
+
+/* ============ 特效 ============ */
+function confetti(){const c=document.getElementById("confetti");c.width=innerWidth;c.height=innerHeight;const x=c.getContext("2d");const ps=Array.from({length:120},()=>({x:Math.random()*c.width,y:-20-Math.random()*100,r:4+Math.random()*6,c:["#FFD93D","#FF7B9C","#4EA8DE","#8FE388","#FF9F45"][Math.floor(Math.random()*5)],v:2+Math.random()*3,o:Math.random()*Math.PI}));let f=0;(function anim(){x.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.y+=p.v;p.o+=0.1;x.save();x.translate(p.x,p.y);x.rotate(p.o);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/2,p.r,p.r);x.restore()});if(++f<90)requestAnimationFrame(anim);else x.clearRect(0,0,c.width,c.height)})()}
+function typeText(el,text,cb){const t=++state.uiToken;el.textContent="";let i=0;(function step(){if(t!==state.uiToken)return;if(i<=text.length){el.textContent=text.slice(0,++i);setTimeout(step,22)}else if(cb)cb()})()}
+
+/* ============ 吉祥物 ============ */
+function capySVG(mode){
+const angry=mode==="fight";
+const eyes='<circle cx="45" cy="48" r="4.5" fill="#222"/><circle cx="46.6" cy="46.4" r="1.6" fill="#fff"/><circle cx="75" cy="48" r="4.5" fill="#222"/><circle cx="76.6" cy="46.4" r="1.6" fill="#fff"/>';
+const brows=angry?'<line x1="36" y1="38" x2="52" y2="43" stroke="#4A2F16" stroke-width="4" stroke-linecap="round"/><line x1="84" y1="38" x2="68" y2="43" stroke="#4A2F16" stroke-width="4" stroke-linecap="round"/>':"";
+const mouth=angry?'<path d="M52 72 q8 -7 16 0" stroke="#4A2F16" stroke-width="3" fill="none" stroke-linecap="round"/>':'<path d="M52 68 q8 7 16 0" stroke="#4A2F16" stroke-width="3" fill="none" stroke-linecap="round"/>';
+let acc="";
+if(mode==="guide"){acc='<ellipse cx="60" cy="24" rx="30" ry="7" fill="#E8C99A" stroke="#4A2F16" stroke-width="3"/><path d="M40 24 q4 -16 20 -16 q16 0 20 16" fill="#F2D9A7" stroke="#4A2F16" stroke-width="3"/><rect x="90" y="60" width="24" height="18" rx="4" fill="#AEE3FF" stroke="#4A2F16" stroke-width="3"/><line x1="94" y1="66" x2="110" y2="66" stroke="#4A2F16" stroke-width="2"/><line x1="94" y1="72" x2="106" y2="72" stroke="#4A2F16" stroke-width="2"/>';}
+else if(mode==="study"){acc='<polygon points="60,4 96,16 60,28 24,16" fill="#4A2F16"/><rect x="52" y="16" width="16" height="10" fill="#6B4423"/><line x1="96" y1="16" x2="96" y2="30" stroke="#FFD93D" stroke-width="3"/><circle cx="96" cy="32" r="3.5" fill="#FFD93D"/>';}
+else if(mode==="party"){acc='<polygon points="60,2 76,26 44,26" fill="#FF7B9C" stroke="#4A2F16" stroke-width="3"/><circle cx="60" cy="2" r="5" fill="#FFD93D" stroke="#4A2F16" stroke-width="2"/><circle cx="26" cy="20" r="3.5" fill="#4EA8DE"/><circle cx="94" cy="20" r="3.5" fill="#8FE388"/>';}
+else{acc='<circle cx="28" cy="20" r="5" fill="#FFD93D" stroke="#4A2F16" stroke-width="2"/><circle cx="92" cy="18" r="4" fill="#FF7B9C" stroke="#4A2F16" stroke-width="2"/>';}
+const blush=(mode==="happy"||mode==="party")?'<ellipse cx="36" cy="58" rx="5" ry="3.5" fill="#FF9F9F" opacity=".7"/><ellipse cx="84" cy="58" rx="5" ry="3.5" fill="#FF9F9F" opacity=".7"/>':"";
+return '<svg class="bob" viewBox="0 0 120 100" aria-hidden="true">'+acc+brows+'<ellipse cx="60" cy="62" rx="34" ry="22" fill="#B07A45" stroke="#4A2F16" stroke-width="4"/><ellipse cx="60" cy="58" rx="26" ry="14" fill="#D2A679"/><ellipse cx="32" cy="34" rx="9" ry="11" fill="#B07A45" stroke="#4A2F16" stroke-width="3"/><ellipse cx="88" cy="34" rx="9" ry="11" fill="#B07A45" stroke="#4A2F16" stroke-width="3"/><ellipse cx="32" cy="36" rx="3.5" ry="5" fill="#E8C99A"/><ellipse cx="88" cy="36" rx="3.5" ry="5" fill="#E8C99A"/>'+eyes+blush+'<ellipse cx="60" cy="60" rx="7" ry="5" fill="#4A2F16"/>'+mouth+'</svg>';
+}
+function initArt(){try{const pals=document.getElementById("startPals");if(pals)pals.innerHTML=`<div class="mascot-big">${capySVG("guide")}</div>`;const mf=document.getElementById("mapFace");if(mf)mf.innerHTML=capySVG("happy");const wc=document.getElementById("winCapy");if(wc)wc.innerHTML=capySVG("party");for(let i=0;i<8;i++){const s=document.createElement("span");s.className="paw";s.textContent="🐾";s.style.left=(Math.random()*94)+"vw";s.style.animationDuration=(7+Math.random()*7)+"s";s.style.animationDelay=(Math.random()*8)+"s";s.style.fontSize=(15+Math.random()*22)+"px";document.body.appendChild(s)}}catch(e){}}
+
+/* ============ 地圖 ============ */
+function renderStartBadges(){const n=Object.keys(state.done).length;document.getElementById("startBadges").innerHTML=n?`<div class="badge got">🏅 已完成 ${n}/5 世界</div><div class="badge got">🪙 ${state.coins} 金幣</div>`:`<div class="badge">🦫 新手上路：跟著咖皮走就對了！</div>`;if(state.name)document.getElementById("playerName").value=state.name}
+function renderMap(){const g=document.getElementById("mapGrid");g.innerHTML="";LEVELS.forEach((L,i)=>{const locked=i>0&&!state.done[i-1];const done=!!state.done[i];const d=document.createElement("div");d.className="level"+(locked?" locked":"")+(done?" done":"");d.innerHTML=`<div class="emoji">${locked?"🔒":L.emoji}</div><div class="mascot">${capySVG(locked?"sleep":LMASCOT[i])}</div><h3>${i+1}. ${L.title}</h3><div style="font-size:12px">${L.sub}</div><p>${L.desc}</p><div class="stars">${"★".repeat(state.stars[i]||0)}${"☆".repeat(3-(state.stars[i]||0))}</div><div style="font-size:12px">${done?"✅ 通關！":""}</div>`;if(!locked)d.onclick=()=>startLevel(i);g.appendChild(d)});const total=Object.keys(state.done).length;document.getElementById("mapProg").style.width=(total/5*100)+"%";document.getElementById("mapProgText").textContent=`已完成 ${total}/5 個世界 · 🪙${state.coins} · ⭐${state.xp}`;const bb=document.getElementById("bossBtn");if(bb){if(total>=5){bb.innerHTML="👾 挑戰叉叉魔王！";bb.style.filter="";bb.style.opacity=""}else{bb.innerHTML=`🔒 叉叉魔王（還差 ${5-total} 個世界）`;bb.style.filter="grayscale(1)";bb.style.opacity=".7"}}const md=document.getElementById("mapDialog");if(md&&total>=5)md.textContent="5 個世界的知識都找回來了！最後的挑戰——叉叉魔王就在前面！10 題要對 8 題，只有 2 次答錯的機會，加油！";else if(md)md.textContent="嗨！我是咖皮隊長！叉叉魔王把家鄉的知識都藏起來了！跟我去 5 個世界把它們找回來吧！"}
+
+/* ============ 重點整理 ============ */
+function renderNotes(){const tabs=document.getElementById("noteTabs");tabs.innerHTML="";NOTES.forEach((n,i)=>{const b=document.createElement("button");b.className="noteTab"+(i===state.noteTab?" on":"");b.textContent=LEVELS[i].emoji+" "+LEVELS[i].title;b.onclick=()=>{state.noteTab=i;renderNotes()};tabs.appendChild(b)});const n=NOTES[state.noteTab];document.getElementById("noteBody").innerHTML=`<h2>${LEVELS[state.noteTab].emoji} ${n[0]}</h2><ul style="margin-top:8px">${n[1].map(t=>"<li>"+t+"</li>").join("")}</ul>`}
+
+/* ============ 關卡 ============ */
+function startGame(){const v=document.getElementById("playerName").value.trim();if(v)state.name=v;save();updateTop();showScreen("scr-map");speakZh("冒險開始！我是咖皮隊長！")}
+function startLevel(i){state.bossMode=false;state.curLevel=i;state.qIndex=0;state.qScore=0;state.qOrder=shuffleArr(QUESTIONS.filter(q=>q.w===i));state.qTotal=state.qOrder.length;updateTop();showScreen("scr-play");document.getElementById("playCard").style.display="none";document.getElementById("playCard").innerHTML="";const L=LEVELS[i];document.getElementById("playWho").textContent=`${L.emoji} ${L.title} · ${L.sub}`;document.getElementById("playFace").innerHTML=capySVG(L.mascot);typeText(document.getElementById("playDialog"),`【${L.title}】${L.story}這一關共 ${state.qTotal} 題，答錯咖皮會立刻告訴你原因！${state.name||"小探險家"}，準備出發！`,()=>askNext())}
+function askNext(){
+if(state.bossMode){
+if(state.bossHp<=0||state.bossIdx>=state.qTotal){bossEnd();return}
+const q=state.qOrder[state.bossIdx];state.curQ=q;
+document.getElementById("playProg").style.width=(state.bossIdx/state.qTotal*100)+"%";
+state.lastQ=q.q;
+const opts=shuffleArr(q.o.map((t,idx)=>({t:t,ok:idx===q.a})));state.curOpts=opts;
+const btns=opts.map((o,idx)=>`<button class="opt" onclick="answerQ(${idx})"><b>${String.fromCharCode(65+idx)}.</b> ${o.t}</button>`).join("");
+document.getElementById("playCard").style.display="block";document.getElementById("playCard").innerHTML=`<div class="quizQ">👾 魔王第 ${state.bossIdx+1}/${state.qTotal} 題：${q.q}</div><div class="quizSub">剩餘愛心：${"❤️".repeat(state.bossHp)} · 已答對 ${state.bossScore} 題（要對 8 題）</div><div class="optGrid">${btns}</div>`;
+document.getElementById("playFb").textContent="";
+later(()=>speakZh(q.q),500);
+return;
+}
+if(state.qIndex>=state.qOrder.length){levelDone();return}
+const q=state.qOrder[state.qIndex];state.curQ=q;const pct=(state.qIndex/state.qTotal*100);document.getElementById("playProg").style.width=pct+"%";state.lastQ=q.q;const opts=shuffleArr(q.o.map((t,idx)=>({t:t,ok:idx===q.a})));state.curOpts=opts;const btns=opts.map((o,idx)=>`<button class="opt" onclick="answerQ(${idx})"><b>${String.fromCharCode(65+idx)}.</b> ${o.t}</button>`).join("");document.getElementById("playCard").style.display="block";document.getElementById("playCard").innerHTML=`<div class="quizQ">❓ ${q.q}</div><div class="quizSub">第 ${state.qIndex+1}/${state.qTotal} 題 · 答對 +10⭐ +5🪙</div><div class="optGrid">${btns}</div>`;document.getElementById("playFb").textContent="";later(()=>speakZh(q.q),500)}
+function answerQ(idx){const q=state.curQ;const o=state.curOpts&&state.curOpts[idx];if(!q||!o)return;const btns=document.querySelectorAll("#playCard .opt");btns.forEach(b=>b.disabled=true);let ok=false;if(o.ok){ok=true;if(btns[idx])btns[idx].classList.add("correct");beep(true);if(state.bossMode)state.bossScore++;else{state.qScore++;state.coins+=5;state.xp+=10;save();updateTop()}document.getElementById("playFb").textContent="✅ 答對了！太棒了！"}else{if(btns[idx])btns[idx].classList.add("wrong");const right=state.curOpts.findIndex(x=>x.ok);if(right>=0&&btns[right])btns[right].classList.add("correct");beep(false);if(state.bossMode)state.bossHp--;document.getElementById("playFb").textContent="❌ 答錯了～沒關係，看下面的說明就學會了！"}const card=document.getElementById("playCard");const box=document.createElement("div");box.className="curiosity";box.innerHTML=`<h4>📚 為什麼？</h4><p>${q.e}</p>`;card.appendChild(box);const next=document.createElement("div");next.style.textAlign="center";next.style.marginTop="10px";next.innerHTML=state.bossMode?`<button class="btn ${state.bossHp>0?"green":"pink"} small" onclick="bossNext()">▶ ${state.bossHp>0?"下一題":"看看結果"}</button>`:`<button class="btn green small" onclick="nextQ()">▶ 下一題</button>`;card.appendChild(next);speakZh((ok?"答對了！":"答錯了。")+q.e)}
+function nextQ(){state.qIndex++;askNext()}
+
+function levelDone(){const L=LEVELS[state.curLevel];const max=state.qTotal;const rate=state.qScore/max;let s=1;if(rate>=0.9)s=3;else if(rate>=0.7)s=2;if((state.stars[state.curLevel]||0)<s)state.stars[state.curLevel]=s;state.done[state.curLevel]=true;state.coins+=20;state.xp+=30;save();updateTop();confetti();beep(true);document.getElementById("playProg").style.width="100%";state.lastQ=`${L.title}通關！你得到 ${s} 顆星！`;typeText(document.getElementById("playDialog"),`🏅 ${L.title}通關！答對 ${state.qScore}/${max} 題，獲得 ${s} 顆星！${s===3?"完全是家鄉小博士！":""}接著去下一關吧！`);document.getElementById("playCard").style.display="block";document.getElementById("playCard").innerHTML=`<div style="text-align:center"><div class="mascot-big">${capySVG("party")}</div><div style="font-size:44px">${L.emoji}🏅</div><h2>${L.title} 完成！</h2><p>得分 ${state.qScore}/${max} · ${"★".repeat(s)}${"☆".repeat(3-s)}</p><p style="margin:8px 0">獲得 +20 🪙 +30 ⭐</p><button class="btn green" onclick="showScreen('scr-map')">🗺️ 回地圖</button><button class="btn blue" onclick="startLevel(${(state.curLevel+1)%5})">▶ 下一關</button><button class="btn white small" onclick="showScreen('scr-notes')">📖 看重點整理</button></div>`;speakZh(`${L.title}通關！你得到 ${s} 顆星！`)}
+
+/* ============ 魔王 ============ */
+function finalBoss(){const n=Object.keys(state.done).length;if(n<5){document.getElementById("mapDialog").textContent=`叉叉魔王太強了！要集滿 5 個世界（還差 ${5-n} 個）才能挑戰！我們先去冒險吧！`;beep(false);speakZh(`還差 ${5-n} 個世界，先去冒險吧！`);return}state.bossMode=true;showScreen("scr-play");document.getElementById("playCard").style.display="none";document.getElementById("playCard").innerHTML="";state.curLevel=-1;state.qIndex=0;state.bossIdx=0;state.bossScore=0;state.bossHp=2;updateTop();const pool=shuffleArr(QUESTIONS);state.qOrder=pool.slice(0,10);state.qTotal=10;document.getElementById("playWho").textContent="👾 叉叉魔王";document.getElementById("playFace").innerHTML=capySVG("fight");typeText(document.getElementById("playDialog"),`哼哼哼……我就是把紅筆叉叉變大的叉叉魔王！聽說你把 5 個世界的知識都學會了？那就來總決戰！10 題要對 8 題，而且只能答錯 2 次！來吧！`,()=>askNext())}
+function bossNext(){if(state.bossHp<=0){bossEnd();return}state.bossIdx++;askNext()}
+function bossEnd(){state.bossMode=false;document.getElementById("playProg").style.width="100%";state.xp+=state.bossScore*10;state.coins+=state.bossScore*5;save();updateTop();const need=8;if(state.bossScore>=need){confetti();beep(true);showScreen("scr-win");document.getElementById("winName").textContent=state.name||"小英雄";document.getElementById("winStats").textContent=`總決戰 ${state.qTotal} 題答對 ${state.bossScore} 題 · 共 ${state.xp} ⭐ ${state.coins} 🪙 · 你是家鄉小博士！`;document.getElementById("winBadges").innerHTML=`<div class="badge got">👾 叉叉魔王擊敗者</div><div class="badge got">🦫 咖皮永遠的朋友</div><div class="badge got">🏅 家鄉小博士</div>`;speakZh("恭喜你打敗叉叉魔王！你是家鄉小博士！")}else{state.uiToken++;document.getElementById("playFace").innerHTML=capySVG("fight");typeText(document.getElementById("playDialog"),`魔王：哈哈！只對 ${state.bossScore}/${state.qTotal} 題，要對 ${need} 題才算贏！再回各世界練練，回來找我報仇吧！`);document.getElementById("playCard").style.display="block";document.getElementById("playCard").innerHTML=`<div style="text-align:center"><div style="font-size:44px">💪</div><h2>挑戰失敗… ${state.bossScore}/${state.qTotal}（要 ${need} 題才過關）</h2><p class="quizSub">建議：回地圖重玩較弱的世界，或看一遍重點整理再來！</p><button class="btn green" onclick="showScreen('scr-map')">🗺️ 回去練功</button><button class="btn pink" onclick="finalBoss()">👾 再戰一次</button><button class="btn white small" onclick="showScreen('scr-notes')">📖 重點整理</button></div>`;speakZh(`只對 ${state.bossScore} 題，再回去練練吧！`)}}
+
+function resetSave(){if(confirm("確定要清除進度重來嗎？")){try{localStorage.removeItem("social4adv")}catch(e){}const n=state.name;const t=state.uiToken+1;state={name:n,coins:0,xp:0,done:{},stars:{},muted:state.muted,curLevel:0,qIndex:0,qScore:0,qTotal:0,lastQ:"",lastScreen:"scr-map",uiToken:t,prevScreen:"scr-start",bossMode:false,bossIdx:0,bossScore:0,bossHp:2,noteTab:0};updateTop();renderMap();renderStartBadges()}}
+
+/* ============ 啟動 ============ */
+load();updateTop();renderStartBadges();initArt();renderNotes();
+if("speechSynthesis" in window){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=function(){speechSynthesis.getVoices()}}
+document.addEventListener("keydown",function(e){if(e.key==="Enter"&&document.querySelector("#scr-play.active")){const nb=document.querySelector("#playCard .btn.green,#playCard .btn.pink");if(nb)nb.click()}});
+</script>
+</body>
+</html>
