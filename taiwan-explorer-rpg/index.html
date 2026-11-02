@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>臺灣小探險家：家鄉大冒險</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d2b3e;--bg2:#154a5e;--panel:#f6efd9;--ink:#1d2a33;--jade:#2fb39a;--mango:#ffb92e;--red:#e4573d;--line:#0a1c28;--text:#f2f7f5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#cfeee6;--bg2:#9fd9cf;--text:#10303a}}
+:root[data-theme="dark"]{--bg:#0d2b3e;--bg2:#154a5e;--text:#f2f7f5}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(var(--bg),var(--bg2));color:var(--text);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.7}
+#app{max-width:760px;margin:0 auto;padding:14px}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--mango);outline-offset:2px}
+.hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--line);border-radius:14px;padding:8px 12px;font-weight:700;color:#f2f7f5}
+.hud .sp{flex:1}
+.xpbar{width:90px;height:10px;background:#34505f;border-radius:6px;overflow:hidden;display:inline-block;vertical-align:middle}
+.xpbar i{display:block;height:100%;background:var(--mango);transition:width .5s}
+.snd{background:none;border:2px solid #5d7c8b;color:#f2f7f5;border-radius:10px;padding:2px 8px}
+.title{text-align:center;padding:40px 8px}
+.title h1{font-size:clamp(2rem,8vw,3.4rem);font-weight:900;margin:.2em 0;line-height:1.2}
+.title p{max-width:30em;margin:0 auto 1.4em}
+.big{font-size:5rem;display:block;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+@media (prefers-reduced-motion:reduce){.big{animation:none}*{transition:none!important}}
+.btn{background:var(--mango);color:#2a1d00;border:0;border-bottom:5px solid #c78400;border-radius:14px;padding:12px 26px;font-weight:900;font-size:1.1rem}
+.btn:active{transform:translateY(3px);border-bottom-width:2px}
+.btn.alt{background:#fff;border-color:#b7c7cf;color:var(--ink)}
+.map{position:relative;margin:18px 0;display:grid;gap:14px}
+.node{display:flex;gap:14px;align-items:center;text-align:left;width:100%;background:var(--panel);color:var(--ink);border:0;border-left:10px solid var(--jade);border-radius:16px;padding:14px 16px}
+.node .e{font-size:2.4rem}
+.node b{display:block;font-size:1.15rem}
+.node small{opacity:.75}
+.node[disabled]{filter:grayscale(1);opacity:.55;cursor:not-allowed;border-left-color:#888}
+.node.done{border-left-color:var(--mango)}
+.node.boss{border-left-color:var(--red)}
+.scene{border-radius:18px;padding:18px;margin:12px 0;min-height:150px;position:relative;overflow:hidden;color:#fff;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.scene .sprite{font-size:4.2rem;line-height:1}
+.scene .place{font-weight:900;font-size:1.3rem;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.box{background:var(--panel);color:var(--ink);border-radius:16px;padding:16px 18px;margin:12px 0;border:3px solid var(--line)}
+.who{font-weight:900;color:#0e7c69}
+.q{font-size:1.2rem;font-weight:700;margin:0 0 10px}
+.opts{display:grid;gap:10px}
+.opt{background:#fff;color:var(--ink);border:3px solid #c9d6dc;border-bottom-width:5px;border-radius:12px;padding:10px 14px;text-align:left;font-weight:700}
+.opt:hover:not([disabled]){border-color:var(--jade)}
+.opt.ok{background:#c9f2dd;border-color:#1f9d63}
+.opt.no{background:#ffd9d1;border-color:var(--red);text-decoration:line-through;opacity:.7}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-weight:700}
+.fb.g{background:#c9f2dd}.fb.b{background:#ffe3c2}
+.prog{display:flex;gap:6px;margin:10px 0}
+.prog i{flex:1;height:8px;border-radius:5px;background:#34505f}
+.prog i.on{background:var(--mango)}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.pop{position:fixed;left:50%;top:30%;transform:translateX(-50%);font-size:2rem;font-weight:900;color:var(--mango);text-shadow:0 2px 0 #000;pointer-events:none;animation:up 1s forwards;z-index:9}
+@keyframes up{to{transform:translate(-50%,-70px);opacity:0}}
+.center{text-align:center}
+.badges{font-size:2rem;letter-spacing:6px}
+.arena{border-radius:18px;padding:16px;display:flex;justify-content:space-between;align-items:flex-end;min-height:180px;color:#fff;margin:12px 0;overflow:hidden}
+.fighter{text-align:center;font-size:4rem;line-height:1.1;flex:0 0 auto}
+.fighter small{display:block;font-size:.85rem;font-weight:700;text-shadow:0 1px 0 #0008}
+.fighter span.sp2{display:inline-block}
+.mbar{width:120px;height:12px;background:#0007;border-radius:6px;overflow:hidden;margin:4px auto}
+.mbar i{display:block;height:100%;background:var(--red);transition:width .5s}
+.vs{align-self:center;font-size:1.6rem;font-weight:900;opacity:.8}
+.hit{animation:hit .45s}@keyframes hit{20%{transform:translateX(12px) rotate(8deg);filter:brightness(3)}60%{transform:translateX(-8px)}}
+.lunge{animation:lg .5s}@keyframes lg{50%{transform:translateX(min(34vw,200px)) scale(1.25)}}
+.mlunge{animation:ml .5s}@keyframes ml{50%{transform:translateX(max(-34vw,-200px)) scale(1.25)}}
+.die{animation:die .8s forwards}@keyframes die{to{transform:rotate(90deg) translateY(40px);opacity:0}}
+.acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.acts button{background:#fff;border:2px solid #b7c7cf;border-radius:10px;padding:4px 12px;font-weight:700;color:var(--ink)}
+.appear{background:var(--red);color:#fff;border-radius:10px;padding:4px 12px;font-weight:900;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s);
+const STAGES=[
+{id:0,name:'地圖小鎮',sub:'家鄉在哪裡',e:'🗺️',npc:'🧭',npcName:'地圖精靈',bg:'linear-gradient(135deg,#2b8a7a,#1a5a73)',
+ intro:'歡迎來到地圖小鎮！我是地圖精靈。想找到家鄉，就要先學會看地圖。答對我的問題，就能拿到「家鄉羅盤」！',
+ qs:[
+ {q:'小美在嘉義出生，但從小住在新北市，覺得家鄉在新北市。這說明了什麼？',o:['家鄉只能是出生的地方','長期生活的地方也是家鄉，家鄉可能不只一個','一個人只能有一個家鄉'],a:1,h:'出生、成長或長期生活的地方，都是我們的家鄉。'},
+ {q:'想知道家鄉包含哪些行政區，應該閱讀哪一種地圖？',o:['交通路線圖','地形圖','行政區圖','觀光導覽圖'],a:2,h:'想認識家鄉有哪些行政區，要閱讀行政區圖。'},
+ {q:'想知道家鄉的地勢高低或河川分布，應該閱讀哪一種地圖？',o:['地形圖','交通路線圖','觀光導覽圖'],a:0,h:'地勢高低、河川分布看地形圖；交通路線看交通路線圖；景點看觀光導覽圖。'},
+ {q:'下列哪一個不是地圖的要素？',o:['圖名','方向標','比例尺','天氣預報'],a:3,h:'地圖的要素有圖名、方向標、比例尺與圖例。'},
+ {q:'電子地圖切換成「衛星模式」，可以看見什麼？',o:['只有景點的名稱','家鄉的道路、密集的房子，以及山地和樹林','只有行政區界線'],a:1,h:'衛星模式可以看見道路、房子、山地和樹林；地圖模式則更快找到道路或景物名稱。'},{q:'地圖上的「北」方向標，是用來表示什麼？',o:['地圖上的方位','實際距離縮小的程度','景物的說明'],a:0,h:'方向標表示地圖上的方位，沒有它使用地圖時會很困擾。'},{q:'比例尺表示什麼？',o:['景物的符號','實際距離在地圖上被縮小的程度','地圖的名稱'],a:1,h:'比例尺表示實際距離在地圖上被縮小的程度。'},{q:'地圖上用簡單的符號，說明實際景物（例如學校、公園、醫院），這是地圖的哪一個要素？',o:['圖名','方向標','圖例'],a:2,h:'圖例是用簡單的符號，表示實際景物的說明。'}]},
+{id:1,name:'起伏山谷',sub:'家鄉的地形',e:'⛰️',npc:'🧗',npcName:'山谷嚮導',bg:'linear-gradient(135deg,#7bbf6a,#3f7f5a 60%,#2b5c4a)',
+ intro:'這裡是起伏山谷！我是山谷嚮導。平原、盆地、台地、丘陵、山地，你分得清楚嗎？',
+ qs:[
+ {q:'地形是指什麼？',o:['地表高低起伏的型態','天空的雲量','河水的流速'],a:0,h:'地形是指地表高低起伏的型態。'},
+ {q:'「高度在 1000 公尺以上」的是哪一種地形？',o:['丘陵','山地','平原','盆地'],a:1,h:'山地高度在 1000 公尺以上；丘陵高度不超過 1000 公尺、坡度較平緩。'},
+ {q:'頂部平坦，邊緣以陡坡和低地相接，是哪一種地形？（例如大肚）',o:['盆地','丘陵','台地','山地'],a:2,h:'頂部平坦、邊緣陡坡的是台地，大肚台地就是例子。'},
+ {q:'靠海的平原地區，居民的生活可能會看到什麼？',o:['一池一池的魚塭','層層的茶園','高聳的雪山'],a:0,h:'靠海的平原地區，可能會有魚塭和漁村。'},
+ {q:'丘陵或山地起伏較大，居民通常選擇在哪裡開闢茶園、果園？',o:['坡度較平緩的山坡地','最陡的懸崖','河川中間'],a:0,h:'丘陵和山地的居民多在坡度較平緩的山坡地開闢茶園、果園。'},{q:'高度不超過 1000 公尺、坡度較平緩的地形是什麼？',o:['丘陵','山地','平原'],a:0,h:'丘陵高度不超過 1000 公尺、坡度較平緩，例如苗栗丘陵。'},{q:'平坦的平原、盆地或台地，有利於做什麼？',o:['種植作物、建築房屋及交通建設','開闢山坡茶園','建造高山滑雪場'],a:0,h:'較平坦的地形有利於種植作物、建築房屋及交通建設。'},{q:'地形的高低起伏，會影響什麼？',o:['居民的生活方式','月亮的形狀','河川的名字'],a:0,h:'地形的高低起伏影響居民的生活方式，居民的活動也改變了地表的景觀與樣貌。'}]},
+{id:2,name:'風雨海岸',sub:'氣候、水資源與生活',e:'🌦️',npc:'🧜',npcName:'雨滴小水',bg:'linear-gradient(135deg,#4aa8d8,#2a6aa8 60%,#1d3f73)',
+ intro:'嗨！我是雨滴小水。氣候是一個地區長時間的天氣平均狀況，快來幫我看氣溫圖和雨量圖吧！',
+ qs:[
+ {q:'下列哪個地方四季氣溫都比較高？',o:['宜蘭','屏東恆春','苗栗'],a:1,h:'恆春的 1 月平均 21.1℃、7 月 28.7℃，四季氣溫高；宜蘭則夏熱冬冷。'},
+ {q:'高雄夏季 6～8 月雨量都超過 300 毫米，冬季雨量很少，這叫做什麼？',o:['四季多雨','夏季多雨、冬季少雨','四季少雨'],a:1,h:'高雄夏季多雨、冬季少雨；基隆則是四季多雨。'},
+ {q:'澎湖雨下得比較少，居民選擇種植哪一種耐旱作物？',o:['水稻','花生','荷花'],a:1,h:'澎湖雨量較少，所以種植需水較少的耐旱作物花生。'},
+ {q:'政府在河川中、上游興建水庫，有什麼功能？',o:['供給民生與工業用水、灌溉、水力發電','讓河水變紅色','讓河川消失'],a:0,h:'水庫可以供給民生與工業用水、灌溉，或水力發電。'},
+ {q:'河川變成紅色、味道很難聞，我們該怎麼做？',o:['不用管它','避免造成汙染，共同愛護水資源','把垃圾丟進河裡'],a:1,h:'保護家鄉的水資源是大家的責任，要避免造成汙染，珍惜並共同愛護。'},{q:'宜蘭市 7 月平均氣溫 28.9℃、1 月 16.6℃，屬於哪一種氣溫型態？',o:['夏熱冬冷','四季氣溫高','四季多雨'],a:0,h:'宜蘭夏季熱、冬季冷；恆春則是四季氣溫高。'},{q:'九份常下雨，居民的屋頂為什麼用瀝青製成的油毛氈？',o:['它是很好的防雨建材','為了曬稻穀','為了種花生'],a:0,h:'黑色的油毛氈屋頂是很好的防雨建材。'},{q:'濁水溪夏季水量多、冬季部分河床裸露，是因為什麼？',o:['河川水量會因季節的降雨量而不同','河水被人喝光了','橋變多了'],a:0,h:'河川的水量會因季節的降雨量而不同。'}]},
+{id:3,name:'竹藤工坊',sub:'器物與生活',e:'🧺',npc:'👴',npcName:'智慧爺爺',bg:'linear-gradient(135deg,#d6a24a,#9a6a30 60%,#5f3d22)',
+ intro:'孩子，歡迎來到竹藤工坊。先人會從大自然就地取材，做出各種生活器物。讓爺爺考考你吧！',
+ qs:[
+ {q:'魚筌用竹子、藤編成，小魚能從縫隙游出去繼續長大。這個設計有什麼好處？',o:['讓魚群生生不息','讓魚全部被捕光','讓魚筌更重'],a:0,h:'小魚從縫隙游出，魚群才能生生不息，這是祖先的智慧。'},
+ {q:'原住民族用木頭做成的木杵，可以做什麼？',o:['搗製食物','包裹食物','捕魚'],a:0,h:'木杵可以搗製食物；月桃葉等植物葉子可以包裹食物。'},
+ {q:'傳統的灶要怎麼控制火力大小？',o:['按開關','增加或減少木柴','倒水進去'],a:1,h:'灶用木柴燒火，增加或減少木柴就能控制火力大小。'},
+ {q:'塑膠器物取代竹、木器物，因為塑膠有什麼特性？但它有什麼問題？',o:['輕便又便宜；但不易在自然環境中分解','又重又貴；但容易分解','很稀有；但很環保'],a:0,h:'塑膠輕便又便宜，卻不易分解，丟棄後變成難處理的垃圾，所以要響應減塑運動。'},
+ {q:'民國 112 年淨灘撿到最多的海洋廢棄物是什麼？',o:['吸管','寶特瓶','塑膠袋'],a:1,h:'寶特瓶有 67076 件，是最多的。'},{q:'木柴燒完的灰燼冷卻後，還可以拿來做什麼？',o:['當作菜園的肥料','當作塑膠袋','當作飲料'],a:0,h:'冷卻後的灰燼可以作為菜園的肥料，這是先民物盡其用的智慧。'},{q:'傳統製作生活器物的原料，多來自哪裡？',o:['大自然','塑膠工廠','太空'],a:0,h:'傳統器物的原料多來自大自然，廢棄物最後也回歸大自然。'},{q:'想減少塑膠垃圾，喝牛奶時選哪一種方式比較友善環境？',o:['不鏽鋼吸管，可重複使用','塑膠吸管，用完就丟','免洗外帶杯'],a:0,h:'要響應減塑運動，選擇對環境友善、能重複使用的器物。'}]}
+];
+const BOSS={name:'大魔王：迷霧',e:'🌫️',npc:'👹',bg:'linear-gradient(135deg,#5a3a7a,#2a1a4a)',
+ qs:[
+ {q:'想知道家鄉有哪些景點，要閱讀哪一種地圖？',o:['觀光導覽圖','行政區圖','交通路線圖'],a:0,h:'景點要看觀光導覽圖。'},
+ {q:'四周高、中間低平的地形是什麼？',o:['台地','盆地','丘陵'],a:1,h:'盆地四周有山圍繞、中間低平，例如埔里盆地。'},
+ {q:'基隆每個月降雨量都多，只有 7 月低於 200 毫米，是哪一種雨量型態？',o:['四季多雨','夏季多雨、冬季少雨','四季少雨'],a:0,h:'基隆四季多雨。'},
+ {q:'河川、湖泊、地下水、海洋，都屬於什麼？',o:['家鄉的水資源','家鄉的地形','家鄉的交通路線'],a:0,h:'河川、湖泊、地下水與海洋都是重要的水資源。'},
+ {q:'生活中想減少塑膠垃圾，下列哪個做法最好？',o:['使用可重複使用的器物','多用免洗餐具','常用外帶飲料杯'],a:0,h:'要選擇對環境友善、能重複使用的器物。'},
+ {q:'製作「背簍」階層圖時，背簍的框架使用藤條、簍身使用藤皮，屬於哪一個面向？',o:['材質','用途','顏色'],a:0,h:'藤條、藤皮說明的是背簍的材質；背負農作物等則是用途。'},{q:'布農族的背簍，族人常用來做什麼？',o:['背負農作物、獵物、工具','捕魚','蒸粿'],a:0,h:'背簍可以背負農作物、獵物、工具等，也可以背小孩。'},{q:'利用電子地圖，我們可以做什麼？',o:['縮放地圖範圍、切換不同的呈現模式','改變天氣','讓河川變乾淨'],a:0,h:'電子地圖可以搜尋家鄉位置、縮放範圍大小，還能切換呈現模式。'}]};
+let G={hp:5,xp:0,coins:0,clear:[],snd:true};
+try{const s=localStorage.getItem('socRPG');if(s)G={...G,...JSON.parse(s)}}catch(e){}
+const save=()=>{try{localStorage.setItem('socRPG',JSON.stringify(G))}catch(e){}};
+let ac;
+function beep(f,d=.12,t='square'){if(!G.snd)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
+const win=()=>{beep(660);setTimeout(()=>beep(880),110)},lose=()=>{beep(180,.25,'sawtooth')};
+const lv=()=>Math.floor(G.xp/40)+1;
+function hud(){return `<div class="hud"><span>🧒 Lv.${lv()}</span><span class="xpbar"><i style="width:${(G.xp%40)/40*100}%"></i></span><span>${'❤️'.repeat(G.hp)}${'🖤'.repeat(5-G.hp)}</span><span>🪙 ${G.coins}</span><span class="sp"></span><button class="snd" onclick="G.snd=!G.snd;save();go()" aria-label="音效開關">${G.snd?'🔊':'🔇'}</button></div>`}
+let view='title',cur=null;
+function go(){({title:title,map:map}[view]||(()=>{}))()}
+function show(h){$('#app').innerHTML=h;window.scrollTo(0,0)}
+function title(){view='title';show(`<div class="title"><span class="big">🧭</span><h1>臺灣小探險家<br>家鄉大冒險</h1><p>迷霧遮住了家鄉！跟著精靈們走過四個地區、答對問題、收集四枚徽章，打敗迷霧魔王吧。內容依照國小社會四年級上冊。</p><button class="btn" onclick="map()">${G.clear.length?'繼續冒險':'開始冒險'}</button> ${G.clear.length?'<button class="btn alt" onclick="if(confirm(\'確定要重新開始嗎？\')){G={hp:5,xp:0,coins:0,clear:[],snd:G.snd};save();title()}">重新開始</button>':''}</div>`)}
+function map(){view='map';const c=G.clear,all=c.length>=4;
+ show(hud()+`<h2 class="center">冒險地圖</h2><div class="badges center">${STAGES.map(s=>c.includes(s.id)?s.e:'⚪').join('')}</div><div class="map">`+
+ STAGES.map(s=>`<button class="node ${c.includes(s.id)?'done':''}" ${s.id>c.length&&!c.includes(s.id)?'disabled':''} onclick="start(${s.id})"><span class="e">${s.e}</span><span><b>${s.name}${c.includes(s.id)?' ✅':''}</b><small>${s.sub}</small></span></button>`).join('')+
+ `<button class="node boss" ${all?'':'disabled'} onclick="start(4)"><span class="e">${BOSS.e}</span><span><b>${BOSS.name}</b><small>${all?'集滿四枚徽章，挑戰魔王！':'需要四枚徽章才能挑戰'}</small></span></button></div>`)}
+function shuf(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1])}
+function start(i){const S=i===4?BOSS:STAGES[i];G.hp=5;save();cur={i,S,n:0,first:true};
+ view='stage';show(hud()+`<div class="scene" style="background:${S.bg}"><span class="place">${S.e} ${S.name}</span><span class="sprite">${S.npc}</span></div><div class="box"><div class="who">${S.npcName||'迷霧魔王'}</div><p id="t" style="min-height:4.6em;margin:.3em 0"></p><button class="btn" id="go" style="display:none" onclick="ask()">出發！</button></div>`);
+ typeText($('#t'),i===4?'呵呵呵……你竟然走到這裡了！只要你答錯，迷霧就會更濃。看你能不能撐到最後！':S.intro,()=>$('#go').style.display='')}
+function typeText(el,t,done){let k=0;const iv=setInterval(()=>{el.textContent=t.slice(0,++k);if(k%3==0)beep(520+Math.random()*80,.03,'triangle');if(k>=t.length){clearInterval(iv);done&&done()}},28)}
+function ask(){const {S,n}=cur,q=S.qs[n];cur.first=true;
+ const idx=shuf(q.o.map((_,i)=>i));
+ show(hud()+`<div class="scene" style="background:${S.bg};min-height:90px"><span class="place">${S.e} ${S.name}</span><span class="sprite" style="font-size:3rem">${S.npc}</span></div><div class="prog">${S.qs.map((_,k)=>`<i class="${k<n?'on':''}"></i>`).join('')}</div><div class="box" id="bx"><p class="q">${q.q}</p><div class="opts">${idx.map(i=>`<button class="opt" data-i="${i}" onclick="pick(${i},this)">${q.o[i]}</button>`).join('')}</div><div id="fb"></div></div>`)}
+function pop(t){const d=document.createElement('div');d.className='pop';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function pick(i,b){const {S,n}=cur,q=S.qs[n],fb=$('#fb');
+ if(i===q.a){win();document.querySelectorAll('.opt').forEach(o=>o.disabled=true);b.classList.add('ok');
+  if(cur.first){G.xp+=10;G.coins+=5;pop('+10 XP  +5 🪙')}else{G.xp+=4;pop('+4 XP')}save();
+  fb.innerHTML=`<div class="fb g">✅ 答對了！${q.h}</div><p><button class="btn" onclick="next()">${n+1<S.qs.length?'下一題':'完成！'}</button></p>`;
+  document.querySelector('.hud').outerHTML=hud();
+ }else{lose();cur.first=false;b.classList.add('no');b.disabled=true;G.hp--;save();$('#bx').classList.remove('shake');void $('#bx').offsetWidth;$('#bx').classList.add('shake');
+  document.querySelector('.hud').outerHTML=hud();
+  if(G.hp<=0){fb.innerHTML=`<div class="fb b">💫 你的體力用完了！先回村莊休息，再重新挑戰吧。</div><p><button class="btn" onclick="start(${cur.i})">重新挑戰</button> <button class="btn alt" onclick="map()">回到地圖</button></p>`;document.querySelectorAll('.opt').forEach(o=>o.disabled=true)}
+  else fb.innerHTML=`<div class="fb b">❌ 再想想！提示：${q.h}</div>`}}
+function next(){cur.n++;cur.n<cur.S.qs.length?ask():finish()}
+function finish(){const {i,S}=cur;
+ if(i===4){G.coins+=30;G.xp+=30;save();view='end';show(hud()+`<div class="title"><span class="big">🏆</span><h1>迷霧散去了！</h1><div class="badges">${STAGES.map(s=>s.e).join('')}</div><p>你收集了四枚徽章，打敗了迷霧魔王！家鄉的地圖、地形、氣候、水資源和器物智慧，你都學會了。<br>最終等級 Lv.${lv()}，金幣 ${G.coins} 枚。</p><button class="btn" onclick="map()">回到地圖</button></div>`);win();setTimeout(()=>beep(1040),250);return}
+ if(!G.clear.includes(i))G.clear.push(i);G.coins+=10;G.xp+=10;save();win();
+ show(hud()+`<div class="title"><span class="big">${S.e}</span><h1>獲得「${S.name}」徽章！</h1><p>${G.clear.length<4?'繼續前往下一個地區吧。':'四枚徽章集滿了，迷霧魔王出現了！'}</p><button class="btn" onclick="map()">回到冒險地圖</button></div>`)}
+const MON=[[{n:'迷路蝸牛',e:'🐌'},{n:'方位巨魔',e:'🧌'}],[{n:'石頭怪',e:'🪨'},{n:'山谷巨龍',e:'🐉'}],[{n:'烏雲怪',e:'⛈️'},{n:'汙水章魚',e:'🦑'}],[{n:'垃圾怪',e:'🗑️'},{n:'塑膠暴龍',e:'🦖'}]];
+function addXp(x){const b=lv();G.xp+=x;if(lv()>b){pop('⬆️ LEVEL UP！');setTimeout(()=>beep(1200,.2),200)}}
+function ask(){const {S,n,i}=cur,q=S.qs[n],per=i===4?8:4,m=i===4?{n:'迷霧魔王',e:'👹'}:MON[i][Math.floor(n/per)],left=per-(n%per);cur.first=true;
+ const idx=shuf(q.o.map((_,k)=>k));
+ show(hud()+`<div class="arena" style="background:${S.bg}"><div class="fighter"><span class="sp2" id="hero">🧒⚔️</span><small>小探險家 Lv.${lv()}</small></div><span class="vs">VS</span><div class="fighter"><span class="sp2" id="mon">${m.e}</span><div class="mbar"><i id="mb" style="width:${left/per*100}%"></i></div><small>${m.n}</small></div></div><div class="box" id="bx">${n%per===0?`<div class="appear">⚠️ ${m.n}出現了！答對題目來攻擊牠！</div>`:''}<p class="q">第 ${n+1} / ${S.qs.length} 題　${q.q}</p><div class="opts">${idx.map(k=>`<button class="opt" data-i="${k}" onclick="pick(${k},this)">${q.o[k]}</button>`).join('')}</div><div id="fb"></div><div class="acts"><button onclick="useHint()">💡 提示 (5🪙)</button><button onclick="usePotion()">🧪 藥水 +2❤️ (10🪙)</button></div></div>`)}
+function refresh(){document.querySelector('.hud').outerHTML=hud()}
+function useHint(){const q=cur.S.qs[cur.n];const w=[...document.querySelectorAll('.opt:not([disabled])')].filter(o=>+o.dataset.i!==q.a);if(!w.length)return;if(G.coins<5){pop('金幣不足');return}G.coins-=5;w[0].disabled=true;w[0].classList.add('no');save();refresh();beep(740,.1)}
+function usePotion(){if(G.hp>=5){pop('體力已滿');return}if(G.coins<10){pop('金幣不足');return}G.coins-=10;G.hp=Math.min(5,G.hp+2);save();refresh();beep(900,.15,'sine')}
+function pick(k,b){const {S,n,i}=cur,q=S.qs[n],fb=$('#fb'),per=i===4?8:4,last=n%per===per-1,A=$('#hero'),M=$('#mon');
+ if(k===q.a){win();document.querySelectorAll('.opt').forEach(o=>o.disabled=true);b.classList.add('ok');
+  const d=cur.first?20:12;addXp(cur.first?10:4);if(cur.first)G.coins+=5;pop('💥 -'+d);
+  A.classList.add('lunge');setTimeout(()=>{M.classList.add('hit');beep(300,.15,'sawtooth')},230);
+  $('#mb').style.width=((per-(n%per)-1)/per*100)+'%';
+  if(last){G.coins+=8;setTimeout(()=>{M.classList.add('die');pop('🪙 +8 擊敗怪物！')},600)}
+  save();refresh();
+  fb.innerHTML=`<div class="fb g">✅ 攻擊成功！${q.h}</div><p><button class="btn" onclick="next()">${n+1<S.qs.length?(last?'前往下一隻怪物':'繼續戰鬥'):'完成！'}</button></p>`;
+ }else{lose();cur.first=false;b.classList.add('no');b.disabled=true;G.hp--;save();
+  M.classList.add('mlunge');setTimeout(()=>{M.classList.remove('mlunge');A.classList.remove('hit');void A.offsetWidth;A.classList.add('hit');pop('💔 -1')},250);
+  refresh();
+  if(G.hp<=0){fb.innerHTML=`<div class="fb b">💫 你被打倒了！先回村莊休息，再重新挑戰吧。</div><p><button class="btn" onclick="start(${i})">重新挑戰</button> <button class="btn alt" onclick="map()">回到地圖</button></p>`;document.querySelectorAll('.opt').forEach(o=>o.disabled=true)}
+  else fb.innerHTML=`<div class="fb b">❌ 怪物反擊了！提示：${q.h}</div>`}}
+title();
+</script>
+</body>
+</html>
