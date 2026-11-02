@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>臺灣島探險記：島嶼大冒險</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d2b3e;--bg2:#154a5e;--panel:#f6efd9;--ink:#1d2a33;--jade:#2fb39a;--mango:#ffb92e;--red:#e4573d;--line:#0a1c28;--text:#f2f7f5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#cfeee6;--bg2:#9fd9cf;--text:#10303a}}
+:root[data-theme="dark"]{--bg:#0d2b3e;--bg2:#154a5e;--text:#f2f7f5}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(var(--bg),var(--bg2));color:var(--text);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.7}
+#app{max-width:760px;margin:0 auto;padding:14px}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--mango);outline-offset:2px}
+.hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--line);border-radius:14px;padding:8px 12px;font-weight:700;color:#f2f7f5}
+.hud .sp{flex:1}
+.xpbar{width:90px;height:10px;background:#34505f;border-radius:6px;overflow:hidden;display:inline-block;vertical-align:middle}
+.xpbar i{display:block;height:100%;background:var(--mango);transition:width .5s}
+.snd{background:none;border:2px solid #5d7c8b;color:#f2f7f5;border-radius:10px;padding:2px 8px}
+.title{text-align:center;padding:40px 8px}
+.title h1{font-size:clamp(2rem,8vw,3.4rem);font-weight:900;margin:.2em 0;line-height:1.2}
+.title p{max-width:30em;margin:0 auto 1.4em}
+.big{font-size:5rem;display:block;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+@media (prefers-reduced-motion:reduce){.big{animation:none}*{transition:none!important}}
+.btn{background:var(--mango);color:#2a1d00;border:0;border-bottom:5px solid #c78400;border-radius:14px;padding:12px 26px;font-weight:900;font-size:1.1rem}
+.btn:active{transform:translateY(3px);border-bottom-width:2px}
+.btn.alt{background:#fff;border-color:#b7c7cf;color:var(--ink)}
+.map{position:relative;margin:18px 0;display:grid;gap:14px}
+.node{display:flex;gap:14px;align-items:center;text-align:left;width:100%;background:var(--panel);color:var(--ink);border:0;border-left:10px solid var(--jade);border-radius:16px;padding:14px 16px}
+.node .e{font-size:2.4rem}
+.node b{display:block;font-size:1.15rem}
+.node small{opacity:.75}
+.node[disabled]{filter:grayscale(1);opacity:.55;cursor:not-allowed;border-left-color:#888}
+.node.done{border-left-color:var(--mango)}
+.node.boss{border-left-color:var(--red)}
+.scene{border-radius:18px;padding:18px;margin:12px 0;min-height:150px;position:relative;overflow:hidden;color:#fff;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.scene .sprite{font-size:4.2rem;line-height:1}
+.scene .place{font-weight:900;font-size:1.3rem;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.box{background:var(--panel);color:var(--ink);border-radius:16px;padding:16px 18px;margin:12px 0;border:3px solid var(--line)}
+.who{font-weight:900;color:#0e7c69}
+.q{font-size:1.2rem;font-weight:700;margin:0 0 10px}
+.opts{display:grid;gap:10px}
+.opt{background:#fff;color:var(--ink);border:3px solid #c9d6dc;border-bottom-width:5px;border-radius:12px;padding:10px 14px;text-align:left;font-weight:700}
+.opt:hover:not([disabled]){border-color:var(--jade)}
+.opt.ok{background:#c9f2dd;border-color:#1f9d63}
+.opt.no{background:#ffd9d1;border-color:var(--red);text-decoration:line-through;opacity:.7}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;font-weight:700}
+.fb.g{background:#c9f2dd}.fb.b{background:#ffe3c2}
+.prog{display:flex;gap:6px;margin:10px 0}
+.prog i{flex:1;height:8px;border-radius:5px;background:#34505f}
+.prog i.on{background:var(--mango)}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.pop{position:fixed;left:50%;top:30%;transform:translateX(-50%);font-size:2rem;font-weight:900;color:var(--mango);text-shadow:0 2px 0 #000;pointer-events:none;animation:up 1s forwards;z-index:9}
+@keyframes up{to{transform:translate(-50%,-70px);opacity:0}}
+.center{text-align:center}
+.badges{font-size:2rem;letter-spacing:6px}
+.arena{border-radius:18px;padding:16px;display:flex;justify-content:space-between;align-items:flex-end;min-height:180px;color:#fff;margin:12px 0;overflow:hidden}
+.fighter{text-align:center;font-size:4rem;line-height:1.1;flex:0 0 auto}
+.fighter small{display:block;font-size:.85rem;font-weight:700;text-shadow:0 1px 0 #0008}
+.fighter span.sp2{display:inline-block}
+.mbar{width:120px;height:12px;background:#0007;border-radius:6px;overflow:hidden;margin:4px auto}
+.mbar i{display:block;height:100%;background:var(--red);transition:width .5s}
+.vs{align-self:center;font-size:1.6rem;font-weight:900;opacity:.8}
+.hit{animation:hit .45s}@keyframes hit{20%{transform:translateX(12px) rotate(8deg);filter:brightness(3)}60%{transform:translateX(-8px)}}
+.lunge{animation:lg .5s}@keyframes lg{50%{transform:translateX(min(34vw,200px)) scale(1.25)}}
+.mlunge{animation:ml .5s}@keyframes ml{50%{transform:translateX(max(-34vw,-200px)) scale(1.25)}}
+.die{animation:die .8s forwards}@keyframes die{to{transform:rotate(90deg) translateY(40px);opacity:0}}
+.acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.acts button{background:#fff;border:2px solid #b7c7cf;border-radius:10px;padding:4px 12px;font-weight:700;color:var(--ink)}
+.appear{background:var(--red);color:#fff;border-radius:10px;padding:4px 12px;font-weight:900;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s);
+const STAGES=[
+{id:0,name:'候鳥海灣',sub:'鳥瞰臺灣',e:'🦅',npc:'🧭',npcName:'候鳥精靈',bg:'linear-gradient(135deg,#2b7a9a,#1a4a73)',
+ intro:'歡迎來到候鳥海灣！我是候鳥精靈。每年都有許多候鳥飛來臺灣，答對我的問題，就能拿到「候鳥徽章」！',
+ qs:[
+{q:'隨著氣溫逐漸轉涼，來自北方的候鳥會前往哪裡度冬？',o:['溫暖的地方','更寒冷的地方','不會移動'],a:0,h:'氣溫轉涼後，來自北方的候鳥前往溫暖的地方度冬，臺灣的地理位置和自然環境適合候鳥棲息。'},
+{q:'灰面鵟鷹一年會過境臺灣幾次？大約在哪些月份？',o:['2 次，大約在四月和十月','1 次，大約在七月','4 次，每季各一次'],a:0,h:'灰面鵟鷹秋季南下、春季北返，一年過境臺灣 2 次，大約在四月和十月。'},
+{q:'黑面琵鷺在臺灣的哪個地方度冬？',o:['臺南曾文溪溪口','墾丁海邊','花蓮清水斷崖'],a:0,h:'黑面琵鷺在臺南曾文溪溪口度冬。'},
+{q:'曾被認為絕種的黑嘴端鳳頭燕鷗，西元 2000 年在哪裡被拍到清晰影像？',o:['澎湖','馬祖列島','金門'],a:1,h:'西元 2000 年有攝影師在馬祖列島拍到黑嘴端鳳頭燕鷗，震撼國際鳥盟。'},
+{q:'「北回歸線」是指什麼？',o:['太陽直射地表最北端的假想線','把地球分成東西兩半的線','臺灣最北邊的海岸線'],a:0,h:'北回歸線是太陽直射地表最北端的假想線，臺灣在北回歸線通過的地方，例如嘉義設有標誌。'},
+{q:'灰面鵟鷹飛行途中若沒有臺灣補充體力，可能飛不過大海。這說明臺灣扮演什麼角色？',o:['生物遷徙的中繼站','火山爆發的地方','只有人類居住的地方'],a:0,h:'臺灣是灰面鵟鷹遷徙途中的中繼站，扮演重要的生物遷徙中繼站角色。'},
+{q:'臺灣的區域範圍，除了臺灣島，還包含下列哪些島嶼？',o:['澎湖、金門、馬祖等島嶼','只有澎湖','日本的島嶼'],a:0,h:'臺灣的區域範圍包含臺灣島、澎湖群島、金門群島、馬祖列島、釣魚臺列嶼、南海諸島等，總面積約 36,000 平方公里。'},
+{q:'馬祖為什麼最早被稱為「媽祖島」？',o:['漁民在南竿島建了媽祖廟，祈求航行平安','島的形狀像媽祖','島上有很多媽祖雕像的工廠'],a:0,h:'福建漁民在南竿島建造媽祖廟祈求航行平安，該島被稱為「媽祖島」，後來名稱逐漸變成「馬祖」。'}]},
+{id:1,name:'板塊島',sub:'海中誕生的家園',e:'🏝️',npc:'🌋',npcName:'板塊精靈',bg:'linear-gradient(135deg,#c0602a,#6a2a3a)',
+ intro:'歡迎來到板塊島！我是板塊精靈。臺灣是從海中誕生的，答對我的問題，就能拿到「板塊徽章」！',
+ qs:[
+{q:'臺灣是在哪兩個板塊互相擠壓下冒出海平面的？',o:['歐亞板塊與菲律賓海板塊','太平洋板塊與非洲板塊','美洲板塊與歐亞板塊'],a:0,h:'大約六百萬年前，歐亞板塊與菲律賓海板塊互相擠壓，臺灣冒出海平面。'},
+{q:'為什麼臺灣與周圍地區常常發生地震？',o:['板塊至今仍持續推擠','海水太鹹','氣溫太高'],a:0,h:'板塊至今仍持續推擠，使得臺灣與周圍地區頻繁發生地震。'},
+{q:'臺灣島是以什麼地形為主體的島嶼？',o:['山脈','沙漠','大草原'],a:0,h:'臺灣島經過板塊擠壓，形成以山脈為主體的島嶼。'},
+{q:'花蓮六十石山坡度較緩的丘陵上，人們種植什麼？',o:['金針花','椰子樹','茶樹'],a:0,h:'人們在六十石山坡度較緩的丘陵上種植金針花。'},
+{q:'河川攜帶泥沙入海，在出海口附近堆積，常形成哪些地形？',o:['沙灘、沙洲和溼地','斷崖和山脈','火山和盆地'],a:0,h:'西部海岸河川在出海口附近堆積泥沙，形成沙灘、沙洲和溼地等。'},
+{q:'漂在外海的沙洲阻隔了風浪，在沙洲與陸地之間會形成什麼？',o:['潟湖','斷崖','岬角'],a:0,h:'沙洲與陸地之間會形成海域相對平靜的潟湖。'},
+{q:'臺灣東部的斷崖海岸，為什麼保留了較完整的自然生態與環境？',o:['早期人們較難登陸，也難進行大規模土地開發','因為沒有海水','因為那裡沒有生物'],a:0,h:'斷崖海岸早期人們較難登陸或翻越山嶺而來，因此保留了較完整的自然生態與環境。'},
+{q:'基隆港是利用北部海岸的哪一種地形修築而成的？',o:['岬灣','潟湖','沙洲'],a:0,h:'基隆港利用北部海岸的岬灣修築；高雄港則是利用潟湖開發。'}]},
+{id:2,name:'史前遺跡',sub:'當人類來到臺灣',e:'🏺',npc:'🦴',npcName:'考古精靈',bg:'linear-gradient(135deg,#8a6a2a,#4a3a1a)',
+ intro:'歡迎來到史前遺跡！我是考古精靈。地底下藏著很久以前的人類生活痕跡，答對我的問題，就能拿到「遺跡徽章」！',
+ qs:[
+{q:'冰河時期海平面下降，臺灣和亞洲大陸有什麼變化？',o:['陸地相連，人類及動物可以自由遷徙','變得離大陸更遠','整座島消失'],a:0,h:'冰河時期海平面下降，臺灣與亞洲大陸陸地相連，人類及動物可以自由遷徙。'},
+{q:'大約一萬餘年前氣溫回升、冰層融化，海平面上升後形成了什麼？',o:['臺灣海峽','中央山脈','花東縱谷'],a:0,h:'海平面上升後形成臺灣海峽，臺灣及周圍島嶼逐漸成為現今的樣貌。'},
+{q:'什麼是「史前時期」？',o:['沒有文字記載的年代','發明電腦的年代','有報紙的年代'],a:0,h:'沒有文字記載的年代，只能根據遺留的物品及當時的環境推測人類的活動，稱為史前時期。'},
+{q:'臺灣史前時期的發展順序，下列何者正確？',o:['舊石器、新石器、金屬器','金屬器、新石器、舊石器','新石器、舊石器、金屬器'],a:0,h:'史前時期依序分為舊石器時期、新石器時期，以及金屬器時期。'},
+{q:'舊石器時期的人們，主要過著什麼樣的生活？',o:['採集、漁獵，並利用火燒烤食物及取暖','種稻、定居在聚落','煉鐵、製作鐵器'],a:0,h:'舊石器時期人們敲打石頭做工具，過著採集、漁獵的生活，並利用火。'},
+{q:'新石器時期的圓山遺址，人們為什麼建築架高的干欄式住屋？',o:['隔絕蛇、鼠及避免溼氣','為了看海','為了養魚'],a:0,h:'干欄式住屋是為了隔絕蛇、鼠及避免溼氣。'},
+{q:'十三行遺址出土了鐵渣與煉鐵爐，可以推測什麼？',o:['當時人們已有煉製鐵器的技術','當時人們還不會用火','當時人們只住在洞穴'],a:0,h:'十三行遺址屬於金屬器時期，鐵渣與煉鐵爐顯示人們已有煉製鐵器的技術。'},
+{q:'漢本遺址陸上交通不便，卻發現花蓮玉器和東南亞玻璃飾品，可見什麼？',o:['人們透過海上交易獲得物品與工藝技術','人們從天上拿到物品','人們都不與外界往來'],a:0,h:'可見當時人們克服地理限制，透過海上交易獲得物品與工藝技術。'}]},
+{id:3,name:'族群村落',sub:'島嶼上的生活樣貌',e:'🏘️',npc:'🏮',npcName:'慕雅凱',bg:'linear-gradient(135deg,#3a8a5a,#1a5a4a)',
+ intro:'歡迎來到族群村落！我是慕雅凱。這裡有不同族群的故事和規範，答對我的問題，就能拿到「村落徽章」！',
+ qs:[
+{q:'住在山地、東部地區及周圍島嶼的原住民族，因為較晚與漢人接觸，大多怎麼樣？',o:['仍保有較完整的傳統語言與文化','完全沒有自己的文化','都搬到平原去'],a:0,h:'較晚與漢人接觸的原住民族，大多仍保有較完整的傳統語言與文化。'},
+{q:'原住民族對狩獵有哪些規範？',o:['狩獵前後舉行祭典，且不侵犯他部落獵場、不濫獵','想獵多少就獵多少','可以隨意進入別人的獵場'],a:0,h:'獵人在狩獵前後都會舉行祭典與儀式，各部落互不侵犯獵場且不濫獵。'},
+{q:'原住民族相信「萬物有靈」，指的是什麼？',o:['祖先、萬物與自然現象皆有神靈','只有人類有靈魂','只有大山有神靈'],a:0,h:'原住民族認為祖先、萬物與自然現象皆有神靈。'},
+{q:'阿美族及卑南族屬於母系社會，下列何者符合？',o:['財產多由女兒繼承','子女都跟父姓','女性不能參與家族事務'],a:0,h:'母系社會財產多由女兒繼承，男方隨妻居住，子女隨母姓，女性在家族中擁有重要地位。'},
+{q:'保生大帝為什麼成為來臺漢人的重要守護神？',o:['相傳他是醫生，早期漢人常因水土不服生病','他是掌管天氣的神','他是航海的神'],a:0,h:'早期來臺漢人常水土不服，相傳保生大帝為醫生，因此是掌管醫藥的醫療之神。'},
+{q:'早期漢人同姓族群聚居形成宗族組織，有什麼作用？',o:['祭祖凝聚向心力，也成為維持地方秩序的力量','讓大家不要往來','只用來蓋房子'],a:0,h:'宗族透過祭祖凝聚向心力，並參與地方事務，成為維持地方秩序的重要力量。'},
+{q:'汽機車占用人行道會受到法律處罰，主要是為了什麼？',o:['保障民眾的步行安全','讓汽車開得更快','增加停車位'],a:0,h:'為了保障民眾的步行安全，汽機車占用人行道、行駛在人行道等行為，都會受到法律處罰。'},
+{q:'傳統社會多認為子女只能從父姓，現代社會重視性別平權，政府怎麼做？',o:['修法，由夫妻協商決定子女姓氏','禁止子女有姓氏','規定一律從母姓'],a:0,h:'隨著社會變遷，有些傳統規範不符現代需求，政府修法由夫妻協商決定子女姓氏。'}]}
+];
+const BOSS={name:'大魔王：迷霧',e:'🌫️',npc:'👹',bg:'linear-gradient(135deg,#5a3a7a,#2a1a4a)',
+ qs:[
+{q:'許多航空公司先飛到臺灣，再轉進東南亞、東北亞，是因為臺灣怎麼樣？',o:['地理位置佳，是海空運往來的重要樞紐','面積比亞洲還大','在赤道上'],a:0,h:'臺灣是亞洲與太平洋、東北亞與東南亞之間，海、空運及貿易往來的重要樞紐。'},
+{q:'臺灣島為什麼會冒出海平面？',o:['歐亞板塊與菲律賓海板塊互相擠壓','海水突然變少','火山噴出沙子堆成'],a:0,h:'約六百萬年前兩個板塊互相擠壓，臺灣冒出海平面。'},
+{q:'高雄港是利用哪一種海岸地形開發的？',o:['潟湖','斷崖','珊瑚礁'],a:0,h:'利用潟湖開發的高雄港是臺灣重要的國際商港。'},
+{q:'圓山遺址的「貝塚」，是用什麼堆積而成的？',o:['貝殼','石頭','鐵塊'],a:0,h:'圓山遺址屬於新石器時期，貝塚是貝殼堆積而成的。'},
+{q:'泰雅族的 Gaga 是什麼？',o:['祖先流傳下來的話，是生活的準則','一位神明的名字','一本寫滿字的經典'],a:0,h:'Gaga 是「祖先流傳下來的話」，例如狩獵時不可以獵殺懷孕中的動物。'},
+{q:'鄒族的「庫巴」是什麼？族人在那裡做什麼？',o:['男子集會所，討論部落事務、學習傳統技能','市場，買賣東西','學校，學習寫字'],a:0,h:'庫巴是男子集會所，男子們共同討論部落事務、學習打獵技巧。'},
+{q:'布農族獵人狩獵案後，野生動物保育法修正，內容是什麼？',o:['「非營利自用」的原住民族狩獵行為合法，但須主管機關核准或備查','所有人都可以隨意打獵','原住民族完全不能打獵'],a:0,h:'修法讓非營利自用的原住民族狩獵合法，但須主管機關核准或備查。'},
+{q:'為了改善優先席的使用情形，政府推動修法，把「老弱婦孺」修改為什麼？',o:['有其他實際需要者','只限老人','所有人都可以坐'],a:0,h:'規範不合時宜時，可以尋求調整，優先席修法為「有其他實際需要者」。'}]};
+let G={hp:5,xp:0,coins:0,clear:[],snd:true,cls:null,eq:[]};
+try{const s=localStorage.getItem('socRPG5a');if(s)G={...G,...JSON.parse(s)}}catch(e){}
+const save=()=>{try{localStorage.setItem('socRPG5a',JSON.stringify(G))}catch(e){}};
+let ac;
+function beep(f,d=.12,t='square'){if(!G.snd)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
+const win=()=>{beep(660);setTimeout(()=>beep(880),110)},lose=()=>{beep(180,.25,'sawtooth')};
+const lv=()=>Math.floor(G.xp/40)+1;
+let view='title',cur=null;
+function go(){({title:title,map:map}[view]||(()=>{}))()}
+function show(h){$('#app').innerHTML=h;window.scrollTo(0,0)}
+function title(){view='title';show(`<div class="title"><span class="big">🧭</span><h1>臺灣島探險記<br>島嶼大冒險</h1><p>迷霧遮住了島嶼！跟著精靈們走過四個地區、答對問題、收集四枚徽章，打敗迷霧魔王吧。內容依照國小社會五年級上冊。</p><button class="btn" onclick="G.cls?map():pickClass()">${G.clear.length?'繼續冒險':'開始冒險'}</button> ${G.clear.length?'<button class="btn alt" onclick="if(confirm(\'確定要重新開始嗎？\')){G={hp:5,xp:0,coins:0,clear:[],snd:G.snd};save();title()}">重新開始</button>':''}</div>`)}
+function map(){view='map';bgm('map');const c=G.clear,all=c.length>=4;
+ show(hud()+`<h2 class="center">冒險地圖</h2><div class="badges center">${STAGES.map(s=>c.includes(s.id)?s.e:'⚪').join('')}</div><div class="map">`+
+ STAGES.map(s=>`<button class="node ${c.includes(s.id)?'done':''}" ${s.id>c.length&&!c.includes(s.id)?'disabled':''} onclick="start(${s.id})"><span class="e">${s.e}</span><span><b>${s.name}${c.includes(s.id)?' ✅':''}</b><small>${s.sub}</small></span></button>`).join('')+
+ `<button class="node boss" ${all?'':'disabled'} onclick="start(4)"><span class="e">${BOSS.e}</span><span><b>${BOSS.name}</b><small>${all?'集滿四枚徽章，挑戰魔王！':'需要四枚徽章才能挑戰'}</small></span></button><button class="node" onclick="shop()"><span class="e">🛒</span><span><b>冒險商店</b><small>用金幣買裝備</small></span></button></div>`)}
+function shuf(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1])}
+function typeText(el,t,done){let k=0;const iv=setInterval(()=>{el.textContent=t.slice(0,++k);if(k%3==0)beep(520+Math.random()*80,.03,'triangle');if(k>=t.length){clearInterval(iv);done&&done()}},28)}
+function pop(t){const d=document.createElement('div');d.className='pop';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function next(){cur.n++;cur.n<cur.S.qs.length?ask():finish()}
+function finish(){const {i,S}=cur;
+ if(i===4){G.coins+=30;G.xp+=30;save();view='end';show(hud()+`<div class="title"><span class="big">🏆</span><h1>迷霧散去了！</h1><div class="badges">${STAGES.map(s=>s.e).join('')}</div><p>你收集了四枚徽章，打敗了迷霧魔王！臺灣的位置、地形、史前歷史、族群文化和生活規範，你都學會了。<br>最終等級 Lv.${lv()}，金幣 ${G.coins} 枚。</p><button class="btn" onclick="map()">回到地圖</button></div>`);win();setTimeout(()=>beep(1040),250);return}
+ if(!G.clear.includes(i))G.clear.push(i);G.coins+=10;G.xp+=10;save();win();
+ show(hud()+`<div class="title"><span class="big">${S.e}</span><h1>獲得「${S.name}」徽章！</h1><p>${G.clear.length<4?'繼續前往下一個地區吧。':'四枚徽章集滿了，迷霧魔王出現了！'}</p><button class="btn" onclick="map()">回到冒險地圖</button></div>`)}
+const MON=[[{n:'迷航雲朵',e:'☁️'},{n:'風暴鷹怪',e:'🦅'}],[{n:'震動岩怪',e:'🪨'},{n:'浪潮巨蟹',e:'🦀'}],[{n:'化石骨怪',e:'🦴'},{n:'冰河猛瑪',e:'🦣'}],[{n:'規範幽靈',e:'👻'},{n:'迷霧法官怪',e:'🧌'}]];
+function addXp(x){const b=lv();G.xp+=x;if(lv()>b){pop('⬆️ LEVEL UP！');setTimeout(()=>beep(1200,.2),200)}}
+const CL={war:{n:'戰士',e:'🛡️',d:'最大血量 +1',sk:'鐵壁',sd:'擋下下一次傷害',ul:'天崩斬',ud:'秒殺本題並回 1 顆愛心'},mag:{n:'法師',e:'🧙',d:'提示消耗減半',sk:'魔法之眼',sd:'消去 2 個錯誤選項',ul:'星雨術',ud:'秒殺本題並獲得 10 金幣'},ran:{n:'遊俠',e:'🏹',d:'答對金幣 +2',sk:'尋寶',sd:'立刻獲得 8 金幣',ul:'疾風連射',ud:'秒殺本題並獲得 15 經驗值'}};
+const ITEMS={sword:['🗡️','勇者之劍',30,'必殺技只需 2 點怒氣'],shield:['🛡️','守護盾',30,'最大血量 +1'],boots:['👢','幸運靴',25,'答對得到的金幣 +50%'],book:['📘','知識書',40,'提示不用花金幣']};
+const has=k=>(G.eq||[]).includes(k),maxHp=()=>5+(G.cls==='war'?1:0)+(has('shield')?1:0),need=()=>has('sword')?2:3,cm=x=>Math.round(x*(has('boots')?1.5:1));
+const MD={'迷航雲朵':['#7ab8e8',0],'風暴鷹怪':['#6a7bd3',3],'震動岩怪':['#8c8c8c',1],'浪潮巨蟹':['#d36a4a',3],'化石骨怪':['#c9b98a',1],'冰河猛瑪':['#6a9ad3',3],'規範幽靈':['#8a4aa8',2],'迷霧法官怪':['#5fae6a',0],'迷霧魔王':['#3a2a5a',4]};
+function mimg(n){const [c,t]=MD[n];let b='';
+ if(t==0)b=`<ellipse cx="60" cy="72" rx="46" ry="38" fill="${c}"/><path d="M30 100q-10 8 4 12h52q14-4 4-12" fill="${c}"/>`;
+ if(t==1)b=`<polygon points="60,6 72,40 108,28 88,58 114,86 76,82 60,114 44,82 6,86 32,58 12,28 48,40" fill="${c}"/>`;
+ if(t==2)b=`<circle cx="60" cy="54" r="42" fill="${c}"/><path d="M26 80q-6 26 6 32M46 90q-4 24 6 26M74 90q4 24-6 26M94 80q6 26-6 32" stroke="${c}" stroke-width="9" fill="none" stroke-linecap="round"/>`;
+ if(t==3)b=`<ellipse cx="60" cy="72" rx="44" ry="40" fill="${c}"/><polygon points="24,44 34,6 52,38" fill="#f2f2e0"/><polygon points="96,44 86,6 68,38" fill="#f2f2e0"/>`;
+ if(t==4)b=`<path d="M10 110Q6 40 40 30 60 0 80 30 114 40 110 110Z" fill="${c}"/><polygon points="24,40 18,2 46,28" fill="#ff5a3c"/><polygon points="96,40 102,2 74,28" fill="#ff5a3c"/>`;
+ return `<svg viewBox="0 0 120 120" width="${t==4?140:110}" height="${t==4?140:110}" aria-hidden="true">${b}<circle cx="45" cy="60" r="10" fill="#fff"/><circle cx="75" cy="60" r="10" fill="#fff"/><circle cx="48" cy="62" r="5" fill="#111"/><circle cx="72" cy="62" r="5" fill="#111"/><path d="M33 48L55 56M87 48L65 56" stroke="#111" stroke-width="4"/><path d="M42 84Q60 98 78 84Z" fill="#111"/><path d="M48 85l4 7 4-7M64 85l4 7 4-7" fill="#fff"/></svg>`}
+let bgmT=null,bgmMode='map',ac2;
+function bgm(m){bgmMode=m;clearInterval(bgmT);if(!G.snd)return;const sc=m==='battle'?[196,233,262,311,349,392,311,262]:[262,330,392,440,392,330,294,330,392,523,440,392];let k=0;bgmT=setInterval(()=>{try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=sc[k%sc.length]*(k%8==0?.5:1);g.gain.setValueAtTime(.035,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.3);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.3);k++}catch(e){}},m==='battle'?200:340)}
+function togSnd(){G.snd=!G.snd;save();bgm(bgmMode);refresh()}
+function hud(){const c=CL[G.cls]||{e:'🧒'},mx=maxHp();return `<div class="hud"><span>${c.e} Lv.${lv()}</span><span class="xpbar"><i style="width:${(G.xp%40)/40*100}%"></i></span><span>${'❤️'.repeat(Math.max(0,G.hp))}${'🖤'.repeat(Math.max(0,mx-G.hp))}</span><span>🪙 ${G.coins}</span><span class="sp"></span><button class="snd" onclick="togSnd()" aria-label="音效與音樂開關">${G.snd?'🎵':'🔇'}</button></div>`}
+function pickClass(){view='cls';show(`<div class="title"><h1>選擇你的職業</h1><p>職業會決定你的被動能力、技能和必殺技。</p></div><div class="map">`+Object.entries(CL).map(([k,c])=>`<button class="node" onclick="G.cls='${k}';G.hp=maxHp();save();map()"><span class="e">${c.e}</span><span><b>${c.n}　被動：${c.d}</b><small>技能「${c.sk}」：${c.sd}<br>必殺「${c.ul}」：${c.ud}</small></span></button>`).join('')+`</div>`)}
+function shop(){view='shop';show(hud()+`<h2 class="center">🛒 冒險商店</h2><div class="map">`+Object.entries(ITEMS).map(([k,v])=>`<button class="node ${has(k)?'done':''}" ${has(k)?'disabled':''} onclick="buy('${k}')"><span class="e">${v[0]}</span><span><b>${v[1]}　${has(k)?'已擁有':v[2]+' 🪙'}</b><small>${v[3]}</small></span></button>`).join('')+`</div><p class="center"><button class="btn alt" onclick="map()">回到地圖</button> <button class="btn alt" onclick="G.cls=null;pickClass()">更換職業</button></p>`)}
+function buy(k){const v=ITEMS[k];if(G.coins<v[2]){pop('金幣不足');lose();return}G.coins-=v[2];(G.eq=G.eq||[]).push(k);G.hp=maxHp();save();win();shop()}
+function start(i){const S=i===4?BOSS:STAGES[i];G.hp=maxHp();save();cur={i,S,n:0,first:true,rage:0};view='stage';bgm('battle');show(hud()+`<div class="scene" style="background:${S.bg}"><span class="place">${S.e} ${S.name}</span><span class="sprite">${S.npc}</span></div><div class="box"><div class="who">${S.npcName||'迷霧魔王'}</div><p id="t" style="min-height:4.6em;margin:.3em 0"></p><button class="btn" id="go" style="display:none" onclick="ask()">出發！</button></div>`);typeText($('#t'),i===4?'呵呵呵……你竟然走到這裡了！只要你答錯，迷霧就會更濃。看你能不能撐到最後！':S.intro,()=>$('#go').style.display='')}
+function ask(){const {S,n,i}=cur,q=S.qs[n],per=i===4?8:4,m=i===4?{n:'迷霧魔王'}:MON[i][Math.floor(n/per)],left=per-(n%per),c=CL[G.cls]||CL.war;cur.first=true;if(n%per===0){cur.su=false;cur.sh=false}
+ const idx=shuf(q.o.map((_,k)=>k));
+ show(hud()+`<div class="arena" style="background:${S.bg}"><div class="fighter"><span class="sp2" id="hero">${c.e}</span><small>${c.n} Lv.${lv()}</small></div><span class="vs">VS</span><div class="fighter"><span class="sp2" id="mon">${mimg(m.n)}</span><div class="mbar"><i id="mb" style="width:${left/per*100}%"></i></div><small>${m.n}</small></div></div><div class="box" id="bx">${n%per===0?`<div class="appear">⚠️ ${m.n}出現了！答對題目來攻擊牠！</div>`:''}<p class="q">第 ${n+1} / ${S.qs.length} 題　${q.q}</p><div class="opts">${idx.map(k=>`<button class="opt" data-i="${k}" onclick="pick(${k},this)">${q.o[k]}</button>`).join('')}</div><div id="fb"></div><div class="acts"><button onclick="useHint()">💡 提示 (${hc()}🪙)</button><button onclick="usePotion()">🧪 藥水 (10🪙)</button><button id="skb" onclick="skill()" ${cur.su?'disabled':''}>✨ ${c.sk}</button><button onclick="ult()">⚡ ${c.ul} <span id="rg">${cur.rage}/${need()}</span></button></div></div>`)}
+const hc=()=>has('book')?0:(G.cls==='mag'?3:5);
+function refresh(){document.querySelector('.hud').outerHTML=hud()}
+function wrongOpts(){const q=cur.S.qs[cur.n];return [...document.querySelectorAll('.opt:not([disabled])')].filter(o=>+o.dataset.i!==q.a)}
+function useHint(){const w=wrongOpts();if(!w.length)return;if(G.coins<hc()){pop('金幣不足');return}G.coins-=hc();w[0].disabled=true;w[0].classList.add('no');save();refresh();beep(740,.1)}
+function usePotion(){if(G.hp>=maxHp()){pop('體力已滿');return}if(G.coins<10){pop('金幣不足');return}G.coins-=10;G.hp=Math.min(maxHp(),G.hp+2);save();refresh();beep(900,.15,'sine')}
+function skill(){if(cur.su)return;cur.su=true;$('#skb').disabled=true;beep(800,.2,'sine');
+ if(G.cls==='war'){cur.sh=true;pop('🛡️ 鐵壁展開')}
+ else if(G.cls==='mag'){wrongOpts().slice(0,2).forEach(o=>{o.disabled=true;o.classList.add('no')});pop('✨ 魔法之眼')}
+ else{G.coins+=8;pop('🪙 尋寶 +8');refresh()}save()}
+function ult(){if(document.querySelector('.opt.ok'))return;if(cur.rage<need()){pop('怒氣不足');return}cur.rage-=need();cur.first=false;
+ if(G.cls==='war'){G.hp=Math.min(maxHp(),G.hp+1)}else if(G.cls==='mag'){G.coins+=10}else{G.xp+=15}
+ pop('⚡ '+(CL[G.cls]||CL.war).ul+'！');const q=cur.S.qs[cur.n];pick(q.a,[...document.querySelectorAll('.opt')].find(o=>+o.dataset.i===q.a))}
+function pick(k,b){const {S,n,i}=cur,q=S.qs[n],fb=$('#fb'),per=i===4?8:4,last=n%per===per-1,A=$('#hero'),M=$('#mon');
+ if(k===q.a){win();document.querySelectorAll('.opt').forEach(o=>o.disabled=true);b.classList.add('ok');
+  const d=cur.first?20:12;if(cur.first){addXp(10);G.coins+=cm(5)+(G.cls==='ran'?2:0);cur.rage=Math.min(3,cur.rage+1)}else addXp(4);pop('💥 -'+d);
+  const rg=$('#rg');if(rg)rg.textContent=cur.rage+'/'+need();
+  A.classList.add('lunge');setTimeout(()=>{M.classList.add('hit');beep(300,.15,'sawtooth')},230);
+  $('#mb').style.width=((per-(n%per)-1)/per*100)+'%';
+  if(last){G.coins+=cm(8);setTimeout(()=>{M.classList.add('die');pop('🪙 擊敗怪物！')},600)}
+  save();refresh();
+  fb.innerHTML=`<div class="fb g">✅ 攻擊成功！${q.h}</div><p><button class="btn" onclick="next()">${n+1<S.qs.length?(last?'前往下一隻怪物':'繼續戰鬥'):'完成！'}</button></p>`;
+ }else{lose();cur.first=false;b.classList.add('no');b.disabled=true;const blk=cur.sh;if(blk)cur.sh=false;else G.hp--;save();
+  M.classList.add('mlunge');setTimeout(()=>{M.classList.remove('mlunge');A.classList.add('hit');pop(blk?'🛡️ 擋下！':'💔 -1')},250);
+  refresh();
+  if(G.hp<=0){fb.innerHTML=`<div class="fb b">💫 你被打倒了！先回村莊休息，再重新挑戰吧。</div><p><button class="btn" onclick="start(${i})">重新挑戰</button> <button class="btn alt" onclick="map()">回到地圖</button></p>`;document.querySelectorAll('.opt').forEach(o=>o.disabled=true)}
+  else fb.innerHTML=`<div class="fb b">❌ 怪物反擊了！提示：${q.h}</div>`}}
+title();
+
+</script>
+</body>
+</html>
